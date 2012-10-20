@@ -1,5 +1,6 @@
 package com.yammer.metrics.httpclient;
 
+import com.yammer.metrics.core.MetricsGroup;
 import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
@@ -61,17 +62,18 @@ class InstrumentedRequestDirector extends DefaultRequestDirector {
               proxyAuthStrategy,
               userTokenHandler,
               params);
-        getTimer = registry.newTimer(HttpClient.class, "get-requests");
-        postTimer = registry.newTimer(HttpClient.class, "post-requests");
-        headTimer = registry.newTimer(HttpClient.class, "head-requests");
-        putTimer = registry.newTimer(HttpClient.class, "put-requests");
-        deleteTimer = registry.newTimer(HttpClient.class, "delete-requests");
-        optionsTimer = registry.newTimer(HttpClient.class, "options-requests");
-        traceTimer = registry.newTimer(HttpClient.class, "trace-requests");
-        connectTimer = registry.newTimer(HttpClient.class, "connect-requests");
-        moveTimer = registry.newTimer(HttpClient.class, "move-requests");
-        patchTimer = registry.newTimer(HttpClient.class, "patch-requests");
-        otherTimer = registry.newTimer(HttpClient.class, "other-requests");
+        final MetricsGroup metrics = registry.group(HttpClient.class);
+        this.getTimer = metrics.timer("get-requests").build();
+        this.postTimer = metrics.timer("post-requests").build();
+        this.headTimer = metrics.timer("head-requests").build();
+        this.putTimer = metrics.timer("put-requests").build();
+        this.deleteTimer = metrics.timer("delete-requests").build();
+        this.optionsTimer = metrics.timer("options-requests").build();
+        this.traceTimer = metrics.timer("trace-requests").build();
+        this.connectTimer = metrics.timer("connect-requests").build();
+        this.moveTimer = metrics.timer("move-requests").build();
+        this.patchTimer = metrics.timer("patch-requests").build();
+        this.otherTimer = metrics.timer("other-requests").build();
     }
 
     @Override

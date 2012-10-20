@@ -2,13 +2,12 @@ package com.yammer.metrics.log4j;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricsGroup;
 import com.yammer.metrics.core.MetricsRegistry;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * A Log4J {@link Appender} delegate which has seven meters, one for each logging level and one for
@@ -29,13 +28,14 @@ public class InstrumentedAppender extends AppenderSkeleton {
 
     public InstrumentedAppender(MetricsRegistry registry) {
         super();
-        this.all = registry.newMeter(Appender.class, "all", "statements", TimeUnit.SECONDS);
-        this.trace = registry.newMeter(Appender.class, "trace", "statements", TimeUnit.SECONDS);
-        this.debug = registry.newMeter(Appender.class, "debug", "statements", TimeUnit.SECONDS);
-        this.info = registry.newMeter(Appender.class, "info", "statements", TimeUnit.SECONDS);
-        this.warn = registry.newMeter(Appender.class, "warn", "statements", TimeUnit.SECONDS);
-        this.error = registry.newMeter(Appender.class, "error", "statements", TimeUnit.SECONDS);
-        this.fatal = registry.newMeter(Appender.class, "fatal", "statements", TimeUnit.SECONDS);
+        final MetricsGroup metrics = registry.group(Appender.class);
+        this.all = metrics.meter("all").measuring("statements").build();
+        this.trace = metrics.meter("trace").measuring("statements").build();
+        this.debug = metrics.meter("debug").measuring("statements").build();
+        this.info = metrics.meter("info").measuring("statements").build();
+        this.warn = metrics.meter("warn").measuring("statements").build();
+        this.error = metrics.meter("error").measuring("statements").build();
+        this.fatal = metrics.meter("fatal").measuring("statements").build();
     }
 
     @Override

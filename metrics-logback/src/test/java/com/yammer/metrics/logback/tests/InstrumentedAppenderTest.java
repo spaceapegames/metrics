@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.logback.InstrumentedAppender;
 import org.junit.After;
@@ -12,9 +13,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class InstrumentedAppenderTest {
     private Meter all, trace, debug, info, warn, error;
@@ -33,13 +32,25 @@ public class InstrumentedAppenderTest {
         this.event = mock(ILoggingEvent.class);
         when(event.getLevel()).thenReturn(Level.INFO);
 
-        final MetricsRegistry registry = mock(MetricsRegistry.class);
-        when(registry.newMeter(Appender.class, "all", "statements", TimeUnit.SECONDS)).thenReturn(all);
-        when(registry.newMeter(Appender.class, "trace", "statements", TimeUnit.SECONDS)).thenReturn(trace);
-        when(registry.newMeter(Appender.class, "debug", "statements", TimeUnit.SECONDS)).thenReturn(debug);
-        when(registry.newMeter(Appender.class, "info", "statements", TimeUnit.SECONDS)).thenReturn(info);
-        when(registry.newMeter(Appender.class, "warn", "statements", TimeUnit.SECONDS)).thenReturn(warn);
-        when(registry.newMeter(Appender.class, "error", "statements", TimeUnit.SECONDS)).thenReturn(error);
+        final MetricsRegistry registry = spy(new MetricsRegistry());
+        when(registry.newMeter(new MetricName(Appender.class, "all"),
+                               "statements",
+                               TimeUnit.SECONDS)).thenReturn(all);
+        when(registry.newMeter(new MetricName(Appender.class, "trace"),
+                               "statements",
+                               TimeUnit.SECONDS)).thenReturn(trace);
+        when(registry.newMeter(new MetricName(Appender.class, "debug"),
+                               "statements",
+                               TimeUnit.SECONDS)).thenReturn(debug);
+        when(registry.newMeter(new MetricName(Appender.class, "info"),
+                               "statements",
+                               TimeUnit.SECONDS)).thenReturn(info);
+        when(registry.newMeter(new MetricName(Appender.class, "warn"),
+                               "statements",
+                               TimeUnit.SECONDS)).thenReturn(warn);
+        when(registry.newMeter(new MetricName(Appender.class, "error"),
+                               "statements",
+                               TimeUnit.SECONDS)).thenReturn(error);
 
         this.instrumented = new InstrumentedAppender(registry);
         instrumented.start();

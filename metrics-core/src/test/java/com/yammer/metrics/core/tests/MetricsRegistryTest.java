@@ -6,7 +6,6 @@ import org.mockito.InOrder;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -21,9 +20,18 @@ public class MetricsRegistryTest {
         final MetricName two = new MetricName(Object.class, "two");
         final MetricName three = new MetricName(String.class, "three");
 
-        final Counter mOne = registry.newCounter(Object.class, "one");
-        final Counter mTwo = registry.newCounter(Object.class, "two");
-        final Counter mThree = registry.newCounter(String.class, "three");
+        final Counter mOne = registry.counter()
+                                     .forClass(Object.class)
+                                     .named("one")
+                                     .build();
+        final Counter mTwo = registry.counter()
+                                     .forClass(Object.class)
+                                     .named("two")
+                                     .build();
+        final Counter mThree = registry.counter()
+                                       .forClass(String.class)
+                                       .named("three")
+                                       .build();
 
         final SortedMap<String, SortedMap<MetricName, Metric>> sortedMetrics = new TreeMap<String, SortedMap<MetricName, Metric>>();
         final TreeMap<MetricName, Metric> objectMetrics = new TreeMap<MetricName, Metric>();
@@ -45,14 +53,25 @@ public class MetricsRegistryTest {
         registry.addListener(listener);
 
         final Gauge<?> gauge = mock(Gauge.class);
-        registry.newGauge(MetricsRegistryTest.class, "gauge", gauge);
-        final Counter counter = registry.newCounter(MetricsRegistryTest.class, "counter");
-        final Histogram histogram = registry.newHistogram(MetricsRegistryTest.class, "histogram");
-        final Meter meter = registry.newMeter(MetricsRegistryTest.class,
-                                              "meter",
-                                              "things",
-                                              TimeUnit.SECONDS);
-        final Timer timer = registry.newTimer(MetricsRegistryTest.class, "timer");
+        registry.gauge().forClass(MetricsRegistryTest.class).named("gauge").build(gauge);
+
+        final Counter counter = registry.counter()
+                                        .forClass(MetricsRegistryTest.class)
+                                        .named("counter")
+                                        .build();
+        final Histogram histogram = registry.histogram()
+                                            .forClass(MetricsRegistryTest.class)
+                                            .named("histogram")
+                                            .buildBiased();
+        final Meter meter = registry.meter()
+                                    .forClass(MetricsRegistryTest.class)
+                                    .named("meter")
+                                    .measuring("things")
+                                    .build();
+        final Timer timer = registry.timer()
+                                    .forClass(MetricsRegistryTest.class)
+                                    .named("timer")
+                                    .build();
 
         verify(listener).onMetricAdded(new MetricName(MetricsRegistryTest.class, "gauge"), gauge);
 
@@ -70,11 +89,17 @@ public class MetricsRegistryTest {
         final MetricsRegistryListener listener = mock(MetricsRegistryListener.class);
         registry.addListener(listener);
 
-        final Counter counter1 = registry.newCounter(MetricsRegistryTest.class, "counter1");
+        final Counter counter1 = registry.counter()
+                                         .forClass(MetricsRegistryTest.class)
+                                         .named("counter1")
+                                         .build();
 
         registry.removeListener(listener);
 
-        final Counter counter2 = registry.newCounter(MetricsRegistryTest.class, "counter2");
+        final Counter counter2 = registry.counter()
+                                        .forClass(MetricsRegistryTest.class)
+                                        .named("counter2")
+                                        .build();
 
         verify(listener).onMetricAdded(new MetricName(MetricsRegistryTest.class, "counter1"), counter1);
 
@@ -88,7 +113,10 @@ public class MetricsRegistryTest {
 
         final MetricName name = new MetricName(MetricsRegistryTest.class, "counter1");
 
-        final Counter counter1 = registry.newCounter(MetricsRegistryTest.class, "counter1");
+        final Counter counter1 = registry.counter()
+                                         .forClass(MetricsRegistryTest.class)
+                                         .named("counter1")
+                                         .build();
         registry.removeMetric(MetricsRegistryTest.class, "counter1");
 
         final InOrder inOrder = inOrder(listener);

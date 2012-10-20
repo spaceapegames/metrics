@@ -1,10 +1,7 @@
 package com.yammer.metrics.jetty;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
-import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricsRegistry;
-import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.*;
 import com.yammer.metrics.util.RatioGauge;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationListener;
@@ -63,25 +60,28 @@ public class InstrumentedHandler extends HandlerWrapper {
      */
     public InstrumentedHandler(Handler underlying, MetricsRegistry registry) {
         super();
-        this.dispatches = registry.newTimer(underlying.getClass(), "dispatches", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.requests = registry.newMeter(underlying.getClass(), "requests", "requests", TimeUnit.SECONDS);
-        this.resumes = registry.newMeter(underlying.getClass(), "resumes", "requests", TimeUnit.SECONDS);
-        this.suspends = registry.newMeter(underlying.getClass(), "suspends", "requests", TimeUnit.SECONDS);
-        this.expires = registry.newMeter(underlying.getClass(), "expires", "requests", TimeUnit.SECONDS);
 
-        this.activeRequests = registry.newCounter(underlying.getClass(), "active-requests");
-        this.activeSuspendedRequests = registry.newCounter(underlying.getClass(), "active-suspended-requests");
-        this.activeDispatches = registry.newCounter(underlying.getClass(), "active-dispatches");
+        final MetricsGroup metrics = registry.group(underlying.getClass());
+
+        this.dispatches = metrics.timer("dispatches").build();
+        this.requests = metrics.meter("requests").measuring("requests").build();
+        this.resumes = metrics.meter("resumes").measuring("requests").build();
+        this.suspends = metrics.meter("suspends").measuring("requests").build();
+        this.expires = metrics.meter("expires").measuring("requests").build();
+
+        this.activeRequests = metrics.counter("active-requests").build();
+        this.activeSuspendedRequests = metrics.counter("active-suspended-requests").build();
+        this.activeDispatches = metrics.counter("active-dispatches").build();
 
         this.responses = new Meter[]{
-                registry.newMeter(underlying.getClass(), "1xx-responses", "responses", TimeUnit.SECONDS), // 1xx
-                registry.newMeter(underlying.getClass(), "2xx-responses", "responses", TimeUnit.SECONDS), // 2xx
-                registry.newMeter(underlying.getClass(), "3xx-responses", "responses", TimeUnit.SECONDS), // 3xx
-                registry.newMeter(underlying.getClass(), "4xx-responses", "responses", TimeUnit.SECONDS), // 4xx
-                registry.newMeter(underlying.getClass(), "5xx-responses", "responses", TimeUnit.SECONDS)  // 5xx
+                metrics.meter("1xx-responses").measuring("responses").build(), // 1xx
+                metrics.meter("2xx-responses").measuring("responses").build(), // 2xx
+                metrics.meter("3xx-responses").measuring("responses").build(), // 3xx
+                metrics.meter("4xx-responses").measuring("responses").build(), // 4xx
+                metrics.meter("5xx-responses").measuring("responses").build(), // 5xx
         };
 
-        registry.newGauge(underlying.getClass(), "percent-4xx-1m", new RatioGauge() {
+        metrics.gauge("percent-4xx-1m").build(new RatioGauge() {
             @Override
             protected double getNumerator() {
                 return responses[3].getOneMinuteRate();
@@ -93,7 +93,7 @@ public class InstrumentedHandler extends HandlerWrapper {
             }
         });
 
-        registry.newGauge(underlying.getClass(), "percent-4xx-5m", new RatioGauge() {
+        metrics.gauge("percent-4xx-5m").build(new RatioGauge() {
             @Override
             protected double getNumerator() {
                 return responses[3].getFiveMinuteRate();
@@ -105,7 +105,7 @@ public class InstrumentedHandler extends HandlerWrapper {
             }
         });
 
-        registry.newGauge(underlying.getClass(), "percent-4xx-15m", new RatioGauge() {
+        metrics.gauge("percent-4xx-15m").build(new RatioGauge() {
             @Override
             protected double getNumerator() {
                 return responses[3].getFifteenMinuteRate();
@@ -117,7 +117,7 @@ public class InstrumentedHandler extends HandlerWrapper {
             }
         });
 
-        registry.newGauge(underlying.getClass(), "percent-5xx-1m", new RatioGauge() {
+        metrics.gauge("percent-5xx-1m").build(new RatioGauge() {
             @Override
             protected double getNumerator() {
                 return responses[4].getOneMinuteRate();
@@ -129,7 +129,7 @@ public class InstrumentedHandler extends HandlerWrapper {
             }
         });
 
-        registry.newGauge(underlying.getClass(), "percent-5xx-5m", new RatioGauge() {
+        metrics.gauge("percent-5xx-5m").build(new RatioGauge() {
             @Override
             protected double getNumerator() {
                 return responses[4].getFiveMinuteRate();
@@ -141,7 +141,7 @@ public class InstrumentedHandler extends HandlerWrapper {
             }
         });
 
-        registry.newGauge(underlying.getClass(), "percent-5xx-15m", new RatioGauge() {
+        metrics.gauge("percent-5xx-15m").build(new RatioGauge() {
             @Override
             protected double getNumerator() {
                 return responses[4].getFifteenMinuteRate();
@@ -169,16 +169,16 @@ public class InstrumentedHandler extends HandlerWrapper {
             }
         };
 
-        this.getRequests = registry.newTimer(underlying.getClass(), "get-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.postRequests = registry.newTimer(underlying.getClass(), "post-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.headRequests = registry.newTimer(underlying.getClass(), "head-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.putRequests = registry.newTimer(underlying.getClass(), "put-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.deleteRequests = registry.newTimer(underlying.getClass(), "delete-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.optionsRequests = registry.newTimer(underlying.getClass(), "options-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.traceRequests = registry.newTimer(underlying.getClass(), "trace-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.connectRequests = registry.newTimer(underlying.getClass(), "connect-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.patchRequests = registry.newTimer(underlying.getClass(), "patch-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        this.otherRequests = registry.newTimer(underlying.getClass(), "other-requests", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        this.getRequests = metrics.timer("get-requests").build();
+        this.postRequests = metrics.timer("post-requests").build();
+        this.headRequests = metrics.timer("head-requests").build();
+        this.putRequests = metrics.timer("put-requests").build();
+        this.deleteRequests = metrics.timer("delete-requests").build();
+        this.optionsRequests = metrics.timer("option-requests").build();
+        this.traceRequests = metrics.timer("trace-requests").build();
+        this.connectRequests = metrics.timer("connect-requests").build();
+        this.patchRequests = metrics.timer("patch-requests").build();
+        this.otherRequests = metrics.timer("other-requests").build();
 
         setHandler(underlying);
     }

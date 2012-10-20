@@ -11,8 +11,6 @@ import net.sf.ehcache.config.CacheConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -34,20 +32,22 @@ public class InstrumentedEhcacheTest {
 
         cache.put(new Element("woo", "whee"));
 
-        final Timer gets = Metrics.defaultRegistry().newTimer(Cache.class,
-                                                              "get",
-                                                              "test",
-                                                              TimeUnit.MILLISECONDS,
-                                                              TimeUnit.SECONDS);
+        final Timer gets = Metrics.defaultRegistry()
+                                  .timer()
+                                  .forClass(Cache.class)
+                                  .named("gets")
+                                  .scopedTo("test")
+                                  .build();
 
         assertThat(gets.getCount(),
                    is(1L));
 
-        final Timer puts = Metrics.defaultRegistry().newTimer(Cache.class,
-                                                              "put",
-                                                              "test",
-                                                              TimeUnit.MILLISECONDS,
-                                                              TimeUnit.SECONDS);
+        final Timer puts = Metrics.defaultRegistry()
+                                  .timer()
+                                  .forClass(Cache.class)
+                                  .named("puts")
+                                  .scopedTo("test")
+                                  .build();
 
         assertThat(puts.getCount(),
                    is(1L));

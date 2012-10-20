@@ -5,6 +5,8 @@ import com.yammer.metrics.core.Gauge;
 import static java.lang.Double.isInfinite;
 import static java.lang.Double.isNaN;
 
+// TODO: 10/19/12 <coda> -- replace with gauge which transforms a Ratio value class
+
 /**
  * A gauge which measures the ratio of one value to another.
  * <p/>

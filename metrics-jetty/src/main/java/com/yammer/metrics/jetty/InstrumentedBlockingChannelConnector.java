@@ -1,10 +1,7 @@
 package com.yammer.metrics.jetty;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
-import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricsRegistry;
-import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.*;
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.server.nio.BlockingChannelConnector;
 
@@ -24,29 +21,26 @@ public class InstrumentedBlockingChannelConnector extends BlockingChannelConnect
                                                 int port) {
         super();
         setPort(port);
-        this.duration = registry.newTimer(BlockingChannelConnector.class,
-                                          "connection-duration",
-                                          Integer.toString(port),
-                                          TimeUnit.MILLISECONDS,
-                                          TimeUnit.SECONDS);
-        this.accepts = registry.newMeter(BlockingChannelConnector.class,
-                                         "accepts",
-                                         Integer.toString(port),
-                                         "connections",
-                                         TimeUnit.SECONDS);
-        this.connects = registry.newMeter(BlockingChannelConnector.class,
-                                          "connects",
-                                          Integer.toString(port),
-                                          "connections",
-                                          TimeUnit.SECONDS);
-        this.disconnects = registry.newMeter(BlockingChannelConnector.class,
-                                             "disconnects",
-                                             Integer.toString(port),
-                                             "connections",
-                                             TimeUnit.SECONDS);
-        this.connections = registry.newCounter(BlockingChannelConnector.class,
-                                               "active-connections",
-                                               Integer.toString(port));
+
+        final MetricsGroup metrics = registry.group(BlockingChannelConnector.class);
+        this.duration = metrics.timer("connection-duration")
+                               .scopedTo(Integer.toString(port))
+                               .build();
+        this.accepts = metrics.meter("accepts")
+                              .scopedTo(Integer.toString(port))
+                              .measuring("connections")
+                              .build();
+        this.connects = metrics.meter("connects")
+                               .scopedTo(Integer.toString(port))
+                               .measuring("connections")
+                               .build();
+        this.disconnects = metrics.meter("disconnects")
+                                  .scopedTo(Integer.toString(port))
+                                  .measuring("connections")
+                                  .build();
+        this.connections = metrics.counter("active-connections")
+                                  .scopedTo(Integer.toString(port))
+                                  .build();
     }
 
     @Override

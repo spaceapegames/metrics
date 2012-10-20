@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * {@link Filter} implementation which captures request information and a breakdown of the response
@@ -46,27 +45,16 @@ public abstract class WebappMetricsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        final MetricsRegistry metricsRegistry = getMetricsFactory(filterConfig);
+        final MetricsGroup metrics = getMetricsFactory(filterConfig).group(WebappMetricsFilter.class);
 
-        this.metersByStatusCode = new ConcurrentHashMap<Integer, Meter>(meterNamesByStatusCode
-                .size());
+        this.metersByStatusCode = new ConcurrentHashMap<Integer, Meter>(meterNamesByStatusCode.size());
         for (Entry<Integer, String> entry : meterNamesByStatusCode.entrySet()) {
             metersByStatusCode.put(entry.getKey(),
-                    metricsRegistry.newMeter(WebappMetricsFilter.class,
-                            entry.getValue(),
-                            "responses",
-                            TimeUnit.SECONDS));
+                                   metrics.meter(entry.getValue()).measuring("responses").build());
         }
-        this.otherMeter = metricsRegistry.newMeter(WebappMetricsFilter.class,
-                otherMetricName,
-                "responses",
-                TimeUnit.SECONDS);
-        this.activeRequests = metricsRegistry.newCounter(WebappMetricsFilter.class, "activeRequests");
-        this.requestTimer = metricsRegistry.newTimer(WebappMetricsFilter.class,
-                "requests",
-                TimeUnit.MILLISECONDS,
-                TimeUnit.SECONDS);
-
+        this.otherMeter = metrics.meter(otherMetricName).measuring("responses").build();
+        this.activeRequests = metrics.counter("activeRequests").build();
+        this.requestTimer = metrics.timer("requests").build();
     }
 
     private MetricsRegistry getMetricsFactory(FilterConfig filterConfig) {

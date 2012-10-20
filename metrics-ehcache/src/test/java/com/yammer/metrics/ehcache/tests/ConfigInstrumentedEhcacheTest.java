@@ -9,8 +9,6 @@ import net.sf.ehcache.Element;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -31,11 +29,12 @@ public class ConfigInstrumentedEhcacheTest {
     public void measuresGets() throws Exception {
         cache.get("woo");
 
-        final Timer gets = Metrics.defaultRegistry().newTimer(Cache.class,
-                                                              "get",
-                                                              "test-config",
-                                                              TimeUnit.MILLISECONDS,
-                                                              TimeUnit.SECONDS);
+        final Timer gets = Metrics.defaultRegistry()
+                                  .timer()
+                                  .forClass(Cache.class)
+                                  .named("gets")
+                                  .scopedTo("test-config")
+                                  .build();
 
         assertThat(gets.getCount(), is(1L));
 
@@ -46,11 +45,12 @@ public class ConfigInstrumentedEhcacheTest {
 
         cache.put(new Element("woo", "whee"));
 
-        final Timer puts = Metrics.defaultRegistry().newTimer(Cache.class,
-                                                              "put",
-                                                              "test-config",
-                                                              TimeUnit.MILLISECONDS,
-                                                              TimeUnit.SECONDS);
+        final Timer puts = Metrics.defaultRegistry()
+                                  .timer()
+                                  .forClass(Cache.class)
+                                  .named("puts")
+                                  .scopedTo("test-config")
+                                  .build();
 
         assertThat(puts.getCount(), is(1L));
 

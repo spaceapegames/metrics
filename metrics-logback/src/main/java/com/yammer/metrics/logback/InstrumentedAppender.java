@@ -6,9 +6,8 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AppenderBase;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricsGroup;
 import com.yammer.metrics.core.MetricsRegistry;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * A Logback {@link AppenderBase} which has six meters, one for each logging level and one for the
@@ -27,12 +26,13 @@ public class InstrumentedAppender extends AppenderBase<ILoggingEvent> {
     }
 
     public InstrumentedAppender(MetricsRegistry registry) {
-        this.all = registry.newMeter(Appender.class, "all", "statements", TimeUnit.SECONDS);
-        this.trace = registry.newMeter(Appender.class, "trace", "statements", TimeUnit.SECONDS);
-        this.debug = registry.newMeter(Appender.class, "debug", "statements", TimeUnit.SECONDS);
-        this.info = registry.newMeter(Appender.class, "info", "statements", TimeUnit.SECONDS);
-        this.warn = registry.newMeter(Appender.class, "warn", "statements", TimeUnit.SECONDS);
-        this.error = registry.newMeter(Appender.class, "error", "statements", TimeUnit.SECONDS);
+        final MetricsGroup metrics = registry.group(Appender.class);
+        this.all = metrics.meter("all").measuring("statements").build();
+        this.trace = metrics.meter("trace").measuring("statements").build();
+        this.debug = metrics.meter("debug").measuring("statements").build();
+        this.info = metrics.meter("info").measuring("statements").build();
+        this.warn = metrics.meter("warn").measuring("statements").build();
+        this.error = metrics.meter("error").measuring("statements").build();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.yammer.metrics.httpclient;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Gauge;
+import com.yammer.metrics.core.MetricsGroup;
 import com.yammer.metrics.core.MetricsRegistry;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.DnsResolver;
@@ -43,41 +44,34 @@ public class InstrumentedClientConnManager extends PoolingClientConnectionManage
                                          TimeUnit connTTLTimeUnit,
                                          DnsResolver dnsResolver) {
         super(schemeRegistry, connTTL, connTTLTimeUnit, dnsResolver);
-        metricsRegistry.newGauge(ClientConnectionManager.class,
-                                 "available-connections",
-                                 new Gauge<Integer>() {
-                                     @Override
-                                     public Integer getValue() {
-                                         // this acquires a lock on the connection pool; remove if contention sucks
-                                         return getTotalStats().getAvailable();
-                                     }
-                                 });
-        metricsRegistry.newGauge(ClientConnectionManager.class,
-                                 "leased-connections",
-                                 new Gauge<Integer>() {
-                                     @Override
-                                     public Integer getValue() {
-                                         // this acquires a lock on the connection pool; remove if contention sucks
-                                         return getTotalStats().getLeased();
-                                     }
-                                 });
-        metricsRegistry.newGauge(ClientConnectionManager.class,
-                                 "max-connections",
-                                 new Gauge<Integer>() {
-                                     @Override
-                                     public Integer getValue() {
-                                         // this acquires a lock on the connection pool; remove if contention sucks
-                                         return getTotalStats().getMax();
-                                     }
-                                 });
-        metricsRegistry.newGauge(ClientConnectionManager.class,
-                                 "pending-connections",
-                                 new Gauge<Integer>() {
-                                     @Override
-                                     public Integer getValue() {
-                                         // this acquires a lock on the connection pool; remove if contention sucks
-                                         return getTotalStats().getPending();
-                                     }
-                                 });
+        final MetricsGroup metrics = metricsRegistry.group(ClientConnectionManager.class);
+        metrics.gauge("available-connections").build(new Gauge<Integer>() {
+            @Override
+            public Integer getValue() {
+                // this acquires a lock on the connection pool; remove if contention sucks
+                return getTotalStats().getAvailable();
+            }
+        });
+        metrics.gauge("leased-connections").build(new Gauge<Integer>() {
+            @Override
+            public Integer getValue() {
+                // this acquires a lock on the connection pool; remove if contention sucks
+                return getTotalStats().getLeased();
+            }
+        });
+        metrics.gauge("max-connections").build(new Gauge<Integer>() {
+            @Override
+            public Integer getValue() {
+                // this acquires a lock on the connection pool; remove if contention sucks
+                return getTotalStats().getMax();
+            }
+        });
+        metrics.gauge("pending-connections").build(new Gauge<Integer>() {
+            @Override
+            public Integer getValue() {
+                // this acquires a lock on the connection pool; remove if contention sucks
+                return getTotalStats().getPending();
+            }
+        });
     }
 }

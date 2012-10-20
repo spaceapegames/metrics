@@ -1,10 +1,7 @@
 package com.yammer.metrics.ehcache;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.MetricsRegistry;
-import com.yammer.metrics.core.Timer;
-import com.yammer.metrics.core.TimerContext;
+import com.yammer.metrics.core.*;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -219,177 +216,133 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
         cache.setSampledStatisticsEnabled(true);
         cache.setStatisticsAccuracy(Statistics.STATISTICS_ACCURACY_NONE);
 
-        registry.newGauge(cache.getClass(), "hits", cache.getName(), new Gauge<Long>() {
+        final MetricsGroup metrics = registry.group(cache.getClass());
+
+        metrics.gauge("hits").scopedTo(cache.getName()).build(new Gauge<Long>() {
             @Override
             public Long getValue() {
                 return cache.getStatistics().getCacheHits();
             }
         });
 
-        registry.newGauge(cache.getClass(),
-                                 "in-memory-hits",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getInMemoryHits();
-                                     }
-                                 });
+        metrics.gauge("in-memory-hits").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getInMemoryHits();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "off-heap-hits",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getOffHeapHits();
-                                     }
-                                 });
+        metrics.gauge("off-heap-hits").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getOffHeapHits();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "on-disk-hits",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getOnDiskHits();
-                                     }
-                                 });
+        metrics.gauge("on-disk-hits").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getOnDiskHits();
+            }
+        });
 
-        registry.newGauge(cache.getClass(), "misses", cache.getName(), new Gauge<Long>() {
+        metrics.gauge("misses").scopedTo(cache.getName()).build(new Gauge<Long>() {
             @Override
             public Long getValue() {
                 return cache.getStatistics().getCacheMisses();
             }
         });
 
-        registry.newGauge(cache.getClass(),
-                                 "in-memory-misses",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getInMemoryMisses();
-                                     }
-                                 });
+        metrics.gauge("in-memory-misses").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getInMemoryMisses();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "off-heap-misses",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getOffHeapMisses();
-                                     }
-                                 });
+        metrics.gauge("off-heap-misses").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getOffHeapMisses();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "on-disk-misses",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getOnDiskMisses();
-                                     }
-                                 });
+        metrics.gauge("on-disk-misses").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getOnDiskMisses();
+            }
+        });
 
-        registry.newGauge(cache.getClass(), "objects", cache.getName(), new Gauge<Long>() {
+        metrics.gauge("objects").scopedTo(cache.getName()).build(new Gauge<Long>() {
             @Override
             public Long getValue() {
                 return cache.getStatistics().getObjectCount();
             }
         });
 
-        registry.newGauge(cache.getClass(),
-                                 "in-memory-objects",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getMemoryStoreObjectCount();
-                                     }
-                                 });
+        metrics.gauge("in-memory-objects").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getMemoryStoreObjectCount();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "off-heap-objects",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getOffHeapStoreObjectCount();
-                                     }
-                                 });
+        metrics.gauge("off-heap-objects").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getOffHeapStoreObjectCount();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "on-disk-objects",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getDiskStoreObjectCount();
-                                     }
-                                 });
+        metrics.gauge("on-disk-objects").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getDiskStoreObjectCount();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "mean-get-time",
-                                 cache.getName(),
-                                 new Gauge<Float>() {
-                                     @Override
-                                     public Float getValue() {
-                                         return cache.getStatistics().getAverageGetTime();
-                                     }
-                                 });
+        metrics.gauge("mean-get-time").scopedTo(cache.getName()).build(new Gauge<Float>() {
+            @Override
+            public Float getValue() {
+                return cache.getStatistics().getAverageGetTime();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "mean-search-time",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getAverageSearchTime();
-                                     }
-                                 });
+        metrics.gauge("mean-search-time").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getAverageSearchTime();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "eviction-count",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getEvictionCount();
-                                     }
-                                 });
+        metrics.gauge("eviction-count").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getEvictionCount();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "searches-per-second",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getSearchesPerSecond();
-                                     }
-                                 });
+        metrics.gauge("searches-per-second").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getSearchesPerSecond();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "writer-queue-size",
-                                 cache.getName(),
-                                 new Gauge<Long>() {
-                                     @Override
-                                     public Long getValue() {
-                                         return cache.getStatistics().getWriterQueueSize();
-                                     }
-                                 });
+        metrics.gauge("writer-queue-size").scopedTo(cache.getName()).build(new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return cache.getStatistics().getWriterQueueSize();
+            }
+        });
 
-        registry.newGauge(cache.getClass(),
-                                 "accuracy",
-                                 cache.getName(),
-                                 new Gauge<String>() {
-                                     @Override
-                                     public String getValue() {
-                                         return cache.getStatistics()
-                                                     .getStatisticsAccuracyDescription();
-                                     }
-                                 });
+        metrics.gauge("accuracy").scopedTo(cache.getName()).build(new Gauge<String>() {
+            @Override
+            public String getValue() {
+                return cache.getStatistics().getStatisticsAccuracyDescription();
+            }
+        });
 
         return new InstrumentedEhcache(registry, cache);
     }
@@ -398,8 +351,15 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
 
     private InstrumentedEhcache(MetricsRegistry registry, Ehcache cache) {
         super(cache);
-        this.getTimer = registry.newTimer(cache.getClass(), "get", cache.getName(), TimeUnit.MICROSECONDS, TimeUnit.SECONDS);
-        this.putTimer = registry.newTimer(cache.getClass(), "put", cache.getName(), TimeUnit.MICROSECONDS, TimeUnit.SECONDS);
+        final MetricsGroup metrics = registry.group(cache.getClass());
+        this.getTimer = metrics.timer("gets")
+                               .scopedTo(cache.getName())
+                               .measuring(TimeUnit.MICROSECONDS)
+                               .build();
+        this.putTimer = metrics.timer("puts")
+                               .scopedTo(cache.getName())
+                               .measuring(TimeUnit.MICROSECONDS)
+                               .build();
     }
 
     @Override

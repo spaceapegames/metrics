@@ -128,7 +128,7 @@ public class MetricsServletTest {
 
     @Test
     public void generatesGauges() throws Exception {
-        registry.newGauge(MetricsServletTest.class, "gauge", new Gauge<Double>() {
+        registry.gauge().forClass(MetricsServletTest.class).named("gauge").build(new Gauge<Double>() {
             @Override
             public Double getValue() {
                 return 22.2;
@@ -144,7 +144,7 @@ public class MetricsServletTest {
 
     @Test
     public void generatesCounters() throws Exception {
-        registry.newCounter(MetricsServletTest.class, "counter").inc(12);
+        registry.counter().forClass(MetricsServletTest.class).named("counter").build().inc(12);
 
         servlet.service(request, response);
 
@@ -155,7 +155,11 @@ public class MetricsServletTest {
 
     @Test
     public void generatesHistograms() throws Exception {
-        registry.newHistogram(MetricsServletTest.class, "histogram").update(12);
+        registry.histogram()
+                .forClass(MetricsServletTest.class)
+                .named("histogram")
+                .buildUniform()
+                .update(12);
 
         servlet.service(request, response);
 
@@ -170,7 +174,11 @@ public class MetricsServletTest {
     public void generatesMeters() throws Exception {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.newMeter(MetricsServletTest.class, "meter", "things", TimeUnit.SECONDS)
+        registry.meter()
+                .forClass(MetricsServletTest.class)
+                .named("meter")
+                .measuring("things")
+                .build()
                 .mark(12);
 
         servlet.service(request, response);
@@ -186,7 +194,11 @@ public class MetricsServletTest {
     public void generatesTimers() throws Exception {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.newTimer(MetricsServletTest.class, "timer").update(100, TimeUnit.MILLISECONDS);
+        registry.timer()
+                .forClass(MetricsServletTest.class)
+                .named("timer")
+                .build()
+                .update(100, TimeUnit.MILLISECONDS);
 
         servlet.service(request, response);
 
