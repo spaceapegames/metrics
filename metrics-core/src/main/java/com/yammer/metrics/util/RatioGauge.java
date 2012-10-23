@@ -5,36 +5,72 @@ import com.yammer.metrics.core.Gauge;
 import static java.lang.Double.isInfinite;
 import static java.lang.Double.isNaN;
 
-// TODO: 10/19/12 <coda> -- replace with gauge which transforms a Ratio value class
-
 /**
  * A gauge which measures the ratio of one value to another.
  * <p/>
  * If the denominator is zero, not a number, or infinite, the resulting ratio is not a number.
  */
 public abstract class RatioGauge extends Gauge<Double> {
-    /**
-     * Returns the numerator (the value on the top half of the fraction or the left-hand side of the
-     * ratio).
-     *
-     * @return the numerator
-     */
-    protected abstract double getNumerator();
+    public static class Ratio {
+        private final double numerator;
+        private final double denominator;
+
+        public Ratio(double numerator, double denominator) {
+            this.numerator = numerator;
+            this.denominator = denominator;
+        }
+
+        public double getNumerator() {
+            return numerator;
+        }
+
+        public double getDenominator() {
+            return denominator;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) { return true; }
+            if (o == null || getClass() != o.getClass()) { return false; }
+
+            final Ratio ratio = (Ratio) o;
+
+            return Double.compare(ratio.denominator, denominator) == 0 &&
+                    Double.compare(ratio.numerator, numerator) == 0;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result;
+            long temp;
+            temp = numerator != +0.0d ? Double.doubleToLongBits(numerator) : 0L;
+            result = (int) (temp ^ (temp >>> 32));
+            temp = denominator != +0.0d ? Double.doubleToLongBits(denominator) : 0L;
+            result = 31 * result + (int) (temp ^ (temp >>> 32));
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return numerator + "/" + denominator;
+        }
+    }
 
     /**
-     * Returns the denominator (the value on the bottom half of the fraction or the right-hand side
-     * of the ratio).
+     * Returns the current value of the ratio.
      *
-     * @return the denominator
+     * @return the current value of the ratio
      */
-    protected abstract double getDenominator();
+    protected abstract Ratio getRatio();
 
     @Override
     public Double getValue() {
-        final double d = getDenominator();
+        final Ratio ratio = getRatio();
+        final double d = ratio.getDenominator();
         if (isNaN(d) || isInfinite(d) || d == 0.0) {
             return Double.NaN;
         }
-        return getNumerator() / d;
+        return ratio.getNumerator() / d;
     }
 }

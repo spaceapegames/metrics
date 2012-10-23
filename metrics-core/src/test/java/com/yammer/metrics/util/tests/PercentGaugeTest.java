@@ -3,21 +3,16 @@ package com.yammer.metrics.util.tests;
 import com.yammer.metrics.util.PercentGauge;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 public class PercentGaugeTest {
     @Test
     public void returnsAPercentage() throws Exception {
         final PercentGauge gauge = new PercentGauge() {
             @Override
-            protected double getNumerator() {
-                return 2;
-            }
-
-            @Override
-            protected double getDenominator() {
-                return 4;
+            protected Ratio getRatio() {
+                return new Ratio(2, 4);
             }
         };
 
@@ -29,13 +24,8 @@ public class PercentGaugeTest {
     public void handlesNaN() throws Exception {
         final PercentGauge gauge = new PercentGauge() {
             @Override
-            protected double getNumerator() {
-                return 2;
-            }
-
-            @Override
-            protected double getDenominator() {
-                return 0;
+            protected Ratio getRatio() {
+                return new Ratio(2, 0);
             }
         };
         

@@ -83,73 +83,45 @@ public class InstrumentedHandler extends HandlerWrapper {
 
         metrics.gauge("percent-4xx-1m").build(new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return responses[3].getOneMinuteRate();
-            }
-
-            @Override
-            protected double getDenominator() {
-                return requests.getOneMinuteRate();
+            protected Ratio getRatio() {
+                return new Ratio(responses[3].getOneMinuteRate(), requests.getOneMinuteRate());
             }
         });
 
         metrics.gauge("percent-4xx-5m").build(new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return responses[3].getFiveMinuteRate();
-            }
-
-            @Override
-            protected double getDenominator() {
-                return requests.getFiveMinuteRate();
+            protected Ratio getRatio() {
+                return new Ratio(responses[3].getFiveMinuteRate(), requests.getFiveMinuteRate());
             }
         });
 
         metrics.gauge("percent-4xx-15m").build(new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return responses[3].getFifteenMinuteRate();
-            }
-
-            @Override
-            protected double getDenominator() {
-                return requests.getFifteenMinuteRate();
+            protected Ratio getRatio() {
+                return new Ratio(responses[3].getFifteenMinuteRate(),
+                                 requests.getFifteenMinuteRate());
             }
         });
 
         metrics.gauge("percent-5xx-1m").build(new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return responses[4].getOneMinuteRate();
-            }
-
-            @Override
-            protected double getDenominator() {
-                return requests.getOneMinuteRate();
+            protected Ratio getRatio() {
+                return new Ratio(responses[4].getOneMinuteRate(), requests.getOneMinuteRate());
             }
         });
 
         metrics.gauge("percent-5xx-5m").build(new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return responses[4].getFiveMinuteRate();
-            }
-
-            @Override
-            protected double getDenominator() {
-                return requests.getFiveMinuteRate();
+            protected Ratio getRatio() {
+                return new Ratio(responses[4].getFiveMinuteRate(), requests.getFiveMinuteRate());
             }
         });
 
         metrics.gauge("percent-5xx-15m").build(new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return responses[4].getFifteenMinuteRate();
-            }
-
-            @Override
-            protected double getDenominator() {
-                return requests.getFifteenMinuteRate();
+            protected Ratio getRatio() {
+                return new Ratio(responses[4].getFifteenMinuteRate(),
+                                 requests.getFifteenMinuteRate());
             }
         });
 

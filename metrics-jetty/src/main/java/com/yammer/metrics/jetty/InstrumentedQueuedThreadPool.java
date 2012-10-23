@@ -19,13 +19,8 @@ public class InstrumentedQueuedThreadPool extends QueuedThreadPool {
 
         metrics.gauge("percent-idle").build(new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return getIdleThreads();
-            }
-
-            @Override
-            protected double getDenominator() {
-                return getThreads();
+            protected Ratio getRatio() {
+                return new Ratio(getIdleThreads(), getThreads());
             }
         });
 
