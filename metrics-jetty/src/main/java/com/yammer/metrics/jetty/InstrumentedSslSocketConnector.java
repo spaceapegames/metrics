@@ -17,10 +17,10 @@ public class InstrumentedSslSocketConnector extends SslSocketConnector {
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedSslSocketConnector(MetricsRegistry registry, int port) {
+    public InstrumentedSslSocketConnector(MetricRegistry registry, int port) {
         super();
         setPort(port);
-        final MetricsGroup metrics = registry.group(SslSocketConnector.class);
+        final MetricGroup metrics = registry.group(SslSocketConnector.class);
         this.duration = metrics.timer("connection-duration")
                                .scopedTo(Integer.toString(port))
                                .build();

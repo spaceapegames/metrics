@@ -17,12 +17,12 @@ public class InstrumentedBlockingChannelConnector extends BlockingChannelConnect
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedBlockingChannelConnector(MetricsRegistry registry,
+    public InstrumentedBlockingChannelConnector(MetricRegistry registry,
                                                 int port) {
         super();
         setPort(port);
 
-        final MetricsGroup metrics = registry.group(BlockingChannelConnector.class);
+        final MetricGroup metrics = registry.group(BlockingChannelConnector.class);
         this.duration = metrics.timer("connection-duration")
                                .scopedTo(Integer.toString(port))
                                .build();

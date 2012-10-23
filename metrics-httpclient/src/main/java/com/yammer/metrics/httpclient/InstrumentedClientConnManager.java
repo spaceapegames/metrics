@@ -2,8 +2,8 @@ package com.yammer.metrics.httpclient;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.MetricsGroup;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricGroup;
+import com.yammer.metrics.core.MetricRegistry;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -31,20 +31,20 @@ public class InstrumentedClientConnManager extends PoolingClientConnectionManage
         this(Metrics.defaultRegistry(), registry, connTTL, connTTLTimeUnit);
     }
 
-    public InstrumentedClientConnManager(MetricsRegistry metricsRegistry,
+    public InstrumentedClientConnManager(MetricRegistry metricRegistry,
                                          SchemeRegistry registry,
                                          long connTTL,
                                          TimeUnit connTTLTimeUnit) {
-        this(metricsRegistry, registry, connTTL, connTTLTimeUnit, new SystemDefaultDnsResolver());
+        this(metricRegistry, registry, connTTL, connTTLTimeUnit, new SystemDefaultDnsResolver());
     }
 
-    public InstrumentedClientConnManager(MetricsRegistry metricsRegistry,
+    public InstrumentedClientConnManager(MetricRegistry metricRegistry,
                                          SchemeRegistry schemeRegistry,
                                          long connTTL,
                                          TimeUnit connTTLTimeUnit,
                                          DnsResolver dnsResolver) {
         super(schemeRegistry, connTTL, connTTLTimeUnit, dnsResolver);
-        final MetricsGroup metrics = metricsRegistry.group(ClientConnectionManager.class);
+        final MetricGroup metrics = metricRegistry.group(ClientConnectionManager.class);
         metrics.gauge("available-connections").build(new Gauge<Integer>() {
             @Override
             public Integer getValue() {

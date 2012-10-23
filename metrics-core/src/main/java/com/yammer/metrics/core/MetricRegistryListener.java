@@ -5,9 +5,9 @@ import java.util.EventListener;
 /**
  * Listeners for events from the registry.  Listeners must be thread-safe.
  */
-public interface MetricsRegistryListener extends EventListener {
+public interface MetricRegistryListener extends EventListener {
     /**
-     * Called when a metric has been added to the {@link MetricsRegistry}.
+     * Called when a metric has been added to the {@link MetricRegistry}.
      *
      * @param name   the name of the {@link Metric}
      * @param metric the {@link Metric}
@@ -15,7 +15,7 @@ public interface MetricsRegistryListener extends EventListener {
     void onMetricAdded(MetricName name, Metric metric);
 
     /**
-     * Called when a metric has been removed from the {@link MetricsRegistry}.
+     * Called when a metric has been removed from the {@link MetricRegistry}.
      *
      * @param name the name of the {@link com.yammer.metrics.core.Metric}
      */

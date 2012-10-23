@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class MetricsRegistryTest {
-    private final MetricsRegistry registry = new MetricsRegistry();
+    private final MetricRegistry registry = new MetricRegistry();
 
     @Test
     public void sortingMetricNamesSortsThemByClassThenScopeThenName() throws Exception {
@@ -49,7 +49,7 @@ public class MetricsRegistryTest {
 
     @Test
     public void listenersRegisterNewMetrics() throws Exception {
-        final MetricsRegistryListener listener = mock(MetricsRegistryListener.class);
+        final MetricRegistryListener listener = mock(MetricRegistryListener.class);
         registry.addListener(listener);
 
         final Gauge<?> gauge = mock(Gauge.class);
@@ -86,7 +86,7 @@ public class MetricsRegistryTest {
 
     @Test
     public void removedListenersDoNotReceiveEvents() throws Exception {
-        final MetricsRegistryListener listener = mock(MetricsRegistryListener.class);
+        final MetricRegistryListener listener = mock(MetricRegistryListener.class);
         registry.addListener(listener);
 
         final Counter counter1 = registry.counter()
@@ -108,7 +108,7 @@ public class MetricsRegistryTest {
 
     @Test
     public void metricsCanBeRemoved() throws Exception {
-        final MetricsRegistryListener listener = mock(MetricsRegistryListener.class);
+        final MetricRegistryListener listener = mock(MetricRegistryListener.class);
         registry.addListener(listener);
 
         final MetricName name = new MetricName(MetricsRegistryTest.class, "counter1");

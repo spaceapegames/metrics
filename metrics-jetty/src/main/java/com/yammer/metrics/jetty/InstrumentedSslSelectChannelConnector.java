@@ -17,11 +17,11 @@ public class InstrumentedSslSelectChannelConnector extends SslSelectChannelConne
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedSslSelectChannelConnector(MetricsRegistry registry,
+    public InstrumentedSslSelectChannelConnector(MetricRegistry registry,
                                                  int port) {
         super();
         setPort(port);
-        final MetricsGroup metrics = registry.group(SslSelectChannelConnector.class);
+        final MetricGroup metrics = registry.group(SslSelectChannelConnector.class);
         this.duration = metrics.timer("connection-duration")
                                .scopedTo(Integer.toString(port))
                                .build();

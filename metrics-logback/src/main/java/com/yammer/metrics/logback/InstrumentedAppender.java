@@ -6,8 +6,8 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AppenderBase;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricsGroup;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricGroup;
+import com.yammer.metrics.core.MetricRegistry;
 
 /**
  * A Logback {@link AppenderBase} which has six meters, one for each logging level and one for the
@@ -25,8 +25,8 @@ public class InstrumentedAppender extends AppenderBase<ILoggingEvent> {
         this(Metrics.defaultRegistry());
     }
 
-    public InstrumentedAppender(MetricsRegistry registry) {
-        final MetricsGroup metrics = registry.group(Appender.class);
+    public InstrumentedAppender(MetricRegistry registry) {
+        final MetricGroup metrics = registry.group(Appender.class);
         this.all = metrics.meter("all").measuring("statements").build();
         this.trace = metrics.meter("trace").measuring("statements").build();
         this.debug = metrics.meter("debug").measuring("statements").build();

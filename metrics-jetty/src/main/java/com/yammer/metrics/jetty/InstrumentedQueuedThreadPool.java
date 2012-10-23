@@ -1,21 +1,21 @@
 package com.yammer.metrics.jetty;
 
-import com.yammer.metrics.core.MetricsGroup;
+import com.yammer.metrics.core.MetricGroup;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.util.RatioGauge;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.MetricsRegistry;
 
 public class InstrumentedQueuedThreadPool extends QueuedThreadPool {
     public InstrumentedQueuedThreadPool() {
         this(Metrics.defaultRegistry());
     }
 
-    public InstrumentedQueuedThreadPool(MetricsRegistry registry) {
+    public InstrumentedQueuedThreadPool(MetricRegistry registry) {
         super();
-        final MetricsGroup metrics = registry.group(QueuedThreadPool.class);
+        final MetricGroup metrics = registry.group(QueuedThreadPool.class);
 
         metrics.gauge("percent-idle").build(new RatioGauge() {
             @Override

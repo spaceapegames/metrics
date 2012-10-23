@@ -1,8 +1,8 @@
 package com.yammer.metrics.core.tests;
 
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricsGroup;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricGroup;
+import com.yammer.metrics.core.MetricRegistry;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.closeTo;
@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class MeterTest {
-    private final MetricsGroup metrics = new MetricsRegistry().group(MeterTest.class);
+    private final MetricGroup metrics = new MetricRegistry().group(MeterTest.class);
     private final Meter meter = metrics.meter("things").build();
 
     @Test

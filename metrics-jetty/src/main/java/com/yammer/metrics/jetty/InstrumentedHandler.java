@@ -58,10 +58,10 @@ public class InstrumentedHandler extends HandlerWrapper {
      * @param underlying the handler about which metrics will be collected
      * @param registry the registry for the metrics
      */
-    public InstrumentedHandler(Handler underlying, MetricsRegistry registry) {
+    public InstrumentedHandler(Handler underlying, MetricRegistry registry) {
         super();
 
-        final MetricsGroup metrics = registry.group(underlying.getClass());
+        final MetricGroup metrics = registry.group(underlying.getClass());
 
         this.dispatches = metrics.timer("dispatches").build();
         this.requests = metrics.meter("requests").measuring("requests").build();

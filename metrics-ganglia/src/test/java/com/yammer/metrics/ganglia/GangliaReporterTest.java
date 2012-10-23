@@ -1,9 +1,6 @@
 package com.yammer.metrics.ganglia;
 
 import com.yammer.metrics.core.*;
-import com.yammer.metrics.ganglia.GangliaMessage;
-import com.yammer.metrics.ganglia.GangliaMessageBuilder;
-import com.yammer.metrics.ganglia.GangliaReporter;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
 import com.yammer.metrics.reporting.tests.AbstractPollingReporterTest;
 import com.yammer.metrics.core.MetricPredicate;
@@ -24,7 +21,7 @@ public class GangliaReporterTest extends AbstractPollingReporterTest {
     private GangliaMessage testMessage;
 
     @Override
-    protected AbstractPollingReporter createReporter(MetricsRegistry registry, OutputStream out, Clock clock) throws Exception {
+    protected AbstractPollingReporter createReporter(MetricRegistry registry, OutputStream out, Clock clock) throws Exception {
         final OutputStreamWriter output = new OutputStreamWriter(out);
         this.testMessage = new GangliaMessage(null, null, null) {
 

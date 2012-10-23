@@ -3,7 +3,7 @@ package com.yammer.metrics.examples;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Histogram;
-import com.yammer.metrics.core.MetricsGroup;
+import com.yammer.metrics.core.MetricGroup;
 import com.yammer.metrics.reporting.ConsoleReporter;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class ExampleRunner {
-    private static final MetricsGroup METRICS = Metrics.defaultRegistry()
+    private static final MetricGroup METRICS = Metrics.defaultRegistry()
                                                        .group(ExampleRunner.class);
     private static final int WORKER_COUNT = 10;
     private static final BlockingQueue<File> JOBS = new LinkedBlockingQueue<File>();

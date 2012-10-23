@@ -1,7 +1,7 @@
 package com.yammer.metrics.httpclient;
 
-import com.yammer.metrics.core.MetricsGroup;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricGroup;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
 import org.apache.commons.logging.Log;
@@ -35,7 +35,7 @@ class InstrumentedRequestDirector extends DefaultRequestDirector {
     private final Timer patchTimer;
     private final Timer otherTimer;
 
-    InstrumentedRequestDirector(MetricsRegistry registry,
+    InstrumentedRequestDirector(MetricRegistry registry,
                                 Log log,
                                 HttpRequestExecutor requestExec,
                                 ClientConnectionManager conman,
@@ -62,7 +62,7 @@ class InstrumentedRequestDirector extends DefaultRequestDirector {
               proxyAuthStrategy,
               userTokenHandler,
               params);
-        final MetricsGroup metrics = registry.group(HttpClient.class);
+        final MetricGroup metrics = registry.group(HttpClient.class);
         this.getTimer = metrics.timer("get-requests").build();
         this.postTimer = metrics.timer("post-requests").build();
         this.headTimer = metrics.timer("head-requests").build();

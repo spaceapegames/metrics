@@ -17,10 +17,10 @@ public class InstrumentedSocketConnector extends SocketConnector {
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedSocketConnector(MetricsRegistry registry, int port) {
+    public InstrumentedSocketConnector(MetricRegistry registry, int port) {
         super();
         setPort(port);
-        final MetricsGroup metrics = registry.group(SocketConnector.class);
+        final MetricGroup metrics = registry.group(SocketConnector.class);
         this.duration = metrics.timer("connection-duration")
                                .scopedTo(Integer.toString(port))
                                .build();

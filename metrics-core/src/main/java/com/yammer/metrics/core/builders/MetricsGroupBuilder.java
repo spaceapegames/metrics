@@ -1,26 +1,26 @@
 package com.yammer.metrics.core.builders;
 
-import com.yammer.metrics.core.MetricsGroup;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricGroup;
+import com.yammer.metrics.core.MetricRegistry;
 
 public class MetricsGroupBuilder {
     public static class BoundMetricsGroupBuilder {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final Class<?> klass;
 
-        BoundMetricsGroupBuilder(MetricsRegistry registry, Class<?> klass) {
+        BoundMetricsGroupBuilder(MetricRegistry registry, Class<?> klass) {
             this.registry = registry;
             this.klass = klass;
         }
 
-        public MetricsGroup build() {
-            return new MetricsGroup(registry, klass);
+        public MetricGroup build() {
+            return new MetricGroup(registry, klass);
         }
     }
 
-    private final MetricsRegistry registry;
+    private final MetricRegistry registry;
 
-    public MetricsGroupBuilder(MetricsRegistry registry) {
+    public MetricsGroupBuilder(MetricRegistry registry) {
         this.registry = registry;
     }
 

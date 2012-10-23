@@ -1,21 +1,21 @@
 package com.yammer.metrics.reporting;
 
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 
 /**
  * The base class for all metric reporters.
  */
 public abstract class AbstractReporter {
-    private final MetricsRegistry metricsRegistry;
+    private final MetricRegistry metricRegistry;
 
     /**
      * Creates a new {@link AbstractReporter} instance.
      *
-     * @param registry    the {@link MetricsRegistry} containing the metrics this reporter will
+     * @param registry    the {@link com.yammer.metrics.core.MetricRegistry} containing the metrics this reporter will
      *                    report
      */
-    protected AbstractReporter(MetricsRegistry registry) {
-        this.metricsRegistry = registry;
+    protected AbstractReporter(MetricRegistry registry) {
+        this.metricRegistry = registry;
     }
 
     /**
@@ -26,11 +26,11 @@ public abstract class AbstractReporter {
     }
 
     /**
-     * Returns the reporter's {@link MetricsRegistry}.
+     * Returns the reporter's {@link com.yammer.metrics.core.MetricRegistry}.
      *
-     * @return the reporter's {@link MetricsRegistry}
+     * @return the reporter's {@link com.yammer.metrics.core.MetricRegistry}
      */
-    protected MetricsRegistry getMetricsRegistry() {
-        return metricsRegistry;
+    protected MetricRegistry getMetricRegistry() {
+        return metricRegistry;
     }
 }

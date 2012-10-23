@@ -2,7 +2,7 @@ package com.yammer.metrics.log4j.tests;
 
 import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.log4j.InstrumentedAppender;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
@@ -30,7 +30,7 @@ public class InstrumentedAppenderTest {
         this.event = mock(LoggingEvent.class);
         when(event.getLevel()).thenReturn(Level.INFO);
 
-        final MetricsRegistry registry = spy(new MetricsRegistry());
+        final MetricRegistry registry = spy(new MetricRegistry());
         doReturn(all).when(registry).register(eq(new MetricName(Appender.class, "all")),
                                               any(Meter.class));
         doReturn(trace).when(registry).register(eq(new MetricName(Appender.class, "trace")),

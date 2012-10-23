@@ -7,7 +7,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
 import com.yammer.metrics.jersey.tests.resources.InstrumentedResource;
@@ -31,11 +31,11 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
         Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
     }
 
-    private MetricsRegistry registry;
+    private MetricRegistry registry;
 
     @Override
     protected AppDescriptor configure() {
-        this.registry = new MetricsRegistry();
+        this.registry = new MetricRegistry();
 
         final DefaultResourceConfig config = new DefaultResourceConfig();
         config.getSingletons().add(new InstrumentedResourceMethodDispatchAdapter(registry));

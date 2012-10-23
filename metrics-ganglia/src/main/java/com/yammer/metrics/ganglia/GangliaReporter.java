@@ -101,21 +101,21 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * Enables the ganglia reporter to send data for the given metrics registry to ganglia server
      * with the specified period.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param period          the period between successive outputs
      * @param unit            the time unit of {@code period}
      * @param gangliaHost     the gangliaHost name of ganglia server (carbon-cache agent)
      * @param port            the port number on which the ganglia server is listening
      * @param groupPrefix     prefix to the ganglia group name (such as myapp_counter)
      */
-    public static void enable(MetricsRegistry metricsRegistry, long period, TimeUnit unit, String gangliaHost, int port, String groupPrefix) {
-        enable(metricsRegistry, period, unit, gangliaHost, port, groupPrefix, MetricPredicate.ALL);
+    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String gangliaHost, int port, String groupPrefix) {
+        enable(metricRegistry, period, unit, gangliaHost, port, groupPrefix, MetricPredicate.ALL);
     }
 
     /**
      * Enables the ganglia reporter to send data to ganglia server with the specified period.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param period          the period between successive outputs
      * @param unit            the time unit of {@code period}
      * @param gangliaHost     the gangliaHost name of ganglia server (carbon-cache agent)
@@ -123,14 +123,14 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param groupPrefix     prefix to the ganglia group name (such as myapp_counter)
      * @param predicate       filters metrics to be reported
      */
-    public static void enable(MetricsRegistry metricsRegistry, long period, TimeUnit unit, String gangliaHost, int port, String groupPrefix, MetricPredicate predicate) {
-        enable(metricsRegistry, period, unit, gangliaHost, port, groupPrefix, predicate, false);
+    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String gangliaHost, int port, String groupPrefix, MetricPredicate predicate) {
+        enable(metricRegistry, period, unit, gangliaHost, port, groupPrefix, predicate, false);
     }
 
     /**
      * Enables the ganglia reporter to send data to ganglia server with the specified period.
      *
-     * @param metricsRegistry      the metrics registry
+     * @param metricRegistry      the metrics registry
      * @param period               the period between successive outputs
      * @param unit                 the time unit of {@code period}
      * @param gangliaHost          the gangliaHost name of ganglia server (carbon-cache agent)
@@ -140,10 +140,10 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param compressPackageNames if true reporter will compress package names e.g.
      *                             com.foo.MetricName becomes c.f.MetricName
      */
-    public static void enable(MetricsRegistry metricsRegistry, long period, TimeUnit unit, String gangliaHost,
+    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String gangliaHost,
                               int port, String groupPrefix, MetricPredicate predicate, boolean compressPackageNames) {
         try {
-            final GangliaReporter reporter = new GangliaReporter(metricsRegistry,
+            final GangliaReporter reporter = new GangliaReporter(metricRegistry,
                                                                  gangliaHost,
                                                                  port,
                                                                  groupPrefix,
@@ -186,34 +186,34 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     /**
      * Creates a new {@link GangliaReporter}.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param gangliaHost     is ganglia server
      * @param port            is port on which ganglia server is running
      * @param groupPrefix     prefix to the ganglia group name (such as myapp_counter)
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(MetricsRegistry metricsRegistry, String gangliaHost, int port, String groupPrefix) throws IOException {
-        this(metricsRegistry, gangliaHost, port, groupPrefix, MetricPredicate.ALL);
+    public GangliaReporter(MetricRegistry metricRegistry, String gangliaHost, int port, String groupPrefix) throws IOException {
+        this(metricRegistry, gangliaHost, port, groupPrefix, MetricPredicate.ALL);
     }
 
     /**
      * Creates a new {@link GangliaReporter}.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param gangliaHost     is ganglia server
      * @param port            is port on which ganglia server is running
      * @param groupPrefix     prefix to the ganglia group name (such as myapp_counter)
      * @param predicate       filters metrics to be reported
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(MetricsRegistry metricsRegistry, String gangliaHost, int port, String groupPrefix, MetricPredicate predicate) throws IOException {
-        this(metricsRegistry, gangliaHost, port, groupPrefix, predicate, false);
+    public GangliaReporter(MetricRegistry metricRegistry, String gangliaHost, int port, String groupPrefix, MetricPredicate predicate) throws IOException {
+        this(metricRegistry, gangliaHost, port, groupPrefix, predicate, false);
     }
 
     /**
      * Creates a new {@link GangliaReporter}.
      *
-     * @param metricsRegistry      the metrics registry
+     * @param metricRegistry      the metrics registry
      * @param gangliaHost          is ganglia server
      * @param port                 is port on which ganglia server is running
      * @param groupPrefix          prefix to the ganglia group name (such as myapp_counter)
@@ -222,9 +222,9 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      *                             com.foo.MetricName becomes c.f.MetricName
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(MetricsRegistry metricsRegistry, String gangliaHost, int port, String groupPrefix,
+    public GangliaReporter(MetricRegistry metricRegistry, String gangliaHost, int port, String groupPrefix,
                            MetricPredicate predicate, boolean compressPackageNames) throws IOException {
-        this(metricsRegistry,
+        this(metricRegistry,
              groupPrefix,
              predicate,
              compressPackageNames,
@@ -234,7 +234,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     /**
      * Creates a new {@link GangliaReporter}.
      *
-     * @param metricsRegistry          the metrics registry
+     * @param metricRegistry          the metrics registry
      * @param groupPrefix              prefix to the ganglia group name (such as myapp_counter)
      * @param predicate                filters metrics to be reported
      * @param compressPackageNames     if true reporter will compress package names e.g.
@@ -243,10 +243,10 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param vm                       a {@link VirtualMachineMetrics} isntance
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(MetricsRegistry metricsRegistry, String groupPrefix,
+    public GangliaReporter(MetricRegistry metricRegistry, String groupPrefix,
                            MetricPredicate predicate, boolean compressPackageNames,
                            GangliaMessageBuilder gangliaMessageBuilder, VirtualMachineMetrics vm) throws IOException {
-        super(metricsRegistry, "ganglia-reporter");
+        super(metricRegistry, "ganglia-reporter");
         this.gangliaMessageBuilder = gangliaMessageBuilder;
         this.groupPrefix = groupPrefix + "_";
         this.hostLabel = getDefaultHostLabel();
@@ -264,7 +264,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     }
 
     private void printRegularMetrics() {
-        for (Map.Entry<String, SortedMap<MetricName, Metric>> entry : getMetricsRegistry().getGroupedMetrics(
+        for (Map.Entry<String, SortedMap<MetricName, Metric>> entry : getMetricRegistry().getGroupedMetrics(
                 predicate).entrySet()) {
             for (Map.Entry<MetricName, Metric> subEntry : entry.getValue().entrySet()) {
                 final Metric metric = subEntry.getValue();

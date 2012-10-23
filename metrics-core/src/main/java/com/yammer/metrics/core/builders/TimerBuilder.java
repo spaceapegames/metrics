@@ -1,18 +1,18 @@
 package com.yammer.metrics.core.builders;
 
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 
 import java.util.concurrent.TimeUnit;
 
 public class TimerBuilder implements MetricBuilder<Timer> {
     public static class BoundBuilder implements BoundMetricBuilder<Timer> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String domain;
         private final String type;
 
-        private BoundBuilder(MetricsRegistry registry, String domain, String type) {
+        private BoundBuilder(MetricRegistry registry, String domain, String type) {
             this.registry = registry;
             this.domain = domain;
             this.type = type;
@@ -25,14 +25,14 @@ public class TimerBuilder implements MetricBuilder<Timer> {
     }
 
     public static class NamedBuilder implements NamedMetricBuilder<Timer> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String domain;
         private final String type;
         private final String name;
         private TimeUnit durationUnit;
         private TimeUnit rateUnit;
 
-        private NamedBuilder(MetricsRegistry registry, String domain, String type, String name) {
+        private NamedBuilder(MetricRegistry registry, String domain, String type, String name) {
             this.registry = registry;
             this.domain = domain;
             this.type = type;
@@ -63,7 +63,7 @@ public class TimerBuilder implements MetricBuilder<Timer> {
     }
 
     public static class ScopedBuilder implements ScopedMetricBuilder<Timer> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String domain;
         private final String type;
         private final String name;
@@ -71,7 +71,7 @@ public class TimerBuilder implements MetricBuilder<Timer> {
         private TimeUnit durationUnit;
         private TimeUnit rateUnit;
 
-        private ScopedBuilder(MetricsRegistry registry, String domain, String type, String name, String scope) {
+        private ScopedBuilder(MetricRegistry registry, String domain, String type, String name, String scope) {
             this.registry = registry;
             this.domain = domain;
             this.type = type;
@@ -98,10 +98,10 @@ public class TimerBuilder implements MetricBuilder<Timer> {
     }
 
     public static class DomainBuilder implements DomainMetricBuilder<Timer> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String domain;
 
-        private DomainBuilder(MetricsRegistry registry, String domain) {
+        private DomainBuilder(MetricRegistry registry, String domain) {
             this.registry = registry;
             this.domain = domain;
         }
@@ -113,10 +113,10 @@ public class TimerBuilder implements MetricBuilder<Timer> {
     }
 
     public static class TypedBuilder implements TypedMetricBuilder<Timer> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String type;
 
-        private TypedBuilder(MetricsRegistry registry, String type) {
+        private TypedBuilder(MetricRegistry registry, String type) {
             this.registry = registry;
             this.type = type;
         }
@@ -127,13 +127,13 @@ public class TimerBuilder implements MetricBuilder<Timer> {
         }
     }
 
-    public static TimerBuilder newBuilder(MetricsRegistry registry) {
+    public static TimerBuilder newBuilder(MetricRegistry registry) {
         return new TimerBuilder(registry);
     }
 
-    private final MetricsRegistry registry;
+    private final MetricRegistry registry;
 
-    private TimerBuilder(MetricsRegistry registry) {
+    private TimerBuilder(MetricRegistry registry) {
         this.registry = registry;
     }
 

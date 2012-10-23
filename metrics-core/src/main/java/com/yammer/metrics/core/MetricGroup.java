@@ -2,11 +2,11 @@ package com.yammer.metrics.core;
 
 import com.yammer.metrics.core.builders.*;
 
-public class MetricsGroup {
-    private final MetricsRegistry registry;
+public class MetricGroup {
+    private final MetricRegistry registry;
     private final Class<?> klass;
 
-    public MetricsGroup(MetricsRegistry registry, Class<?> klass) {
+    public MetricGroup(MetricRegistry registry, Class<?> klass) {
         this.registry = registry;
         this.klass = klass;
     }

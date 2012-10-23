@@ -17,11 +17,11 @@ public class InstrumentedSelectChannelConnector extends SelectChannelConnector {
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedSelectChannelConnector(MetricsRegistry registry,
+    public InstrumentedSelectChannelConnector(MetricRegistry registry,
                                               int port) {
         super();
         setPort(port);
-        final MetricsGroup metrics = registry.group(SelectChannelConnector.class);
+        final MetricGroup metrics = registry.group(SelectChannelConnector.class);
         this.duration = metrics.timer("connection-duration")
                                .scopedTo(Integer.toString(port))
                                .build();

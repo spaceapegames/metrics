@@ -3,7 +3,7 @@ package com.yammer.metrics.examples;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricsGroup;
+import com.yammer.metrics.core.MetricGroup;
 import com.yammer.metrics.core.Timer;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 public class DirectoryLister {
-    private final MetricsGroup metrics = Metrics.defaultRegistry().group(DirectoryLister.class);
+    private final MetricGroup metrics = Metrics.defaultRegistry().group(DirectoryLister.class);
     private final Counter counter = metrics.counter("directories").build();
     private final Meter meter = metrics.meter("files").measuring("files").build();
     private final Timer timer = metrics.timer("directory-listing").build();

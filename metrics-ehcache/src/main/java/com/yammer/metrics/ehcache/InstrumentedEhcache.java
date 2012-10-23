@@ -208,15 +208,15 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
      * level of "none."</b>
      *
      * @param cache       an {@link Ehcache} instance
-     * @param registry    a {@link MetricsRegistry}
+     * @param registry    a {@link com.yammer.metrics.core.MetricRegistry}
      * @return an instrumented decorator for {@code cache}
      * @see Statistics
      */
-    public static Ehcache instrument(MetricsRegistry registry, final Ehcache cache) {
+    public static Ehcache instrument(MetricRegistry registry, final Ehcache cache) {
         cache.setSampledStatisticsEnabled(true);
         cache.setStatisticsAccuracy(Statistics.STATISTICS_ACCURACY_NONE);
 
-        final MetricsGroup metrics = registry.group(cache.getClass());
+        final MetricGroup metrics = registry.group(cache.getClass());
 
         metrics.gauge("hits").scopedTo(cache.getName()).build(new Gauge<Long>() {
             @Override
@@ -349,9 +349,9 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
 
     private final Timer getTimer, putTimer;
 
-    private InstrumentedEhcache(MetricsRegistry registry, Ehcache cache) {
+    private InstrumentedEhcache(MetricRegistry registry, Ehcache cache) {
         super(cache);
-        final MetricsGroup metrics = registry.group(cache.getClass());
+        final MetricGroup metrics = registry.group(cache.getClass());
         this.getTimer = metrics.timer("gets")
                                .scopedTo(cache.getName())
                                .measuring(TimeUnit.MICROSECONDS)

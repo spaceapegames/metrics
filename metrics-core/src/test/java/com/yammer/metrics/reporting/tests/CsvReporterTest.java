@@ -3,7 +3,7 @@ package com.yammer.metrics.reporting.tests;
 import com.yammer.metrics.core.Clock;
 import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricPredicate;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
 import com.yammer.metrics.reporting.CsvReporter;
 
@@ -15,7 +15,7 @@ import java.io.PrintStream;
 public class CsvReporterTest extends AbstractPollingReporterTest {
 
     @Override
-    protected AbstractPollingReporter createReporter(MetricsRegistry registry, final OutputStream out, Clock clock) throws Exception {
+    protected AbstractPollingReporter createReporter(MetricRegistry registry, final OutputStream out, Clock clock) throws Exception {
         return new CsvReporter(registry, MetricPredicate.ALL, new File("/tmp"), clock) {
             @Override
             protected PrintStream createStreamForMetric(MetricName metricName) throws IOException {

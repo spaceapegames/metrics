@@ -45,7 +45,7 @@ public abstract class WebappMetricsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        final MetricsGroup metrics = getMetricsFactory(filterConfig).group(WebappMetricsFilter.class);
+        final MetricGroup metrics = getMetricsFactory(filterConfig).group(WebappMetricsFilter.class);
 
         this.metersByStatusCode = new ConcurrentHashMap<Integer, Meter>(meterNamesByStatusCode.size());
         for (Entry<Integer, String> entry : meterNamesByStatusCode.entrySet()) {
@@ -57,16 +57,16 @@ public abstract class WebappMetricsFilter implements Filter {
         this.requestTimer = metrics.timer("requests").build();
     }
 
-    private MetricsRegistry getMetricsFactory(FilterConfig filterConfig) {
-        final MetricsRegistry metricsRegistry;
+    private MetricRegistry getMetricsFactory(FilterConfig filterConfig) {
+        final MetricRegistry metricRegistry;
 
         final Object o = filterConfig.getServletContext().getAttribute(this.registryAttribute);
-        if (o instanceof MetricsRegistry) {
-            metricsRegistry = (MetricsRegistry) o;
+        if (o instanceof MetricRegistry) {
+            metricRegistry = (MetricRegistry) o;
         } else {
-            metricsRegistry = Metrics.defaultRegistry();
+            metricRegistry = Metrics.defaultRegistry();
         }
-        return metricsRegistry;
+        return metricRegistry;
     }
 
     @Override

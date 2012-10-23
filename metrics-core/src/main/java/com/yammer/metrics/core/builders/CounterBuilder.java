@@ -2,15 +2,15 @@ package com.yammer.metrics.core.builders;
 
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 
 public class CounterBuilder implements MetricBuilder<Counter> {
     public static class BoundBuilder implements BoundMetricBuilder<Counter> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String domain;
         private final String type;
 
-        private BoundBuilder(MetricsRegistry registry, String domain, String type) {
+        private BoundBuilder(MetricRegistry registry, String domain, String type) {
             this.registry = registry;
             this.domain = domain;
             this.type = type;
@@ -23,12 +23,12 @@ public class CounterBuilder implements MetricBuilder<Counter> {
     }
 
     public static class NamedBuilder implements NamedMetricBuilder<Counter> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String domain;
         private final String type;
         private final String name;
 
-        private NamedBuilder(MetricsRegistry registry, String domain, String type, String name) {
+        private NamedBuilder(MetricRegistry registry, String domain, String type, String name) {
             this.registry = registry;
             this.domain = domain;
             this.type = type;
@@ -46,13 +46,13 @@ public class CounterBuilder implements MetricBuilder<Counter> {
     }
 
     public static class ScopedBuilder implements ScopedMetricBuilder<Counter> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String domain;
         private final String type;
         private final String name;
         private final String scope;
 
-        private ScopedBuilder(MetricsRegistry registry, String domain, String type, String name, String scope) {
+        private ScopedBuilder(MetricRegistry registry, String domain, String type, String name, String scope) {
             this.registry = registry;
             this.domain = domain;
             this.type = type;
@@ -66,10 +66,10 @@ public class CounterBuilder implements MetricBuilder<Counter> {
     }
 
     public static class DomainBuilder implements DomainMetricBuilder<Counter> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String domain;
 
-        private DomainBuilder(MetricsRegistry registry, String domain) {
+        private DomainBuilder(MetricRegistry registry, String domain) {
             this.registry = registry;
             this.domain = domain;
         }
@@ -81,10 +81,10 @@ public class CounterBuilder implements MetricBuilder<Counter> {
     }
 
     public static class TypedBuilder implements TypedMetricBuilder<Counter> {
-        private final MetricsRegistry registry;
+        private final MetricRegistry registry;
         private final String type;
 
-        private TypedBuilder(MetricsRegistry registry, String type) {
+        private TypedBuilder(MetricRegistry registry, String type) {
             this.registry = registry;
             this.type = type;
         }
@@ -95,13 +95,13 @@ public class CounterBuilder implements MetricBuilder<Counter> {
         }
     }
 
-    public static CounterBuilder newBuilder(MetricsRegistry registry) {
+    public static CounterBuilder newBuilder(MetricRegistry registry) {
         return new CounterBuilder(registry);
     }
 
-    private final MetricsRegistry registry;
+    private final MetricRegistry registry;
 
-    private CounterBuilder(MetricsRegistry registry) {
+    private CounterBuilder(MetricRegistry registry) {
         this.registry = registry;
     }
 

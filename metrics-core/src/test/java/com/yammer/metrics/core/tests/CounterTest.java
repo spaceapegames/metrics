@@ -1,15 +1,15 @@
 package com.yammer.metrics.core.tests;
 
 import com.yammer.metrics.core.Counter;
-import com.yammer.metrics.core.MetricsGroup;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricGroup;
+import com.yammer.metrics.core.MetricRegistry;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class CounterTest {
-    private final MetricsGroup metrics = new MetricsRegistry().group(CounterTest.class);
+    private final MetricGroup metrics = new MetricRegistry().group(CounterTest.class);
     private final Counter counter = metrics.counter("counter").build();
 
     @Test

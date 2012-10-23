@@ -10,28 +10,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * A registry of metric instances.
  */
-public class MetricsRegistry {
+public class MetricRegistry {
     private static final int EXPECTED_METRIC_COUNT = 1024;
     private final ConcurrentMap<MetricName, Metric> metrics;
-    private final List<MetricsRegistryListener> listeners;
+    private final List<MetricRegistryListener> listeners;
     private final String name;
 
     /**
-     * Creates a new {@link MetricsRegistry}.
+     * Creates a new {@link MetricRegistry}.
      */
-    public MetricsRegistry() {
+    public MetricRegistry() {
         this(null);
     }
 
     /**
-     * Creates a new {@link MetricsRegistry} with the given name.
+     * Creates a new {@link MetricRegistry} with the given name.
      *
      * @param name  the name of the registry
      */
-    public MetricsRegistry(String name) {
+    public MetricRegistry(String name) {
         this.name = name;
         this.metrics = new ConcurrentHashMap<MetricName, Metric>(EXPECTED_METRIC_COUNT);
-        this.listeners = new CopyOnWriteArrayList<MetricsRegistryListener>();
+        this.listeners = new CopyOnWriteArrayList<MetricRegistryListener>();
     }
 
     @SuppressWarnings("unchecked")
@@ -114,14 +114,14 @@ public class MetricsRegistry {
     }
 
     /**
-     * Adds a {@link MetricsRegistryListener} to a collection of listeners that will be notified on
+     * Adds a {@link MetricRegistryListener} to a collection of listeners that will be notified on
      * metric creation.  Listeners will be notified in the order in which they are added.
      * <p/>
      * <b>N.B.:</b> The listener will be notified of all existing metrics when it first registers.
      *
      * @param listener the listener that will be notified
      */
-    public void addListener(MetricsRegistryListener listener) {
+    public void addListener(MetricRegistryListener listener) {
         listeners.add(listener);
         for (Map.Entry<MetricName, Metric> entry : metrics.entrySet()) {
             listener.onMetricAdded(entry.getKey(), entry.getValue());
@@ -129,22 +129,22 @@ public class MetricsRegistry {
     }
 
     /**
-     * Removes a {@link MetricsRegistryListener} from this registry's collection of listeners.
+     * Removes a {@link MetricRegistryListener} from this registry's collection of listeners.
      *
      * @param listener the listener that will be removed
      */
-    public void removeListener(MetricsRegistryListener listener) {
+    public void removeListener(MetricRegistryListener listener) {
         listeners.remove(listener);
     }
 
     private void notifyMetricRemoved(MetricName name) {
-        for (MetricsRegistryListener listener : listeners) {
+        for (MetricRegistryListener listener : listeners) {
             listener.onMetricRemoved(name);
         }
     }
 
     private void notifyMetricAdded(MetricName name, Metric metric) {
-        for (MetricsRegistryListener listener : listeners) {
+        for (MetricRegistryListener listener : listeners) {
             listener.onMetricAdded(name, metric);
         }
     }
@@ -173,7 +173,7 @@ public class MetricsRegistry {
         return TimerBuilder.newBuilder(this);
     }
 
-    public MetricsGroup group(Class<?> klass) {
+    public MetricGroup group(Class<?> klass) {
         return new MetricsGroupBuilder(this).forClass(klass).build();
     }
 }
