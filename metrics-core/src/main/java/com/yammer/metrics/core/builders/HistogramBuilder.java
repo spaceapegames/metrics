@@ -41,11 +41,13 @@ public class HistogramBuilder implements MetricBuilder<Histogram> {
         }
 
         public Histogram buildBiased() {
-            return registry.newHistogram(new MetricName(domain, type, name), true);
+            return registry.register(new MetricName(domain, type, name),
+                                     new Histogram(Histogram.SampleType.BIASED));
         }
 
         public Histogram buildUniform() {
-            return registry.newHistogram(new MetricName(domain, type, name), false);
+            return registry.register(new MetricName(domain, type, name),
+                                     new Histogram(Histogram.SampleType.UNIFORM));
         }
     }
 
@@ -65,11 +67,13 @@ public class HistogramBuilder implements MetricBuilder<Histogram> {
         }
 
         public Histogram buildBiased() {
-            return registry.newHistogram(new MetricName(domain, type, name, scope), true);
+            return registry.register(new MetricName(domain, type, name, scope),
+                                     new Histogram(Histogram.SampleType.BIASED));
         }
 
         public Histogram buildUniform() {
-            return registry.newHistogram(new MetricName(domain, type, name, scope), false);
+            return registry.register(new MetricName(domain, type, name, scope),
+                                     new Histogram(Histogram.SampleType.UNIFORM));
         }
     }
 

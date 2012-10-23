@@ -1,9 +1,6 @@
 package com.yammer.metrics.core.tests;
 
-import com.yammer.metrics.core.Clock;
-import com.yammer.metrics.core.MetricsGroup;
-import com.yammer.metrics.core.MetricsRegistry;
-import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.*;
 import com.yammer.metrics.stats.Snapshot;
 import org.junit.Test;
 
@@ -15,7 +12,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class TimerTest {
-    private final MetricsGroup metrics = new MetricsRegistry(new Clock() {
+    private final Clock clock = new Clock() {
         // a mock clock that increments its ticker by 50msec per call
         private long val = 0;
 
@@ -23,8 +20,8 @@ public class TimerTest {
         public long getTick() {
             return val += 50000000;
         }
-    }).group(TimerTest.class);
-    private final Timer timer = metrics.timer("timer").build();
+    };
+    private final Timer timer = new Timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock);
 
     @Test
     public void hasADurationUnit() throws Exception {

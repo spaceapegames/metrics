@@ -1,6 +1,7 @@
 package com.yammer.metrics.ehcache.tests;
 
 import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.ehcache.InstrumentedEhcache;
 import net.sf.ehcache.Cache;
@@ -32,22 +33,14 @@ public class InstrumentedEhcacheTest {
 
         cache.put(new Element("woo", "whee"));
 
-        final Timer gets = Metrics.defaultRegistry()
-                                  .timer()
-                                  .forClass(Cache.class)
-                                  .named("gets")
-                                  .scopedTo("test")
-                                  .build();
+        final Timer gets = (Timer) Metrics.defaultRegistry()
+                                          .get(new MetricName(Cache.class, "gets", "test"));
 
         assertThat(gets.getCount(),
                    is(1L));
 
-        final Timer puts = Metrics.defaultRegistry()
-                                  .timer()
-                                  .forClass(Cache.class)
-                                  .named("puts")
-                                  .scopedTo("test")
-                                  .build();
+        final Timer puts = (Timer) Metrics.defaultRegistry()
+                                          .get(new MetricName(Cache.class, "puts", "test"));
 
         assertThat(puts.getCount(),
                    is(1L));

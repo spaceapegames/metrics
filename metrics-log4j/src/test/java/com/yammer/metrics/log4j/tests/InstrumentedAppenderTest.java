@@ -10,8 +10,6 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.mockito.Mockito.*;
 
 public class InstrumentedAppenderTest {
@@ -33,27 +31,20 @@ public class InstrumentedAppenderTest {
         when(event.getLevel()).thenReturn(Level.INFO);
 
         final MetricsRegistry registry = spy(new MetricsRegistry());
-        when(registry.newMeter(new MetricName(Appender.class, "all"),
-                               "statements",
-                               TimeUnit.SECONDS)).thenReturn(all);
-        when(registry.newMeter(new MetricName(Appender.class, "trace"),
-                               "statements",
-                               TimeUnit.SECONDS)).thenReturn(trace);
-        when(registry.newMeter(new MetricName(Appender.class, "debug"),
-                               "statements",
-                               TimeUnit.SECONDS)).thenReturn(debug);
-        when(registry.newMeter(new MetricName(Appender.class, "info"),
-                               "statements",
-                               TimeUnit.SECONDS)).thenReturn(info);
-        when(registry.newMeter(new MetricName(Appender.class, "warn"),
-                               "statements",
-                               TimeUnit.SECONDS)).thenReturn(warn);
-        when(registry.newMeter(new MetricName(Appender.class, "error"),
-                               "statements",
-                               TimeUnit.SECONDS)).thenReturn(error);
-        when(registry.newMeter(new MetricName(Appender.class, "fatal"),
-                               "statements",
-                               TimeUnit.SECONDS)).thenReturn(fatal);
+        doReturn(all).when(registry).register(eq(new MetricName(Appender.class, "all")),
+                                              any(Meter.class));
+        doReturn(trace).when(registry).register(eq(new MetricName(Appender.class, "trace")),
+                                                any(Meter.class));
+        doReturn(debug).when(registry).register(eq(new MetricName(Appender.class, "debug")),
+                                                any(Meter.class));
+        doReturn(info).when(registry).register(eq(new MetricName(Appender.class, "info")),
+                                               any(Meter.class));
+        doReturn(warn).when(registry).register(eq(new MetricName(Appender.class, "warn")),
+                                               any(Meter.class));
+        doReturn(error).when(registry).register(eq(new MetricName(Appender.class, "error")),
+                                                any(Meter.class));
+        doReturn(fatal).when(registry).register(eq(new MetricName(Appender.class, "fatal")),
+                                                any(Meter.class));
 
         this.instrumented = new InstrumentedAppender(registry);
     }

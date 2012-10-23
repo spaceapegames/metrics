@@ -57,7 +57,8 @@ public class MeterBuilder implements MetricBuilder<Meter> {
         }
 
         public Meter build() {
-            return registry.newMeter(new MetricName(domain, type, name), eventName, rateUnit);
+            return registry.register(new MetricName(domain, type, name),
+                                     new Meter(eventName, rateUnit));
         }
     }
 
@@ -92,7 +93,8 @@ public class MeterBuilder implements MetricBuilder<Meter> {
         }
 
         public Meter build() {
-            return registry.newMeter(new MetricName(domain, type, name, scope), eventName, rateUnit);
+            return registry.register(new MetricName(domain, type, name, scope), new Meter(eventName,
+                                                                                          rateUnit));
         }
     }
 

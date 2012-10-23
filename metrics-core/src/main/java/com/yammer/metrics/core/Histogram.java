@@ -23,7 +23,7 @@ public class Histogram implements Metric, Sampling, Summarizable {
     /**
      * The type of sampling the histogram should be performing.
      */
-    enum SampleType {
+    public enum SampleType {
         /**
          * Uses a uniform sample of 1028 elements, which offers a 99.9% confidence level with a 5%
          * margin of error assuming a normal distribution.
@@ -61,21 +61,19 @@ public class Histogram implements Metric, Sampling, Summarizable {
     private final AtomicLong count = new AtomicLong();
 
     /**
+     * Creates a new uniform {@link Histogram}.
+     */
+    public Histogram() {
+        this(SampleType.UNIFORM);
+    }
+
+    /**
      * Creates a new {@link Histogram} with the given sample type.
      *
      * @param type the type of sample to use
      */
-    Histogram(SampleType type) {
-        this(type.newSample());
-    }
-
-    /**
-     * Creates a new {@link Histogram} with the given sample.
-     *
-     * @param sample the sample to create a histogram from
-     */
-    Histogram(Sample sample) {
-        this.sample = sample;
+    public Histogram(SampleType type) {
+        this.sample = type.newSample();
         clear();
     }
 

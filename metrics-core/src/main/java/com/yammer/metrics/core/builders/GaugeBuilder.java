@@ -41,7 +41,7 @@ public class GaugeBuilder implements MetricBuilder<Gauge<?>> {
         }
 
         public <T, G extends Gauge<T>> G build(G gauge) {
-            return registry.newGauge(new MetricName(domain, type, name), gauge);
+            return registry.register(new MetricName(domain, type, name), gauge);
         }
     }
 
@@ -61,7 +61,7 @@ public class GaugeBuilder implements MetricBuilder<Gauge<?>> {
         }
 
         public Gauge<?> build(Gauge<?> gauge) {
-            return registry.newGauge(new MetricName(domain, type, name, scope), gauge);
+            return registry.register(new MetricName(domain, type, name, scope), gauge);
         }
     }
 

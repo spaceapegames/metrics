@@ -6,6 +6,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
 import com.yammer.metrics.jersey.tests.resources.InstrumentedResource;
@@ -38,11 +39,9 @@ public class MetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("timed").get(String.class),
                    is("yay"));
 
-        final Timer timer = Metrics.defaultRegistry()
-                                   .timer()
-                                   .forClass(InstrumentedResource.class)
-                                   .named("timed")
-                                   .build();
+        final Timer timer = (Timer) Metrics.defaultRegistry()
+                                           .get(new MetricName(InstrumentedResource.class,
+                                                               "timed"));
 
         assertThat(timer.getCount(),
                    is(1L));
@@ -53,11 +52,9 @@ public class MetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("metered").get(String.class),
                    is("woo"));
 
-        final Meter meter = Metrics.defaultRegistry()
-                                   .meter()
-                                   .forClass(InstrumentedResource.class)
-                                   .named("metered")
-                                   .build();
+        final Meter meter = (Meter) Metrics.defaultRegistry()
+                                           .get(new MetricName(InstrumentedResource.class,
+                                                               "metered"));
 
         assertThat(meter.getCount(),
                    is(1L));
@@ -65,11 +62,9 @@ public class MetricsJerseyTest extends JerseyTest {
 
     @Test
     public void exceptionMeteredMethodsAreExceptionMetered() {
-        final Meter meter = Metrics.defaultRegistry()
-                                   .meter()
-                                   .forClass(InstrumentedResource.class)
-                                   .named("exceptionMeteredExceptions")
-                                   .build();
+        final Meter meter = (Meter) Metrics.defaultRegistry()
+                                           .get(new MetricName(InstrumentedResource.class,
+                                                               "exceptionMeteredExceptions"));
 
         assertThat(resource().path("exception-metered").get(String.class),
                    is("fuh"));

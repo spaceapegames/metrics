@@ -17,13 +17,41 @@ public class Timer implements Metered, Sampling, Summarizable {
     private final Clock clock;
 
     /**
+     * Creates a new {@link Timer} with the default {@link Clock} measuring rates in calls per
+     * second and calls in milliseconds.
+     */
+    public Timer() {
+        this(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, Clock.defaultClock());
+    }
+
+    /**
+     * Creates a new {@link Timer} with the default {@link Clock} measuring rates in calls per
+     * second.
+     *
+     * @param durationUnit the scale unit for this timer's duration metrics
+     */
+    public Timer(TimeUnit durationUnit) {
+        this(durationUnit, TimeUnit.SECONDS, Clock.defaultClock());
+    }
+
+    /**
+     * Creates a new {@link Timer} with the default {@link Clock}.
+     *
+     * @param durationUnit the scale unit for this timer's duration metrics
+     * @param rateUnit     the scale unit for this timer's rate metrics
+     */
+    public Timer(TimeUnit durationUnit, TimeUnit rateUnit) {
+        this(durationUnit, rateUnit, Clock.defaultClock());
+    }
+
+    /**
      * Creates a new {@link Timer}.
      *
      * @param durationUnit the scale unit for this timer's duration metrics
      * @param rateUnit     the scale unit for this timer's rate metrics
      * @param clock        the clock used to calculate duration
      */
-    Timer(TimeUnit durationUnit, TimeUnit rateUnit, Clock clock) {
+    public Timer(TimeUnit durationUnit, TimeUnit rateUnit, Clock clock) {
         this.durationUnit = durationUnit;
         this.rateUnit = rateUnit;
         this.meter = new Meter("calls", rateUnit, clock);

@@ -41,7 +41,7 @@ public class CounterBuilder implements MetricBuilder<Counter> {
         }
 
         public Counter build() {
-            return registry.newCounter(new MetricName(domain, type, name));
+            return registry.register(new MetricName(domain, type, name), new Counter());
         }
     }
 
@@ -61,7 +61,7 @@ public class CounterBuilder implements MetricBuilder<Counter> {
         }
 
         public Counter build() {
-            return registry.newCounter(new MetricName(domain, type, name, scope));
+            return registry.register(new MetricName(domain, type, name, scope), new Counter());
         }
     }
 

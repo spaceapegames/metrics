@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yammer.metrics.core.Clock;
-import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.MetricsRegistry;
-import com.yammer.metrics.core.VirtualMachineMetrics;
+import com.yammer.metrics.core.*;
 import com.yammer.metrics.servlet.MetricsServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class MetricsServletTest {
     private final Clock clock = mock(Clock.class);
     private final VirtualMachineMetrics vm = mock(VirtualMachineMetrics.class);
-    private final MetricsRegistry registry = new MetricsRegistry(clock);
+    private final MetricsRegistry registry = new MetricsRegistry();
     private final JsonFactory factory = mock(JsonFactory.class);
 
     private final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -174,12 +171,8 @@ public class MetricsServletTest {
     public void generatesMeters() throws Exception {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.meter()
-                .forClass(MetricsServletTest.class)
-                .named("meter")
-                .measuring("things")
-                .build()
-                .mark(12);
+        registry.register(new MetricName(MetricsServletTest.class, "meter"),
+                          new Meter("things", TimeUnit.SECONDS, clock)).mark(12);
 
         servlet.service(request, response);
 
@@ -194,10 +187,8 @@ public class MetricsServletTest {
     public void generatesTimers() throws Exception {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.timer()
-                .forClass(MetricsServletTest.class)
-                .named("timer")
-                .build()
+        registry.register(new MetricName(MetricsServletTest.class, "timer"),
+                          new Timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock))
                 .update(100, TimeUnit.MILLISECONDS);
 
         servlet.service(request, response);

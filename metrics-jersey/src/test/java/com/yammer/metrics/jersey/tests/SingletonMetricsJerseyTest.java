@@ -5,8 +5,8 @@ import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
@@ -17,7 +17,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -44,34 +45,12 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
     }
 
     @Test
-    public void registryIsNotDefault() {
-        final Timer timer1 = registry.timer()
-                                     .forClass(InstrumentedResource.class)
-                                     .named("timed")
-                                     .build();
-        final Timer timer2 = registry.timer()
-                                     .forClass(InstrumentedResource.class)
-                                     .named("timed")
-                                     .build();
-        final Timer timer3 = Metrics.defaultRegistry()
-                                    .timer()
-                                    .forClass(InstrumentedResource.class)
-                                    .named("timed")
-                                    .build();
-
-        assertThat(timer1, sameInstance(timer2));
-        assertThat(timer1, not(sameInstance(timer3)));
-    }
-
-    @Test
     public void timedMethodsAreTimed() {
         assertThat(resource().path("timed").get(String.class),
                    is("yay"));
 
-        final Timer timer = registry.timer()
-                                    .forClass(InstrumentedResource.class)
-                                    .named("timed")
-                                    .build();
+        final Timer timer = (Timer) registry.get(new MetricName(InstrumentedResource.class,
+                                                                "timed"));
         assertThat(timer.getCount(),
                    is(1L));
     }
@@ -81,26 +60,17 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("metered").get(String.class),
                    is("woo"));
 
-        final Meter meter = registry.meter()
-                                    .forClass(InstrumentedResource.class)
-                                    .named("metered")
-                                    .build();
+        final Meter meter = (Meter) registry.get(new MetricName(InstrumentedResource.class,
+                                                                "metered"));
+
         assertThat(meter.getCount(),
                    is(1L));
     }
 
     @Test
     public void exceptionMeteredMethodsAreExceptionMetered() {
-        final Meter meter = registry.meter()
-                                    .forClass(InstrumentedResource.class)
-                                    .named("exceptionMeteredExceptions")
-                                    .build();
-
         assertThat(resource().path("exception-metered").get(String.class),
                    is("fuh"));
-
-        assertThat(meter.getCount(),
-                   is(0L));
 
         try {
             resource().path("exception-metered").queryParam("splode", "true").get(String.class);
@@ -109,6 +79,9 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
             assertThat(e.getCause(),
                        is(instanceOf(IOException.class)));
         }
+
+        final Meter meter = (Meter) registry.get(new MetricName(InstrumentedResource.class,
+                                                                "exceptionMeteredExceptions"));
 
         assertThat(meter.getCount(),
                    is(1L));

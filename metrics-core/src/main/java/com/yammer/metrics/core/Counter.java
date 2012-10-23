@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Counter implements Metric {
     private final AtomicLong count;
 
-    Counter() {
+    public Counter() {
         this.count = new AtomicLong(0);
     }
 

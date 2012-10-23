@@ -26,6 +26,34 @@ public class Meter implements Metered {
     private final Clock clock;
 
     /**
+     * Creates a new {@link Meter} with a default clock measuring events per second.
+     */
+    public Meter() {
+        this("events", TimeUnit.SECONDS, Clock.defaultClock());
+    }
+
+    /**
+     * Creates a new {@link Meter} with a default clock measuring events per second.
+     *
+     * @param eventType the plural name of the event the meter is measuring (e.g., {@code
+     *                  "requests"})
+     */
+    public Meter(String eventType) {
+        this(eventType, TimeUnit.SECONDS, Clock.defaultClock());
+    }
+
+    /**
+     * Creates a new {@link Meter} with a default clock.
+     *
+     * @param eventType  the plural name of the event the meter is measuring (e.g., {@code
+     *                   "requests"})
+     * @param rateUnit   the rate unit of the new meter
+     */
+    public Meter(String eventType, TimeUnit rateUnit) {
+        this(eventType, rateUnit, Clock.defaultClock());
+    }
+
+    /**
      * Creates a new {@link Meter}.
      *
      * @param eventType  the plural name of the event the meter is measuring (e.g., {@code
@@ -33,7 +61,7 @@ public class Meter implements Metered {
      * @param rateUnit   the rate unit of the new meter
      * @param clock      the clock to use for the meter ticks
      */
-    Meter(String eventType, TimeUnit rateUnit, Clock clock) {
+    public Meter(String eventType, TimeUnit rateUnit, Clock clock) {
         this.rateUnit = rateUnit;
         this.eventType = eventType;
         this.clock = clock;

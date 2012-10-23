@@ -57,7 +57,8 @@ public class TimerBuilder implements MetricBuilder<Timer> {
         }
 
         public Timer build() {
-            return registry.newTimer(new MetricName(domain, type, name), durationUnit, rateUnit);
+            return registry.register(new MetricName(domain, type, name),
+                                     new Timer(durationUnit, rateUnit));
         }
     }
 
@@ -91,9 +92,8 @@ public class TimerBuilder implements MetricBuilder<Timer> {
         }
 
         public Timer build() {
-            return registry.newTimer(new MetricName(domain, type, name, scope),
-                                     durationUnit,
-                                     rateUnit);
+            return registry.register(new MetricName(domain, type, name, scope),
+                                     new Timer(durationUnit, rateUnit));
         }
     }
 

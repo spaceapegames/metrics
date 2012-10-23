@@ -107,7 +107,8 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
                                                                     .getResourceClass(),
                                                               method.getMethod(),
                                                               annotation);
-            final Timer timer = registry.newTimer(name, annotation.durationUnit(), annotation.rateUnit());
+            final Timer timer = registry.register(name, new Timer(annotation.durationUnit(),
+                                                                  annotation.rateUnit()));
             dispatcher = new TimedRequestDispatcher(dispatcher, timer);
         }
 
@@ -117,7 +118,8 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
                                                                       .getResourceClass(),
                                                                 method.getMethod(),
                                                                 annotation);
-            final Meter meter = registry.newMeter(name, annotation.eventType(), annotation.rateUnit());
+            final Meter meter = registry.register(name, new Meter(annotation.eventType(),
+                                                                  annotation.rateUnit()));
             dispatcher = new MeteredRequestDispatcher(dispatcher, meter);
         }
 
@@ -127,7 +129,8 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
                                                                                .getResourceClass(),
                                                                          method.getMethod(),
                                                                          annotation);
-            final Meter meter = registry.newMeter(name, annotation.eventType(), annotation.rateUnit());
+            final Meter meter = registry.register(name, new Meter(annotation.eventType(),
+                                                                  annotation.rateUnit()));
             dispatcher = new ExceptionMeteredRequestDispatcher(dispatcher, meter, annotation.cause());
         }
 

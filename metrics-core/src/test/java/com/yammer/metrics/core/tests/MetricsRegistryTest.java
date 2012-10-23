@@ -53,7 +53,7 @@ public class MetricsRegistryTest {
         registry.addListener(listener);
 
         final Gauge<?> gauge = mock(Gauge.class);
-        registry.gauge().forClass(MetricsRegistryTest.class).named("gauge").build(gauge);
+        registry.register(new MetricName(MetricsRegistryTest.class, "gauge"), gauge);
 
         final Counter counter = registry.counter()
                                         .forClass(MetricsRegistryTest.class)
@@ -117,7 +117,7 @@ public class MetricsRegistryTest {
                                          .forClass(MetricsRegistryTest.class)
                                          .named("counter1")
                                          .build();
-        registry.removeMetric(MetricsRegistryTest.class, "counter1");
+        registry.unregister(new MetricName(MetricsRegistryTest.class, "counter1"));
 
         final InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).onMetricAdded(name, counter1);
