@@ -262,16 +262,14 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     }
 
     private void printRegularMetrics() {
-        for (Map.Entry<String, Metric> entry : getMetricsRegistry()) {
+        for (Map.Entry<String, Metric> entry : getMetricsRegistry().filter(predicate)) {
             final String name = entry.getKey();
             final Metric metric = entry.getValue();
-            if (predicate.matches(name, metric)) {
-                if (metric != null) {
-                    try {
-                        dispatcher.dispatch(metric, name, this, null);
-                    } catch (Exception ignored) {
-                        LOG.error("Error printing regular metrics:", ignored);
-                    }
+            if (metric != null) {
+                try {
+                    dispatcher.dispatch(metric, name, this, null);
+                } catch (Exception ignored) {
+                    LOG.error("Error printing regular metrics:", ignored);
                 }
             }
         }

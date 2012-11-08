@@ -3,6 +3,7 @@ package com.yammer.metrics.core;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -128,6 +129,49 @@ public class MetricsRegistry implements Iterable<Map.Entry<String, Metric>> {
             @Override
             public void remove() {
                 throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    public Iterable<Map.Entry<String, Metric>> filter(final MetricPredicate predicate) {
+        return new Iterable<Map.Entry<String, Metric>>() {
+            @Override
+            public Iterator<Map.Entry<String, Metric>> iterator() {
+                final Iterator<Map.Entry<String, Metric>> iterator = MetricsRegistry.this.iterator();
+                return new Iterator<Map.Entry<String, Metric>>() {
+                    private Map.Entry<String, Metric> element;
+
+                    @Override
+                    public boolean hasNext() {
+                        if (element != null) {
+                            return true;
+                        }
+
+                        while (iterator.hasNext()) {
+                            final Map.Entry<String, Metric> possibleElement = iterator.next();
+                            if (predicate.matches(possibleElement.getKey(), possibleElement.getValue())) {
+                                this.element = possibleElement;
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public Map.Entry<String, Metric> next() {
+                        if (hasNext()) {
+                            final Map.Entry<String, Metric> e = element;
+                            this.element = null;
+                            return e;
+                        }
+                        throw new NoSuchElementException();
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
             }
         };
     }

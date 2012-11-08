@@ -239,16 +239,14 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
     }
 
     protected void printRegularMetrics(final Long epoch) {
-        for (Entry<String, Metric> entry : getMetricsRegistry()) {
-            if (predicate.matches(entry.getKey(), entry.getValue())) {
-                final String name = entry.getKey();
-                final Metric metric = entry.getValue();
-                if (metric != null) {
-                    try {
-                        dispatcher.dispatch(metric, name, this, epoch);
-                    } catch (Exception ignored) {
-                        LOG.error("Error printing regular metrics:", ignored);
-                    }
+        for (Entry<String, Metric> entry : getMetricsRegistry().filter(predicate)) {
+            final String name = entry.getKey();
+            final Metric metric = entry.getValue();
+            if (metric != null) {
+                try {
+                    dispatcher.dispatch(metric, name, this, epoch);
+                } catch (Exception ignored) {
+                    LOG.error("Error printing regular metrics:", ignored);
                 }
             }
         }

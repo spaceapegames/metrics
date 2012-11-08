@@ -148,21 +148,21 @@ public class CsvReporter extends AbstractPollingReporter implements
         final long time = TimeUnit.MILLISECONDS.toSeconds(clock.getTime() - startTime);
         final MetricDispatcher dispatcher = new MetricDispatcher();
         try {
-            for (Entry<String, Metric> entry : getMetricsRegistry()) {
-                final String metricName = entry.getKey();
+            for (Entry<String, Metric> entry : getMetricsRegistry().filter(predicate)) {
+                final String name = entry.getKey();
                 final Metric metric = entry.getValue();
-                if (predicate.matches(metricName, metric)) {
+                if (metric != null) {
                     final Context context = new Context() {
                         @Override
                         public PrintStream getStream(String header) throws IOException {
-                            final PrintStream stream = getPrintStream(metricName, header);
+                            final PrintStream stream = getPrintStream(name, header);
                             stream.print(time);
                             stream.print(',');
                             return stream;
                         }
 
                     };
-                    dispatcher.dispatch(entry.getValue(), entry.getKey(), this, context);
+                    dispatcher.dispatch(metric, name, this, context);
                 }
             }
         } catch (Exception e) {
