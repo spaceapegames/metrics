@@ -327,15 +327,15 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
     }
 
     static final class Context {
-        private final MetricName metricName;
+        private final String metricName;
         private final ObjectName objectName;
 
-        public Context(final MetricName metricName, final ObjectName objectName) {
+        public Context(final String metricName, final ObjectName objectName) {
             this.metricName = metricName;
             this.objectName = objectName;
         }
 
-        MetricName getMetricName() {
+        String getMetricName() {
             return metricName;
         }
 
@@ -344,7 +344,7 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
         }
     }
 
-    private final Map<MetricName, ObjectName> registeredBeans;
+    private final Map<String, ObjectName> registeredBeans;
     private final String registryName;
     private final MBeanServer server;
     private final MetricDispatcher dispatcher;
@@ -357,13 +357,13 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
     public JmxReporter(MetricsRegistry registry) {
         super(registry);
         this.registryName = registry.getName();
-        this.registeredBeans = new ConcurrentHashMap<MetricName, ObjectName>(100);
+        this.registeredBeans = new ConcurrentHashMap<String, ObjectName>(100);
         this.server = ManagementFactory.getPlatformMBeanServer();
         this.dispatcher = new MetricDispatcher();
     }
 
     @Override
-    public void onMetricAdded(MetricName name, Metric metric) {
+    public void onMetricAdded(String name, Metric metric) {
         if (metric != null) {
             try {
                 dispatcher.dispatch(metric, name, this, new Context(name, createObjectName(name)));
@@ -373,28 +373,29 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
         }
     }
 
-    private ObjectName createObjectName(MetricName name) throws MalformedObjectNameException {
-        final StringBuilder nameBuilder = new StringBuilder();
-        nameBuilder.append(name.getDomain());
-        nameBuilder.append(":type=");
-        nameBuilder.append(name.getType());
-        if (name.hasScope()) {
-            nameBuilder.append(",scope=");
-            nameBuilder.append(name.getScope());
+    private ObjectName createObjectName(String name) throws MalformedObjectNameException {
+        final String[] strings = name.split("[\\.,]");
+
+        final StringBuilder builder = new StringBuilder();
+        final int last = strings.length - 1;
+        final int secondToLast = strings.length - 2;
+        for (int i = 0; i < last; i++) {
+            builder.append(strings[i]);
+            if (i < secondToLast) {
+                builder.append('.');
+            }
         }
-        if (!name.getName().isEmpty()) {
-            nameBuilder.append(",name=");
-            nameBuilder.append(name.getName());
-        }
+        builder.append(':').append("name=").append(strings[last]);
+
         if (registryName != null) {
-            nameBuilder.append(",registry=");
-            nameBuilder.append(registryName);
+            builder.append(",registry=");
+            builder.append(registryName);
         }
-        return new ObjectName(nameBuilder.toString());
+        return new ObjectName(builder.toString());
     }
 
     @Override
-    public void onMetricRemoved(MetricName name) {
+    public void onMetricRemoved(String name) {
         final ObjectName objectName = registeredBeans.remove(name);
         if (objectName != null) {
             unregisterBean(objectName);
@@ -402,33 +403,33 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
     }
 
     @Override
-    public void processMeter(MetricName name, Metered meter, Context context) throws Exception {
+    public void processMeter(String name, Metered meter, Context context) throws Exception {
         registerBean(context.getMetricName(), new Meter(meter, context.getObjectName()),
                      context.getObjectName());
     }
 
     @Override
-    public void processCounter(MetricName name, com.yammer.metrics.core.Counter counter, Context context) throws Exception {
+    public void processCounter(String name, com.yammer.metrics.core.Counter counter, Context context) throws Exception {
         registerBean(context.getMetricName(),
                      new Counter(counter, context.getObjectName()),
                      context.getObjectName());
     }
 
     @Override
-    public void processHistogram(MetricName name, com.yammer.metrics.core.Histogram histogram, Context context) throws Exception {
+    public void processHistogram(String name, com.yammer.metrics.core.Histogram histogram, Context context) throws Exception {
         registerBean(context.getMetricName(),
                      new Histogram(histogram, context.getObjectName()),
                      context.getObjectName());
     }
 
     @Override
-    public void processTimer(MetricName name, com.yammer.metrics.core.Timer timer, Context context) throws Exception {
+    public void processTimer(String name, com.yammer.metrics.core.Timer timer, Context context) throws Exception {
         registerBean(context.getMetricName(), new Timer(timer, context.getObjectName()),
                      context.getObjectName());
     }
 
     @Override
-    public void processGauge(MetricName name, com.yammer.metrics.core.Gauge<?> gauge, Context context) throws Exception {
+    public void processGauge(String name, com.yammer.metrics.core.Gauge<?> gauge, Context context) throws Exception {
         registerBean(context.getMetricName(), new Gauge(gauge, context.getObjectName()),
                      context.getObjectName());
     }
@@ -449,7 +450,7 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
         getMetricsRegistry().addListener(this);
     }
 
-    private void registerBean(MetricName name, MetricMBean bean, ObjectName objectName)
+    private void registerBean(String name, MetricMBean bean, ObjectName objectName)
             throws MBeanRegistrationException, OperationsException {
 
         if ( server.isRegistered(objectName) ){

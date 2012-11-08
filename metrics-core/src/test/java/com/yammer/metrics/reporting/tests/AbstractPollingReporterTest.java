@@ -23,21 +23,15 @@ public abstract class AbstractPollingReporterTest {
     protected final Clock clock = mock(Clock.class);
     protected AbstractPollingReporter reporter;
     protected ByteArrayOutputStream out;
-    protected TestMetricsRegistry registry;
+    protected MetricsRegistry registry;
 
     @Before
     public void init() throws Exception {
         when(clock.getTick()).thenReturn(1234L);
         when(clock.getTime()).thenReturn(5678L);
-        registry = new TestMetricsRegistry();
+        registry = new MetricsRegistry();
         out = new ByteArrayOutputStream();
         reporter = createReporter(registry, out, clock);
-    }
-
-    protected static class TestMetricsRegistry extends MetricsRegistry {
-        public <T extends Metric> T add(MetricName name, T metric) {
-            return getOrAdd(name, metric);
-        }
     }
 
     protected <T extends Metric> void assertReporterOutput(Callable<T> action, String... expected) throws Exception {
@@ -45,7 +39,7 @@ public abstract class AbstractPollingReporterTest {
         final T metric = action.call();
         try {
             // Add the metric to the registry, run the reporter and flush the result
-            registry.add(new MetricName(Object.class, "metric"), metric);
+            registry.add(MetricName.name(Object.class, "metric"), metric);
             reporter.run();
             out.flush();
             final String[] lines = out.toString().split("\r?\n|\r");

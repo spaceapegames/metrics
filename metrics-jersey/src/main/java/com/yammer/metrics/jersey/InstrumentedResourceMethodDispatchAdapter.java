@@ -13,7 +13,7 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 public class InstrumentedResourceMethodDispatchAdapter implements ResourceMethodDispatchAdapter {
-    private MetricsRegistry registry;
+    private final MetricsRegistry registry;
 
     /**
      * Construct a resource method dispatch adapter using the default

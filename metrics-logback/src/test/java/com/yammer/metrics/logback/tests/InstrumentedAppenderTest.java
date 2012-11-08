@@ -4,17 +4,16 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.logback.InstrumentedAppender;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 public class InstrumentedAppenderTest {
     private Meter all, trace, debug, info, warn, error;
@@ -34,12 +33,18 @@ public class InstrumentedAppenderTest {
         when(event.getLevel()).thenReturn(Level.INFO);
 
         final MetricsRegistry registry = mock(MetricsRegistry.class);
-        when(registry.newMeter(Appender.class, "all", "statements", TimeUnit.SECONDS)).thenReturn(all);
-        when(registry.newMeter(Appender.class, "trace", "statements", TimeUnit.SECONDS)).thenReturn(trace);
-        when(registry.newMeter(Appender.class, "debug", "statements", TimeUnit.SECONDS)).thenReturn(debug);
-        when(registry.newMeter(Appender.class, "info", "statements", TimeUnit.SECONDS)).thenReturn(info);
-        when(registry.newMeter(Appender.class, "warn", "statements", TimeUnit.SECONDS)).thenReturn(warn);
-        when(registry.newMeter(Appender.class, "error", "statements", TimeUnit.SECONDS)).thenReturn(error);
+        when(registry.add(eq(MetricName.name(Appender.class, "all")),
+                          any(Meter.class))).thenReturn(all);
+        when(registry.add(eq(MetricName.name(Appender.class, "trace")),
+                          any(Meter.class))).thenReturn(trace);
+        when(registry.add(eq(MetricName.name(Appender.class, "debug")),
+                          any(Meter.class))).thenReturn(debug);
+        when(registry.add(eq(MetricName.name(Appender.class, "info")),
+                          any(Meter.class))).thenReturn(info);
+        when(registry.add(eq(MetricName.name(Appender.class, "warn")),
+                          any(Meter.class))).thenReturn(warn);
+        when(registry.add(eq(MetricName.name(Appender.class, "error")),
+                          any(Meter.class))).thenReturn(error);
 
         this.instrumented = new InstrumentedAppender(registry);
         instrumented.start();

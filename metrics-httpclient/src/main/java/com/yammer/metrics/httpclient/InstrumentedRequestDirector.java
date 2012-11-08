@@ -1,5 +1,6 @@
 package com.yammer.metrics.httpclient;
 
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
@@ -61,17 +62,28 @@ class InstrumentedRequestDirector extends DefaultRequestDirector {
               proxyAuthStrategy,
               userTokenHandler,
               params);
-        getTimer = registry.newTimer(HttpClient.class, "get-requests");
-        postTimer = registry.newTimer(HttpClient.class, "post-requests");
-        headTimer = registry.newTimer(HttpClient.class, "head-requests");
-        putTimer = registry.newTimer(HttpClient.class, "put-requests");
-        deleteTimer = registry.newTimer(HttpClient.class, "delete-requests");
-        optionsTimer = registry.newTimer(HttpClient.class, "options-requests");
-        traceTimer = registry.newTimer(HttpClient.class, "trace-requests");
-        connectTimer = registry.newTimer(HttpClient.class, "connect-requests");
-        moveTimer = registry.newTimer(HttpClient.class, "move-requests");
-        patchTimer = registry.newTimer(HttpClient.class, "patch-requests");
-        otherTimer = registry.newTimer(HttpClient.class, "other-requests");
+        getTimer = registry.add(MetricName.name(HttpClient.class, "get-requests"),
+                                new Timer());
+        postTimer = registry.add(MetricName.name(HttpClient.class, "post-requests"),
+                                 new Timer());
+        headTimer = registry.add(MetricName.name(HttpClient.class, "head-requests"),
+                                 new Timer());
+        putTimer = registry.add(MetricName.name(HttpClient.class, "put-requests"),
+                                new Timer());
+        deleteTimer = registry.add(MetricName.name(HttpClient.class, "delete-requests"),
+                                   new Timer());
+        optionsTimer = registry.add(MetricName.name(HttpClient.class, "options-requests"),
+                                    new Timer());
+        traceTimer = registry.add(MetricName.name(HttpClient.class, "trace-requests"),
+                                  new Timer());
+        connectTimer = registry.add(MetricName.name(HttpClient.class, "connect-requests"),
+                                    new Timer());
+        moveTimer = registry.add(MetricName.name(HttpClient.class, "move-requests"),
+                                 new Timer());
+        patchTimer = registry.add(MetricName.name(HttpClient.class, "patch-requests"),
+                                  new Timer());
+        otherTimer = registry.add(MetricName.name(HttpClient.class, "other-requests"),
+                                  new Timer());
     }
 
     @Override

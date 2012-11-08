@@ -10,7 +10,7 @@ import static java.lang.Double.isNaN;
  * <p/>
  * If the denominator is zero, not a number, or infinite, the resulting ratio is not a number.
  */
-public abstract class RatioGauge extends Gauge<Double> {
+public abstract class RatioGauge implements Gauge<Double> {
     /**
      * Returns the numerator (the value on the top half of the fraction or the left-hand side of the
      * ratio).

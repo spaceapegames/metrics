@@ -3,6 +3,7 @@ package com.yammer.metrics.examples;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Histogram;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.reporting.ConsoleReporter;
 
@@ -15,8 +16,12 @@ public class ExampleRunner {
     private static final BlockingQueue<File> JOBS = new LinkedBlockingQueue<File>();
     private static final ExecutorService POOL = Executors.newFixedThreadPool(WORKER_COUNT);
     private static final MetricsRegistry REGISTRY = Metrics.defaultRegistry();
-    private static final Counter QUEUE_DEPTH = REGISTRY.newCounter(ExampleRunner.class, "queue-depth");
-    private static final Histogram DIRECTORY_SIZE = REGISTRY.newHistogram(ExampleRunner.class, "directory-size", false);
+    private static final Counter QUEUE_DEPTH = REGISTRY.add(
+            MetricName.name(ExampleRunner.class, "queue-depth"),
+            new Counter());
+    private static final Histogram DIRECTORY_SIZE = REGISTRY.add(
+            MetricName.name(ExampleRunner.class, "directory-size"),
+            new Histogram(Histogram.SampleType.UNIFORM));
 
     public static class Job implements Runnable {
         @Override

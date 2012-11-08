@@ -14,7 +14,7 @@ public interface MetricProcessor<T> {
      * @param context    the context of the meter
      * @throws Exception if something goes wrong
      */
-    void processMeter(MetricName name, Metered meter, T context) throws Exception;
+    void processMeter(String name, Metered meter, T context) throws Exception;
 
     /**
      * Process the given counter.
@@ -24,7 +24,7 @@ public interface MetricProcessor<T> {
      * @param context    the context of the meter
      * @throws Exception if something goes wrong
      */
-    void processCounter(MetricName name, Counter counter, T context) throws Exception;
+    void processCounter(String name, Counter counter, T context) throws Exception;
 
     /**
      * Process the given histogram.
@@ -34,7 +34,7 @@ public interface MetricProcessor<T> {
      * @param context    the context of the meter
      * @throws Exception if something goes wrong
      */
-    void processHistogram(MetricName name, Histogram histogram, T context) throws Exception;
+    void processHistogram(String name, Histogram histogram, T context) throws Exception;
 
     /**
      * Process the given timer.
@@ -44,7 +44,7 @@ public interface MetricProcessor<T> {
      * @param context    the context of the meter
      * @throws Exception if something goes wrong
      */
-    void processTimer(MetricName name, Timer timer, T context) throws Exception;
+    void processTimer(String name, Timer timer, T context) throws Exception;
 
     /**
      * Process the given gauge.
@@ -54,5 +54,5 @@ public interface MetricProcessor<T> {
      * @param context    the context of the meter
      * @throws Exception if something goes wrong
      */
-    void processGauge(MetricName name, Gauge<?> gauge, T context) throws Exception;
+    void processGauge(String name, Gauge<?> gauge, T context) throws Exception;
 }

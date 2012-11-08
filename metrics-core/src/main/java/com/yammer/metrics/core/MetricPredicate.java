@@ -10,7 +10,7 @@ public interface MetricPredicate {
      */
     MetricPredicate ALL = new MetricPredicate() {
         @Override
-        public boolean matches(MetricName name, Metric metric) {
+        public boolean matches(String name, Metric metric) {
             return true;
         }
     };
@@ -22,5 +22,5 @@ public interface MetricPredicate {
      * @param metric the metric itself
      * @return {@code true} if the predicate applies, {@code false} otherwise
      */
-    boolean matches(MetricName name, Metric metric);
+    boolean matches(String name, Metric metric);
 }

@@ -18,7 +18,7 @@ public class CsvReporterTest extends AbstractPollingReporterTest {
     protected AbstractPollingReporter createReporter(MetricsRegistry registry, final OutputStream out, Clock clock) throws Exception {
         return new CsvReporter(registry, MetricPredicate.ALL, new File("/tmp"), clock) {
             @Override
-            protected PrintStream createStreamForMetric(MetricName metricName) throws IOException {
+            protected PrintStream createStreamForMetric(String metricName) throws IOException {
                 return new PrintStream(out);
             }
         };

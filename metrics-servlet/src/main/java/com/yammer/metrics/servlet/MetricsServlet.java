@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -286,27 +285,21 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
 
     public void writeRegularMetrics(JsonGenerator json, String classPrefix, boolean showFullSamples) throws IOException {
         final MetricDispatcher dispatcher = new MetricDispatcher();
-        for (Map.Entry<String, SortedMap<MetricName, Metric>> entry : registry.getGroupedMetrics().entrySet()) {
-            if (classPrefix == null || entry.getKey().startsWith(classPrefix)) {
-                json.writeFieldName(entry.getKey());
-                json.writeStartObject();
-                {
-                    for (Map.Entry<MetricName, Metric> subEntry : entry.getValue().entrySet()) {
-                        json.writeFieldName(subEntry.getKey().getName());
-                        try {
-                            dispatcher.dispatch(subEntry.getValue(), subEntry.getKey(), this, new Context(json, showFullSamples));
-                        } catch (Exception e) {
-                            LOGGER.warn("Error writing out " + subEntry.getKey(), e);
-                        }
-                    }
-                }
-                json.writeEndObject();
+        for (Map.Entry<String, Metric> entry : registry) {
+            json.writeFieldName(entry.getKey());
+            try {
+                dispatcher.dispatch(entry.getValue(),
+                                    entry.getKey(),
+                                    this,
+                                    new Context(json, showFullSamples));
+            } catch (Exception e) {
+                LOGGER.warn("Error writing out " + entry.getKey(), e);
             }
         }
     }
 
     @Override
-    public void processHistogram(MetricName name, Histogram histogram, Context context) throws Exception {
+    public void processHistogram(String name, Histogram histogram, Context context) throws Exception {
         final JsonGenerator json = context.json;
         json.writeStartObject();
         {
@@ -323,7 +316,7 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
     }
 
     @Override
-    public void processCounter(MetricName name, Counter counter, Context context) throws Exception {
+    public void processCounter(String name, Counter counter, Context context) throws Exception {
         final JsonGenerator json = context.json;
         json.writeStartObject();
         {
@@ -334,7 +327,7 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
     }
 
     @Override
-    public void processGauge(MetricName name, Gauge<?> gauge, Context context) throws Exception {
+    public void processGauge(String name, Gauge<?> gauge, Context context) throws Exception {
         final JsonGenerator json = context.json;
         json.writeStartObject();
         {
@@ -345,7 +338,7 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
     }
 
     @Override
-    public void processMeter(MetricName name, Metered meter, Context context) throws Exception {
+    public void processMeter(String name, Metered meter, Context context) throws Exception {
         final JsonGenerator json = context.json;
         json.writeStartObject();
         {
@@ -357,7 +350,7 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
     }
 
     @Override
-    public void processTimer(MetricName name, Timer timer, Context context) throws Exception {
+    public void processTimer(String name, Timer timer, Context context) throws Exception {
         final JsonGenerator json = context.json;
         json.writeStartObject();
         {

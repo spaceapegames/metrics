@@ -1,6 +1,7 @@
 package com.yammer.metrics.ehcache.tests;
 
-import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.MetricName;
+import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.ehcache.InstrumentedEhcache;
 import net.sf.ehcache.Cache;
@@ -8,16 +9,16 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class InstrumentedEhcacheTest {
     private static final CacheManager MANAGER = CacheManager.create();
+    private static final MetricsRegistry REGISTRY = new MetricsRegistry();
 
     private Ehcache cache;
 
@@ -25,31 +26,32 @@ public class InstrumentedEhcacheTest {
     public void setUp() throws Exception {
         final Cache c = new Cache(new CacheConfiguration("test", 100));
         MANAGER.addCache(c);
-        this.cache = InstrumentedEhcache.instrument(c);
+        this.cache = InstrumentedEhcache.instrument(REGISTRY, c);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        MANAGER.removeCache("test");
     }
 
     @Test
-    public void measuresGetsAndPuts() throws Exception {
+    public void measuresGets() throws Exception {
         cache.get("woo");
 
+        final Timer gets = REGISTRY.add(MetricName.name(Cache.class, "get", "test"),
+                                        (Timer) null);
+
+        assertThat(gets.getCount(), is(1L));
+
+    }
+
+    @Test
+    public void measuresPuts() throws Exception {
         cache.put(new Element("woo", "whee"));
 
-        final Timer gets = Metrics.defaultRegistry().newTimer(Cache.class,
-                                                              "get",
-                                                              "test",
-                                                              TimeUnit.MILLISECONDS,
-                                                              TimeUnit.SECONDS);
+        final Timer puts = REGISTRY.add(MetricName.name(Cache.class, "put", "test"),
+                                        (Timer) null);
 
-        assertThat(gets.getCount(),
-                   is(1L));
-
-        final Timer puts = Metrics.defaultRegistry().newTimer(Cache.class,
-                                                              "put",
-                                                              "test",
-                                                              TimeUnit.MILLISECONDS,
-                                                              TimeUnit.SECONDS);
-
-        assertThat(puts.getCount(),
-                   is(1L));
+        assertThat(puts.getCount(), is(1L));
     }
 }

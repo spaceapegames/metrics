@@ -1,10 +1,7 @@
 package com.yammer.metrics.jetty;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
-import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricsRegistry;
-import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.*;
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 
@@ -24,29 +21,26 @@ public class InstrumentedSelectChannelConnector extends SelectChannelConnector {
                                               int port) {
         super();
         setPort(port);
-        this.duration = registry.newTimer(SelectChannelConnector.class,
-                                          "connection-duration",
-                                          Integer.toString(port),
-                                          TimeUnit.MILLISECONDS,
-                                          TimeUnit.SECONDS);
-        this.accepts = registry.newMeter(SelectChannelConnector.class,
-                                         "accepts",
-                                         Integer.toString(port),
-                                         "connections",
-                                         TimeUnit.SECONDS);
-        this.connects = registry.newMeter(SelectChannelConnector.class,
-                                          "connects",
-                                          Integer.toString(port),
-                                          "connections",
-                                          TimeUnit.SECONDS);
-        this.disconnects = registry.newMeter(SelectChannelConnector.class,
-                                             "disconnects",
-                                             Integer.toString(port),
-                                             "connections",
-                                             TimeUnit.SECONDS);
-        this.connections = registry.newCounter(SelectChannelConnector.class,
-                                               "active-connections",
-                                               Integer.toString(port));
+        this.duration = registry.add(MetricName.name(SelectChannelConnector.class,
+                                                     "connection-duration",
+                                                     Integer.toString(port)),
+                                     new Timer());
+        this.accepts = registry.add(MetricName.name(SelectChannelConnector.class,
+                                                    "accepts",
+                                                    Integer.toString(port)),
+                                    new Meter("connections"));
+        this.connects = registry.add(MetricName.name(SelectChannelConnector.class,
+                                                     "connects",
+                                                     Integer.toString(port)),
+                                     new Meter("connections"));
+        this.disconnects = registry.add(MetricName.name(SelectChannelConnector.class,
+                                                        "disconnects",
+                                                        Integer.toString(port)),
+                                        new Meter("connections"));
+        this.connections = registry.add(MetricName.name(SelectChannelConnector.class,
+                                                        "active-connections",
+                                                        Integer.toString(port)),
+                                        new Counter());
     }
 
     @Override

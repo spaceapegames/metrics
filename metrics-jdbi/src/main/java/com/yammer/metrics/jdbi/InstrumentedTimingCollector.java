@@ -50,8 +50,7 @@ public class InstrumentedTimingCollector implements TimingCollector {
     }
 
     private Timer getTimer(StatementContext ctx) {
-        return registry.newTimer(statementNameStrategy.getStatementName(ctx),
-                                 durationUnit,
-                                 rateUnit);
+        return registry.add(statementNameStrategy.getStatementName(ctx).toString(),
+                            new Timer(durationUnit, rateUnit));
     }
 }

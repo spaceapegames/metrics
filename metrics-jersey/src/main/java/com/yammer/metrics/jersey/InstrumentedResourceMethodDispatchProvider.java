@@ -8,9 +8,6 @@ import com.yammer.metrics.annotation.ExceptionMetered;
 import com.yammer.metrics.annotation.Metered;
 import com.yammer.metrics.annotation.Timed;
 import com.yammer.metrics.core.*;
-import sun.misc.Unsafe;
-
-import java.lang.reflect.Field;
 
 class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispatchProvider {
     private static class TimedRequestDispatcher implements RequestDispatcher {
@@ -71,19 +68,17 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
                         (e.getCause() != null && exceptionClass.isAssignableFrom(e.getCause().getClass()))) {
                     meter.mark();
                 }
-                getUnsafe().throwException(e);
+                InstrumentedResourceMethodDispatchProvider.<RuntimeException>chuck(e);
             }
         }
     }
 
-    private static Unsafe getUnsafe() {
-        try {
-            final Field field = Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            return (Unsafe) field.get(null);
-        } catch (Exception ex) {
-            throw new RuntimeException("can't get Unsafe instance", ex);
-        }
+    /*
+     * Leverage type erasure to throw exceptions where they shouldn't be thrown. Safer than unsafe.
+     */
+    @SuppressWarnings("unchecked")
+    private static <E extends Throwable> void chuck(Throwable e) throws E {
+        throw (E) e;
     }
 
     private final ResourceMethodDispatchProvider provider;
@@ -103,31 +98,36 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
 
         if (method.getMethod().isAnnotationPresent(Timed.class)) {
             final Timed annotation = method.getMethod().getAnnotation(Timed.class);
-            final MetricName name = MetricName.forTimedMethod(method.getDeclaringResource()
-                                                                    .getResourceClass(),
-                                                              method.getMethod(),
-                                                              annotation);
-            final Timer timer = registry.newTimer(name, annotation.durationUnit(), annotation.rateUnit());
+            final String name = MetricName.forTimedMethod(method.getDeclaringResource().getResourceClass(),
+                                                          method.getMethod(),
+                                                          annotation);
+            final Timer timer = registry.add(name,
+                                             new Timer(annotation.durationUnit(),
+                                                       annotation.rateUnit()));
             dispatcher = new TimedRequestDispatcher(dispatcher, timer);
         }
 
         if (method.getMethod().isAnnotationPresent(Metered.class)) {
             final Metered annotation = method.getMethod().getAnnotation(Metered.class);
-            final MetricName name = MetricName.forMeteredMethod(method.getDeclaringResource()
-                                                                      .getResourceClass(),
-                                                                method.getMethod(),
-                                                                annotation);
-            final Meter meter = registry.newMeter(name, annotation.eventType(), annotation.rateUnit());
+            final String name = MetricName.forMeteredMethod(method.getDeclaringResource()
+                                                                  .getResourceClass(),
+                                                            method.getMethod(),
+                                                            annotation);
+            final Meter meter = registry.add(name,
+                                             new Meter(annotation.eventType(),
+                                                       annotation.rateUnit()));
             dispatcher = new MeteredRequestDispatcher(dispatcher, meter);
         }
 
         if (method.getMethod().isAnnotationPresent(ExceptionMetered.class)) {
             final ExceptionMetered annotation = method.getMethod().getAnnotation(ExceptionMetered.class);
-            final MetricName name = MetricName.forExceptionMeteredMethod(method.getDeclaringResource()
-                                                                               .getResourceClass(),
-                                                                         method.getMethod(),
-                                                                         annotation);
-            final Meter meter = registry.newMeter(name, annotation.eventType(), annotation.rateUnit());
+            final String name = MetricName.forExceptionMeteredMethod(method.getDeclaringResource()
+                                                                           .getResourceClass(),
+                                                                     method.getMethod(),
+                                                                     annotation);
+            final Meter meter = registry.add(name,
+                                             new Meter(annotation.eventType(),
+                                                       annotation.rateUnit()));
             dispatcher = new ExceptionMeteredRequestDispatcher(dispatcher, meter, annotation.cause());
         }
 

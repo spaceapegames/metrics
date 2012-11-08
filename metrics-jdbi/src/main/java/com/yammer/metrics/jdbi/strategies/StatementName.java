@@ -10,10 +10,10 @@ public class StatementName {
      */
     private static final Pattern JMX_SAFE_CHARS = Pattern.compile("[^a-zA-Z0-9_\\.-]");
 
-    public static MetricName getJmxSafeName(String groupName, String typeName, String statementName) {
-        return new MetricName(getJmxSafeName(groupName),
-                              getJmxSafeName(typeName),
-                              getJmxSafeName(statementName));
+    public static String getJmxSafeName(String groupName, String typeName, String statementName) {
+        return MetricName.name(getJmxSafeName(groupName),
+                               getJmxSafeName(typeName),
+                               getJmxSafeName(statementName));
     }
 
     /**

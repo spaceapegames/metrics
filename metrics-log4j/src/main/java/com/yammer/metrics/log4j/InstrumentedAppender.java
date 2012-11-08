@@ -2,13 +2,12 @@ package com.yammer.metrics.log4j;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricsRegistry;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * A Log4J {@link Appender} delegate which has seven meters, one for each logging level and one for
@@ -29,13 +28,13 @@ public class InstrumentedAppender extends AppenderSkeleton {
 
     public InstrumentedAppender(MetricsRegistry registry) {
         super();
-        this.all = registry.newMeter(Appender.class, "all", "statements", TimeUnit.SECONDS);
-        this.trace = registry.newMeter(Appender.class, "trace", "statements", TimeUnit.SECONDS);
-        this.debug = registry.newMeter(Appender.class, "debug", "statements", TimeUnit.SECONDS);
-        this.info = registry.newMeter(Appender.class, "info", "statements", TimeUnit.SECONDS);
-        this.warn = registry.newMeter(Appender.class, "warn", "statements", TimeUnit.SECONDS);
-        this.error = registry.newMeter(Appender.class, "error", "statements", TimeUnit.SECONDS);
-        this.fatal = registry.newMeter(Appender.class, "fatal", "statements", TimeUnit.SECONDS);
+        this.all = registry.add(MetricName.name(Appender.class, "all"), new Meter("statements"));
+        this.trace = registry.add(MetricName.name(Appender.class, "trace"), new Meter("statements"));
+        this.debug = registry.add(MetricName.name(Appender.class, "debug"), new Meter("statements"));
+        this.info = registry.add(MetricName.name(Appender.class, "info"), new Meter("statements"));
+        this.warn = registry.add(MetricName.name(Appender.class, "warn"), new Meter("statements"));
+        this.error = registry.add(MetricName.name(Appender.class, "error"), new Meter("statements"));
+        this.fatal = registry.add(MetricName.name(Appender.class, "fatal"), new Meter("statements"));
     }
 
     @Override

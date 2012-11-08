@@ -5,7 +5,6 @@ import com.yammer.metrics.core.*;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
 import com.yammer.metrics.reporting.MetricDispatcher;
 import com.yammer.metrics.stats.Snapshot;
-import com.yammer.metrics.core.MetricPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Locale;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -264,13 +262,13 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     }
 
     private void printRegularMetrics() {
-        for (Map.Entry<String, SortedMap<MetricName, Metric>> entry : getMetricsRegistry().getGroupedMetrics(
-                predicate).entrySet()) {
-            for (Map.Entry<MetricName, Metric> subEntry : entry.getValue().entrySet()) {
-                final Metric metric = subEntry.getValue();
+        for (Map.Entry<String, Metric> entry : getMetricsRegistry()) {
+            final String name = entry.getKey();
+            final Metric metric = entry.getValue();
+            if (predicate.matches(name, metric)) {
                 if (metric != null) {
                     try {
-                        dispatcher.dispatch(subEntry.getValue(), subEntry.getKey(), this, null);
+                        dispatcher.dispatch(metric, name, this, null);
                     } catch (Exception ignored) {
                         LOG.error("Error printing regular metrics:", ignored);
                     }
@@ -340,7 +338,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     }
 
     @Override
-    public void processGauge(MetricName name, Gauge<?> gauge, String x) throws IOException {
+    public void processGauge(String name, Gauge<?> gauge, String x) throws IOException {
         final Object value = gauge.getValue();
         final Class<?> klass = value.getClass();
 
@@ -360,7 +358,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     }
 
     @Override
-    public void processCounter(MetricName name, Counter counter, String x) throws IOException {
+    public void processCounter(String name, Counter counter, String x) throws IOException {
         sendToGanglia(sanitizeName(name),
                       GANGLIA_INT_TYPE,
                       String.format(locale, "%d", counter.getCount()),
@@ -368,7 +366,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     }
 
     @Override
-    public void processMeter(MetricName name, Metered meter, String x) throws IOException {
+    public void processMeter(String name, Metered meter, String x) throws IOException {
         final String sanitizedName = sanitizeName(name);
         final String rateUnits = meter.getRateUnit().name();
         final String rateUnit = rateUnits.substring(0, rateUnits.length() - 1).toLowerCase(Locale.US);
@@ -381,7 +379,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     }
 
     @Override
-    public void processHistogram(MetricName name, Histogram histogram, String x) throws IOException {
+    public void processHistogram(String name, Histogram histogram, String x) throws IOException {
         final String sanitizedName = sanitizeName(name);
         final Snapshot snapshot = histogram.getSnapshot();
         // TODO:  what units make sense for histograms?  should we add event type to the Histogram metric?
@@ -398,7 +396,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     }
 
     @Override
-    public void processTimer(MetricName name, Timer timer, String x) throws IOException {
+    public void processTimer(String name, Timer timer, String x) throws IOException {
         processMeter(name, timer, x);
         final String sanitizedName = sanitizeName(name);
         final Snapshot snapshot = timer.getSnapshot();
@@ -479,15 +477,13 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
         return hostLabel;
     }
 
-    protected String sanitizeName(MetricName name) {
+    protected String sanitizeName(String name) {
         if (name == null) {
             return "";
         }
-        final String qualifiedTypeName = name.getDomain() + "." + name.getType() + "." + name.getName();
-        final String metricName = name.hasScope() ? qualifiedTypeName + '.' + name.getScope() : qualifiedTypeName;
         final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < metricName.length(); i++) {
-            final char p = metricName.charAt(i);
+        for (int i = 0; i < name.length(); i++) {
+            final char p = name.charAt(i);
             if (!(p >= 'A' && p <= 'Z')
                     && !(p >= 'a' && p <= 'z')
                     && !(p >= '0' && p <= '9')

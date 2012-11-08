@@ -3,14 +3,12 @@ package com.yammer.metrics.reporting;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.*;
 import com.yammer.metrics.stats.Snapshot;
-import com.yammer.metrics.core.MetricPredicate;
 
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.SortedMap;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -132,17 +130,10 @@ public class ConsoleReporter extends AbstractPollingReporter implements
                 out.print('=');
             }
             out.println();
-            for (Entry<String, SortedMap<MetricName, Metric>> entry : getMetricsRegistry().getGroupedMetrics(
-                    predicate).entrySet()) {
+            for (Entry<String, Metric> entry : getMetricsRegistry()) {
                 out.print(entry.getKey());
                 out.println(':');
-                for (Entry<MetricName, Metric> subEntry : entry.getValue().entrySet()) {
-                    out.print("  ");
-                    out.print(subEntry.getKey().getName());
-                    out.println(':');
-                    dispatcher.dispatch(subEntry.getValue(), subEntry.getKey(), this, out);
-                    out.println();
-                }
+                dispatcher.dispatch(entry.getValue(), entry.getKey(), this, out);
                 out.println();
             }
             out.println();
@@ -153,17 +144,17 @@ public class ConsoleReporter extends AbstractPollingReporter implements
     }
 
     @Override
-    public void processGauge(MetricName name, Gauge<?> gauge, PrintStream stream) {
+    public void processGauge(String name, Gauge<?> gauge, PrintStream stream) {
         stream.printf(locale, "    value = %s\n", gauge.getValue());
     }
 
     @Override
-    public void processCounter(MetricName name, Counter counter, PrintStream stream) {
+    public void processCounter(String name, Counter counter, PrintStream stream) {
         stream.printf(locale, "    count = %d\n", counter.getCount());
     }
 
     @Override
-    public void processMeter(MetricName name, Metered meter, PrintStream stream) {
+    public void processMeter(String name, Metered meter, PrintStream stream) {
         final String unit = abbrev(meter.getRateUnit());
         stream.printf(locale, "             count = %d\n", meter.getCount());
         stream.printf(locale, "         mean rate = %2.2f %s/%s\n",
@@ -185,7 +176,7 @@ public class ConsoleReporter extends AbstractPollingReporter implements
     }
 
     @Override
-    public void processHistogram(MetricName name, Histogram histogram, PrintStream stream) {
+    public void processHistogram(String name, Histogram histogram, PrintStream stream) {
         final Snapshot snapshot = histogram.getSnapshot();
         stream.printf(locale, "               min = %2.2f\n", histogram.getMin());
         stream.printf(locale, "               max = %2.2f\n", histogram.getMax());
@@ -200,7 +191,7 @@ public class ConsoleReporter extends AbstractPollingReporter implements
     }
 
     @Override
-    public void processTimer(MetricName name, Timer timer, PrintStream stream) {
+    public void processTimer(String name, Timer timer, PrintStream stream) {
         processMeter(name, timer, stream);
         final String durationUnit = abbrev(timer.getDurationUnit());
         final Snapshot snapshot = timer.getSnapshot();

@@ -1,15 +1,13 @@
 package com.yammer.metrics.core.tests;
 
 import com.yammer.metrics.core.Counter;
-import com.yammer.metrics.core.MetricsRegistry;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class CounterTest {
-    private final MetricsRegistry registry = new MetricsRegistry();
-    private final Counter counter = registry.newCounter(CounterTest.class, "counter");
+    private final Counter counter = new Counter();
 
     @Test
     public void startsAtZero() throws Exception {

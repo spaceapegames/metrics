@@ -3,7 +3,6 @@ package com.yammer.metrics.reporting;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.*;
 import com.yammer.metrics.stats.Snapshot;
-import com.yammer.metrics.core.MetricPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,6 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,7 +67,7 @@ public class CsvReporter extends AbstractPollingReporter implements
 
     private final MetricPredicate predicate;
     private final File outputDir;
-    private final Map<MetricName, PrintStream> streamMap;
+    private final Map<String, PrintStream> streamMap;
     private final Clock clock;
     private long startTime;
 
@@ -124,7 +122,7 @@ public class CsvReporter extends AbstractPollingReporter implements
         }
         this.outputDir = outputDir;
         this.predicate = predicate;
-        this.streamMap = new HashMap<MetricName, PrintStream>();
+        this.streamMap = new HashMap<String, PrintStream>();
         this.startTime = 0L;
         this.clock = clock;
     }
@@ -137,8 +135,8 @@ public class CsvReporter extends AbstractPollingReporter implements
      * @return an opened {@link PrintStream} specific to {@code metricName}
      * @throws IOException if there is an error opening the stream
      */
-    protected PrintStream createStreamForMetric(MetricName metricName) throws IOException {
-        final File newFile = new File(outputDir, metricName.toString() + ".csv");
+    protected PrintStream createStreamForMetric(String metricName) throws IOException {
+        final File newFile = new File(outputDir, metricName + ".csv");
         if (newFile.createNewFile()) {
             return new PrintStream(new FileOutputStream(newFile));
         }
@@ -148,11 +146,10 @@ public class CsvReporter extends AbstractPollingReporter implements
     @Override
     public void run() {
         final long time = TimeUnit.MILLISECONDS.toSeconds(clock.getTime() - startTime);
-        final Set<Entry<MetricName, Metric>> metrics = getMetricsRegistry().getAllMetrics().entrySet();
         final MetricDispatcher dispatcher = new MetricDispatcher();
         try {
-            for (Entry<MetricName, Metric> entry : metrics) {
-                final MetricName metricName = entry.getKey();
+            for (Entry<String, Metric> entry : getMetricsRegistry()) {
+                final String metricName = entry.getKey();
                 final Metric metric = entry.getValue();
                 if (predicate.matches(metricName, metric)) {
                     final Context context = new Context() {
@@ -174,7 +171,7 @@ public class CsvReporter extends AbstractPollingReporter implements
     }
 
     @Override
-    public void processMeter(MetricName name, Metered meter, Context context) throws IOException {
+    public void processMeter(String name, Metered meter, Context context) throws IOException {
         final PrintStream stream = context.getStream(
                 "# time,count,1 min rate,mean rate,5 min rate,15 min rate");
         stream.append(new StringBuilder()
@@ -188,14 +185,14 @@ public class CsvReporter extends AbstractPollingReporter implements
     }
 
     @Override
-    public void processCounter(MetricName name, Counter counter, Context context) throws IOException {
+    public void processCounter(String name, Counter counter, Context context) throws IOException {
         final PrintStream stream = context.getStream("# time,count");
         stream.println(counter.getCount());
         stream.flush();
     }
 
     @Override
-    public void processHistogram(MetricName name, Histogram histogram, Context context) throws IOException {
+    public void processHistogram(String name, Histogram histogram, Context context) throws IOException {
         final PrintStream stream = context.getStream("# time,min,max,mean,median,stddev,95%,99%,99.9%");
         final Snapshot snapshot = histogram.getSnapshot();
         stream.append(new StringBuilder()
@@ -213,7 +210,7 @@ public class CsvReporter extends AbstractPollingReporter implements
     }
 
     @Override
-    public void processTimer(MetricName name, Timer timer, Context context) throws IOException {
+    public void processTimer(String name, Timer timer, Context context) throws IOException {
         final PrintStream stream = context.getStream("# time,min,max,mean,median,stddev,95%,99%,99.9%");
         final Snapshot snapshot = timer.getSnapshot();
         stream.append(new StringBuilder()
@@ -230,7 +227,7 @@ public class CsvReporter extends AbstractPollingReporter implements
     }
 
     @Override
-    public void processGauge(MetricName name, Gauge<?> gauge, Context context) throws IOException {
+    public void processGauge(String name, Gauge<?> gauge, Context context) throws IOException {
         final PrintStream stream = context.getStream("# time,value");
         stream.println(gauge.getValue());
         stream.flush();
@@ -257,7 +254,7 @@ public class CsvReporter extends AbstractPollingReporter implements
         }
     }
 
-    private PrintStream getPrintStream(MetricName metricName, String header)
+    private PrintStream getPrintStream(String metricName, String header)
             throws IOException {
         PrintStream stream;
         synchronized (streamMap) {

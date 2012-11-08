@@ -10,7 +10,7 @@ import java.lang.management.ManagementFactory;
 /**
  * A gauge which exposes an attribute of a JMX MBean.
  */
-public class JmxGauge extends Gauge<Object> {
+public class JmxGauge implements Gauge<Object> {
     private static final MBeanServer SERVER = ManagementFactory.getPlatformMBeanServer();
     private final ObjectName objectName;
     private final String attribute;

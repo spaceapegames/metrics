@@ -31,8 +31,7 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
     public String[] expectedCounterResult(long count) {
         return new String[]{
                 "1/1/70 12:00:05 AM =============================================================",
-                "java.lang.Object:",
-                "metric:",
+                "java.lang.Object.metric:",
                 "count = " + count
         };
     }
@@ -41,8 +40,7 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
     public String[] expectedHistogramResult() {
         return new String[]{
                 "1/1/70 12:00:05 AM =============================================================",
-                "java.lang.Object:",
-                "metric:",
+                "java.lang.Object.metric:",
                 "min = 1.00",
                 "max = 3.00",
                 "mean = 2.00",
@@ -60,8 +58,7 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
     public String[] expectedMeterResult() {
         return new String[]{
                 "1/1/70 12:00:05 AM =============================================================",
-                "java.lang.Object:",
-                "metric:",
+                "java.lang.Object.metric:",
                 "count = 1",
                 "mean rate = 2.00 eventType/s",
                 "1-minute rate = 1.00 eventType/s",
@@ -74,8 +71,7 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
     public String[] expectedTimerResult() {
         return new String[]{
                 "1/1/70 12:00:05 AM =============================================================",
-                "java.lang.Object:", "" +
-                "metric:",
+                "java.lang.Object.metric:", "" +
                 "count = 1",
                 "mean rate = 2.00 eventType/s",
                 "1-minute rate = 1.00 eventType/s",
@@ -98,8 +94,7 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
     public String[] expectedGaugeResult(String value) {
         return new String[]{
                 "1/1/70 12:00:05 AM =============================================================",
-                "java.lang.Object:",
-                "metric:",
+                "java.lang.Object.metric:",
                 String.format("value = %s", value)
         };
     }

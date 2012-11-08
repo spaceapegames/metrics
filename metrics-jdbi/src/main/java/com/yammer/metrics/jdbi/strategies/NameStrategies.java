@@ -19,12 +19,12 @@ public final class NameStrategies {
     /**
      * An empty SQL statement.
      */
-    private static final MetricName EMPTY_SQL = new MetricName("sql", "empty", "");
+    private static final String EMPTY_SQL = MetricName.name("sql", "empty", "");
 
     /**
      * Unknown SQL.
      */
-    static final MetricName UNKNOWN_SQL = new MetricName("sql", "unknown", "");
+    static final String UNKNOWN_SQL = MetricName.name("sql", "unknown", "");
 
     /**
      * Context attribute name for the metric class.
@@ -46,7 +46,7 @@ public final class NameStrategies {
      */
     public static final String STATEMENT_NAME = "_metric_name";
 
-    private static MetricName forRawSql(String rawSql) {
+    private static String forRawSql(String rawSql) {
         return StatementName.getJmxSafeName("sql", "raw", rawSql);
     }
 
@@ -55,7 +55,7 @@ public final class NameStrategies {
         }
 
         @Override
-        public MetricName getStatementName(StatementContext statementContext) {
+        public String getStatementName(StatementContext statementContext) {
             final String rawSql = statementContext.getRawSql();
 
             if (rawSql == null || rawSql.length() == 0) {
@@ -70,7 +70,7 @@ public final class NameStrategies {
         }
 
         @Override
-        public MetricName getStatementName(StatementContext statementContext) {
+        public String getStatementName(StatementContext statementContext) {
             final String rawSql = statementContext.getRawSql();
 
             if (ClasspathStatementLocator.looksLikeSql(rawSql)) {
@@ -85,7 +85,7 @@ public final class NameStrategies {
         }
 
         @Override
-        public MetricName getStatementName(StatementContext statementContext) {
+        public String getStatementName(StatementContext statementContext) {
             final String rawSql = statementContext.getRawSql();
 
             // Is it using the template loader?
@@ -107,7 +107,7 @@ public final class NameStrategies {
         }
 
         @Override
-        public MetricName getStatementName(StatementContext statementContext) {
+        public String getStatementName(StatementContext statementContext) {
             final Class<?> clazz = statementContext.getSqlObjectType();
             final Method method = statementContext.getSqlObjectMethod();
             if (clazz != null) {
@@ -127,7 +127,7 @@ public final class NameStrategies {
         }
 
         @Override
-        public MetricName getStatementName(StatementContext statementContext) {
+        public String getStatementName(StatementContext statementContext) {
             final Object classObj = statementContext.getAttribute(STATEMENT_CLASS);
             final Object nameObj = statementContext.getAttribute(STATEMENT_NAME);
 
@@ -159,7 +159,7 @@ public final class NameStrategies {
         }
 
         @Override
-        public MetricName getStatementName(StatementContext statementContext) {
+        public String getStatementName(StatementContext statementContext) {
             final Object groupObj = statementContext.getAttribute(STATEMENT_GROUP);
             final Object typeObj = statementContext.getAttribute(STATEMENT_TYPE);
             final Object nameObj = statementContext.getAttribute(STATEMENT_NAME);

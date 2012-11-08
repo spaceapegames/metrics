@@ -1,18 +1,14 @@
 package com.yammer.metrics.core.tests;
 
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricsRegistry;
 import org.junit.Test;
-
-import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class MeterTest {
-    private final MetricsRegistry registry = new MetricsRegistry();
-    private final Meter meter = registry.newMeter(MeterTest.class, "things", "thing", TimeUnit.SECONDS);
+    private final Meter meter = new Meter("thing");
 
     @Test
     public void aBlankMeter() throws Exception {

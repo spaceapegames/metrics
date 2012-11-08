@@ -1,6 +1,7 @@
 package com.yammer.metrics.servlet.experiments;
 
 import com.yammer.metrics.core.Gauge;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricsRegistry;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -17,15 +18,22 @@ import com.yammer.metrics.servlet.AdminServlet;
 
 public class ExampleServer {
     private static final MetricsRegistry REGISTRY = Metrics.defaultRegistry();
-    private static final Counter COUNTER_1 = REGISTRY.newCounter(ExampleServer.class, "wah", "doody");
-    private static final Counter COUNTER_2 = REGISTRY.newCounter(ExampleServer.class, "woo");
+    private static final Counter COUNTER_1 = REGISTRY.add(MetricName.name(ExampleServer.class,
+                                                                          "wah",
+                                                                          "doody"),
+                                                          new Counter());
+    private static final Counter COUNTER_2 = REGISTRY.add(MetricName.name(ExampleServer.class,
+                                                                          "woo"),
+                                                          new Counter());
+
     static {
-        Metrics.defaultRegistry().newGauge(ExampleServer.class, "boo", new Gauge<Integer>() {
-            @Override
-            public Integer getValue() {
-                throw new RuntimeException("asplode!");
-            }
-        });
+        Metrics.defaultRegistry()
+               .add(MetricName.name(ExampleServer.class, "boo"), new Gauge<Integer>() {
+                   @Override
+                   public Integer getValue() {
+                       throw new RuntimeException("asplode!");
+                   }
+               });
     }
 
     public static void main(String[] args) throws Exception {

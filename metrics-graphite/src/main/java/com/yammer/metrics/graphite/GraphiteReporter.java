@@ -5,7 +5,6 @@ import com.yammer.metrics.core.*;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
 import com.yammer.metrics.reporting.MetricDispatcher;
 import com.yammer.metrics.stats.Snapshot;
-import com.yammer.metrics.core.MetricPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,6 @@ import java.lang.Thread.State;
 import java.net.Socket;
 import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 
@@ -241,13 +239,13 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
     }
 
     protected void printRegularMetrics(final Long epoch) {
-        for (Entry<String,SortedMap<MetricName,Metric>> entry : getMetricsRegistry().getGroupedMetrics(
-                predicate).entrySet()) {
-            for (Entry<MetricName, Metric> subEntry : entry.getValue().entrySet()) {
-                final Metric metric = subEntry.getValue();
+        for (Entry<String, Metric> entry : getMetricsRegistry()) {
+            if (predicate.matches(entry.getKey(), entry.getValue())) {
+                final String name = entry.getKey();
+                final Metric metric = entry.getValue();
                 if (metric != null) {
                     try {
-                        dispatcher.dispatch(subEntry.getValue(), subEntry.getKey(), this, epoch);
+                        dispatcher.dispatch(metric, name, this, epoch);
                     } catch (Exception ignored) {
                         LOG.error("Error printing regular metrics:", ignored);
                     }
@@ -285,36 +283,23 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
         }
     }
 
-    protected String sanitizeName(MetricName name) {
-        final StringBuilder sb = new StringBuilder()
-                .append(name.getDomain())
-                .append('.')
-                .append(name.getType())
-                .append('.');
-        if (name.hasScope()) {
-            sb.append(name.getScope())
-              .append('.');
-        }
-        return sb.append(name.getName()).toString();
-    }
-    
     protected String sanitizeString(String s) {
         return s.replace(' ', '-');
     }
 
     @Override
-    public void processGauge(MetricName name, Gauge<?> gauge, Long epoch) throws IOException {
-        sendObjToGraphite(epoch, sanitizeName(name), "value", gauge.getValue());
+    public void processGauge(String name, Gauge<?> gauge, Long epoch) throws IOException {
+        sendObjToGraphite(epoch, name, "value", gauge.getValue());
     }
 
     @Override
-    public void processCounter(MetricName name, Counter counter, Long epoch) throws IOException {
-        sendInt(epoch, sanitizeName(name), "count", counter.getCount());
+    public void processCounter(String name, Counter counter, Long epoch) throws IOException {
+        sendInt(epoch, name, "count", counter.getCount());
     }
 
     @Override
-    public void processMeter(MetricName name, Metered meter, Long epoch) throws IOException {
-        final String sanitizedName = sanitizeName(name);
+    public void processMeter(String name, Metered meter, Long epoch) throws IOException {
+        final String sanitizedName = name;
         sendInt(epoch, sanitizedName, "count", meter.getCount());
         sendFloat(epoch, sanitizedName, "meanRate", meter.getMeanRate());
         sendFloat(epoch, sanitizedName, "1MinuteRate", meter.getOneMinuteRate());
@@ -323,16 +308,16 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
     }
 
     @Override
-    public void processHistogram(MetricName name, Histogram histogram, Long epoch) throws IOException {
-        final String sanitizedName = sanitizeName(name);
+    public void processHistogram(String name, Histogram histogram, Long epoch) throws IOException {
+        final String sanitizedName = name;
         sendSummarizable(epoch, sanitizedName, histogram);
         sendSampling(epoch, sanitizedName, histogram);
     }
 
     @Override
-    public void processTimer(MetricName name, Timer timer, Long epoch) throws IOException {
+    public void processTimer(String name, Timer timer, Long epoch) throws IOException {
         processMeter(name, timer, epoch);
-        final String sanitizedName = sanitizeName(name);
+        final String sanitizedName = name;
         sendSummarizable(epoch, sanitizedName, timer);
         sendSampling(epoch, sanitizedName, timer);
     }

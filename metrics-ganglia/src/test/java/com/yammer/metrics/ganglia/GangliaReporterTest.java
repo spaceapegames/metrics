@@ -1,12 +1,8 @@
 package com.yammer.metrics.ganglia;
 
 import com.yammer.metrics.core.*;
-import com.yammer.metrics.ganglia.GangliaMessage;
-import com.yammer.metrics.ganglia.GangliaMessageBuilder;
-import com.yammer.metrics.ganglia.GangliaReporter;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
 import com.yammer.metrics.reporting.tests.AbstractPollingReporterTest;
-import com.yammer.metrics.core.MetricPredicate;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -84,7 +80,7 @@ public class GangliaReporterTest extends AbstractPollingReporterTest {
 
     @Test
     public void testSanitizeName_noBadCharacters() throws IOException {
-        final MetricName metricName = new MetricName("thisIs", "AClean", "MetricName");
+        final String metricName = MetricName.name("thisIs", "AClean", "MetricName");
         final GangliaReporter gangliaReporter = new GangliaReporter("localhost", 5555);
         final String cleanMetricName = gangliaReporter.sanitizeName(metricName);
         assertEquals("clean metric name was changed unexpectedly",
@@ -94,7 +90,7 @@ public class GangliaReporterTest extends AbstractPollingReporterTest {
 
     @Test
     public void testSanitizeName_badCharacters() throws IOException {
-        final MetricName metricName = new MetricName("thisIs", "AC>&!>lean", "Metric Name");
+        final String metricName = MetricName.name("thisIs", "AC>&!>lean", "Metric Name");
         final String expectedMetricName = "thisIs.AC____lean.Metric_Name";
         final GangliaReporter gangliaReporter = new GangliaReporter("localhost", 5555);
         final String cleanMetricName = gangliaReporter.sanitizeName(metricName);
@@ -105,7 +101,9 @@ public class GangliaReporterTest extends AbstractPollingReporterTest {
 
     @Test
     public void testCompressPackageName() throws IOException {
-        final MetricName metricName = new MetricName("some.long.package.name.thisIs", "AC>&!>lean", "Metric Name");
+        final String metricName = MetricName.name("some.long.package.name.thisIs",
+                                                  "AC>&!>lean",
+                                                  "Metric Name");
         final String expectedMetricName = "s.l.p.n.t.AC____lean.Metric_Name";
         final GangliaReporter gangliaReporter = new GangliaReporter("localhost", 5555, true);
         final String cleanMetricName = gangliaReporter.sanitizeName(metricName);

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yammer.metrics.core.Clock;
-import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.MetricsRegistry;
-import com.yammer.metrics.core.VirtualMachineMetrics;
+import com.yammer.metrics.core.*;
 import com.yammer.metrics.servlet.MetricsServlet;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class MetricsServletTest {
     private final Clock clock = mock(Clock.class);
     private final VirtualMachineMetrics vm = mock(VirtualMachineMetrics.class);
-    private final MetricsRegistry registry = new MetricsRegistry(clock);
+    private final MetricsRegistry registry = new MetricsRegistry();
     private final JsonFactory factory = mock(JsonFactory.class);
 
     private final HttpServletRequest request = mock(HttpServletRequest.class);
@@ -128,76 +125,80 @@ public class MetricsServletTest {
 
     @Test
     public void generatesGauges() throws Exception {
-        registry.newGauge(MetricsServletTest.class, "gauge", new Gauge<Double>() {
-            @Override
-            public Double getValue() {
-                return 22.2;
-            }
-        });
+        registry.add(MetricName.name(MetricsServletTest.class, "gauge"),
+                     new Gauge<Double>() {
+                         @Override
+                         public Double getValue() {
+                             return 22.2;
+                         }
+                     });
 
         servlet.service(request, response);
 
         assertThat(json.toString(),
-                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest\":" +
-                              "{\"gauge\":{\"type\":\"gauge\",\"value\":22.2}}}"));
+                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.gauge\":{\"type\":\"gauge\",\"value\":22.2}}"));
     }
 
     @Test
     public void generatesCounters() throws Exception {
-        registry.newCounter(MetricsServletTest.class, "counter").inc(12);
+        registry.add(MetricName.name(MetricsServletTest.class, "counter"), new Counter())
+                .inc(12);
 
         servlet.service(request, response);
 
         assertThat(json.toString(),
-                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest\":" +
-                              "{\"counter\":{\"type\":\"counter\",\"count\":12}}}"));
+                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.counter\":{\"type\":\"counter\",\"count\":12}}"));
     }
 
     @Test
     public void generatesHistograms() throws Exception {
-        registry.newHistogram(MetricsServletTest.class, "histogram").update(12);
+        registry.add(MetricName.name(MetricsServletTest.class, "histogram"),
+                     new Histogram(Histogram.SampleType.UNIFORM))
+                .update(12);
 
         servlet.service(request, response);
 
         assertThat(json.toString(),
-                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest\":" +
-                              "{\"histogram\":{\"type\":\"histogram\",\"count\":1,\"min\":12.0," +
+                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.histogram\":{\"type\":\"histogram\",\"count\":1,\"min\":12.0," +
                               "\"max\":12.0,\"mean\":12.0,\"std_dev\":0.0,\"median\":12.0," +
-                              "\"p75\":12.0,\"p95\":12.0,\"p98\":12.0,\"p99\":12.0,\"p999\":12.0}}}"));
+                              "\"p75\":12.0,\"p95\":12.0,\"p98\":12.0,\"p99\":12.0,\"p999\":12.0}}"));
     }
 
     @Test
     public void generatesMeters() throws Exception {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.newMeter(MetricsServletTest.class, "meter", "things", TimeUnit.SECONDS)
+        registry.add(MetricName.name(MetricsServletTest.class, "meter"),
+                     new Meter("things", TimeUnit.SECONDS, clock))
                 .mark(12);
 
         servlet.service(request, response);
 
         assertThat(json.toString(),
-                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest\":" +
-                              "{\"meter\":{\"type\":\"meter\",\"event_type\":\"things\"," +
+                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.meter\":{" +
+                              "\"type\":\"meter\",\"event_type\":\"things\"," +
                               "\"unit\":\"seconds\",\"count\":12,\"mean\":1200000.0," +
-                              "\"m1\":0.0,\"m5\":0.0,\"m15\":0.0}}}"));
+                              "\"m1\":0.0,\"m5\":0.0,\"m15\":0.0}}"));
     }
 
     @Test
     public void generatesTimers() throws Exception {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.newTimer(MetricsServletTest.class, "timer").update(100, TimeUnit.MILLISECONDS);
+        registry.add(MetricName.name(MetricsServletTest.class, "timer"),
+                     new Timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock))
+                .update(100, TimeUnit.MILLISECONDS);
 
         servlet.service(request, response);
 
         assertThat(json.toString(),
-                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest\":{\"timer\":" +
+                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.timer\":" +
                               "{\"type\":\"timer\",\"duration\":{\"unit\":\"milliseconds\"," +
                               "\"min\":100.0,\"max\":100.0,\"mean\":100.0,\"std_dev\":0.0," +
                               "\"median\":100.0,\"p75\":100.0,\"p95\":100.0,\"p98\":100.0," +
                               "\"p99\":100.0,\"p999\":100.0},\"rate\":{\"unit\":\"seconds\"," +
                               "\"count\":1,\"mean\":100000.0,\"m1\":0.0,\"m5\":0.0," +
-                              "\"m15\":0.0}}}}"));
+                              "\"m15\":0.0}}}"));
     }
 
     // TODO: 1/19/12 <coda> -- test class prefix

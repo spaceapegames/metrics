@@ -30,7 +30,7 @@ public final class ShortNameStrategy extends DelegatingStatementNameStrategy {
 
     private final class ShortContextClassStrategy implements StatementNameStrategy {
         @Override
-        public MetricName getStatementName(StatementContext statementContext) {
+        public String getStatementName(StatementContext statementContext) {
             final Object classObj = statementContext.getAttribute(NameStrategies.STATEMENT_CLASS);
             final Object nameObj = statementContext.getAttribute(NameStrategies.STATEMENT_NAME);
 
@@ -59,7 +59,7 @@ public final class ShortNameStrategy extends DelegatingStatementNameStrategy {
 
     private final class ShortSqlObjectStrategy implements StatementNameStrategy {
         @Override
-        public MetricName getStatementName(StatementContext statementContext) {
+        public String getStatementName(StatementContext statementContext) {
             final Class<?> clazz = statementContext.getSqlObjectType();
             final Method method = statementContext.getSqlObjectMethod();
             if (clazz != null && method != null) {

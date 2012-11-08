@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Returns a {@code 1} the first time it's called, a {@code 0} every time after that.
  */
-public class ToggleGauge extends Gauge<Integer> {
+public class ToggleGauge implements Gauge<Integer> {
     private final AtomicInteger value = new AtomicInteger(1);
 
     @Override

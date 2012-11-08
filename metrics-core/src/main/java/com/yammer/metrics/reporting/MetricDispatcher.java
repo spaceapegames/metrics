@@ -3,7 +3,7 @@ package com.yammer.metrics.reporting;
 import com.yammer.metrics.core.*;
 
 public class MetricDispatcher {
-    public <T> void dispatch(Metric metric, MetricName name, MetricProcessor<T> processor, T context) throws Exception {
+    public <T> void dispatch(Metric metric, String name, MetricProcessor<T> processor, T context) throws Exception {
         if (metric instanceof Gauge) {
             processor.processGauge(name, (Gauge<?>) metric, context);
         } else if (metric instanceof Counter) {

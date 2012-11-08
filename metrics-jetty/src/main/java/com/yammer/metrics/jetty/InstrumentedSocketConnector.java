@@ -1,10 +1,7 @@
 package com.yammer.metrics.jetty;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
-import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricsRegistry;
-import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.*;
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.server.bio.SocketConnector;
 
@@ -23,29 +20,26 @@ public class InstrumentedSocketConnector extends SocketConnector {
     public InstrumentedSocketConnector(MetricsRegistry registry, int port) {
         super();
         setPort(port);
-        this.duration = registry.newTimer(SocketConnector.class,
-                                          "connection-duration",
-                                          Integer.toString(port),
-                                          TimeUnit.MILLISECONDS,
-                                          TimeUnit.SECONDS);
-        this.accepts = registry.newMeter(SocketConnector.class,
-                                         "accepts",
-                                         Integer.toString(port),
-                                         "connections",
-                                         TimeUnit.SECONDS);
-        this.connects = registry.newMeter(SocketConnector.class,
-                                          "connects",
-                                          Integer.toString(port),
-                                          "connections",
-                                          TimeUnit.SECONDS);
-        this.disconnects = registry.newMeter(SocketConnector.class,
-                                             "disconnects",
-                                             Integer.toString(port),
-                                             "connections",
-                                             TimeUnit.SECONDS);
-        this.connections = registry.newCounter(SocketConnector.class,
-                                               "active-connections",
-                                               Integer.toString(port));
+        this.duration = registry.add(MetricName.name(SocketConnector.class,
+                                                     "connection-duration",
+                                                     Integer.toString(port)),
+                                     new Timer());
+        this.accepts = registry.add(MetricName.name(SocketConnector.class,
+                                                    "accepts",
+                                                    Integer.toString(port)),
+                                    new Meter("connections"));
+        this.connects = registry.add(MetricName.name(SocketConnector.class,
+                                                     "connects",
+                                                     Integer.toString(port)),
+                                     new Meter("connections"));
+        this.disconnects = registry.add(MetricName.name(SocketConnector.class,
+                                                        "disconnects",
+                                                        Integer.toString(port)),
+                                        new Meter("connections"));
+        this.connections = registry.add(MetricName.name(SocketConnector.class,
+                                                        "active-connections",
+                                                        Integer.toString(port)),
+                                        new Counter());
     }
 
     @Override

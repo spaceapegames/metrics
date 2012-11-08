@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * {@link Filter} implementation which captures request information and a breakdown of the response
@@ -52,20 +51,18 @@ public abstract class WebappMetricsFilter implements Filter {
                 .size());
         for (Entry<Integer, String> entry : meterNamesByStatusCode.entrySet()) {
             metersByStatusCode.put(entry.getKey(),
-                    metricsRegistry.newMeter(WebappMetricsFilter.class,
-                            entry.getValue(),
-                            "responses",
-                            TimeUnit.SECONDS));
+                                   metricsRegistry.add(MetricName.name(WebappMetricsFilter.class,
+                                                                       entry.getValue()),
+                                                       new Meter("responses")));
         }
-        this.otherMeter = metricsRegistry.newMeter(WebappMetricsFilter.class,
-                otherMetricName,
-                "responses",
-                TimeUnit.SECONDS);
-        this.activeRequests = metricsRegistry.newCounter(WebappMetricsFilter.class, "activeRequests");
-        this.requestTimer = metricsRegistry.newTimer(WebappMetricsFilter.class,
-                "requests",
-                TimeUnit.MILLISECONDS,
-                TimeUnit.SECONDS);
+        this.otherMeter = metricsRegistry.add(MetricName.name(WebappMetricsFilter.class,
+                                                              otherMetricName),
+                                              new Meter("responses"));
+        this.activeRequests = metricsRegistry.add(MetricName.name(WebappMetricsFilter.class,
+                                                                  "activeRequests"), new Counter());
+        this.requestTimer = metricsRegistry.add(MetricName.name(WebappMetricsFilter.class,
+                                                                "requests"),
+                                                new Timer());
 
     }
 
