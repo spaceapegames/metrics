@@ -1,9 +1,11 @@
 package com.yammer.metrics.core;
 
+import com.yammer.metrics.util.FilteredIterator;
+import com.yammer.metrics.util.UnmodifiableIterator;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -113,63 +115,18 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
 
     @Override
     public Iterator<Map.Entry<String, Metric>> iterator() {
-        final Iterator<Map.Entry<String, Metric>> iterator = metrics.entrySet().iterator();
-        return new Iterator<Map.Entry<String, Metric>>() {
-
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            @Override
-            public Map.Entry<String, Metric> next() {
-                return iterator.next();
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        return new UnmodifiableIterator<Map.Entry<String, Metric>>(metrics.entrySet().iterator());
     }
 
     public Iterable<Map.Entry<String, Metric>> filter(final MetricPredicate predicate) {
         return new Iterable<Map.Entry<String, Metric>>() {
             @Override
             public Iterator<Map.Entry<String, Metric>> iterator() {
-                final Iterator<Map.Entry<String, Metric>> iterator = MetricRegistry.this.iterator();
-                return new Iterator<Map.Entry<String, Metric>>() {
-                    private Map.Entry<String, Metric> element;
-
+                return new FilteredIterator<Map.Entry<String, Metric>>(MetricRegistry.this.iterator()) {
                     @Override
-                    public boolean hasNext() {
-                        if (element != null) {
-                            return true;
-                        }
-
-                        while (iterator.hasNext()) {
-                            final Map.Entry<String, Metric> possibleElement = iterator.next();
-                            if (predicate.matches(possibleElement.getKey(), possibleElement.getValue())) {
-                                this.element = possibleElement;
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-
-                    @Override
-                    public Map.Entry<String, Metric> next() {
-                        if (hasNext()) {
-                            final Map.Entry<String, Metric> e = element;
-                            this.element = null;
-                            return e;
-                        }
-                        throw new NoSuchElementException();
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
+                    protected boolean matches(Map.Entry<String, Metric> possibleElement) {
+                        return predicate.matches(possibleElement.getKey(),
+                                                 possibleElement.getValue());
                     }
                 };
             }
