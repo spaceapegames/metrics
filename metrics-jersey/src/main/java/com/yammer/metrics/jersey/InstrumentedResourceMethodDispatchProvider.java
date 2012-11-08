@@ -82,9 +82,9 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
     }
 
     private final ResourceMethodDispatchProvider provider;
-    private final MetricsRegistry registry;
+    private final MetricRegistry registry;
 
-    public InstrumentedResourceMethodDispatchProvider(ResourceMethodDispatchProvider provider, MetricsRegistry registry) {
+    public InstrumentedResourceMethodDispatchProvider(ResourceMethodDispatchProvider provider, MetricRegistry registry) {
         this.provider = provider;
         this.registry = registry;
     }

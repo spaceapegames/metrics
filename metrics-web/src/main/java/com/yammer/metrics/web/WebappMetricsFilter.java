@@ -45,37 +45,37 @@ public abstract class WebappMetricsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        final MetricsRegistry metricsRegistry = getMetricsFactory(filterConfig);
+        final MetricRegistry metricRegistry = getMetricsFactory(filterConfig);
 
         this.metersByStatusCode = new ConcurrentHashMap<Integer, Meter>(meterNamesByStatusCode
                 .size());
         for (Entry<Integer, String> entry : meterNamesByStatusCode.entrySet()) {
             metersByStatusCode.put(entry.getKey(),
-                                   metricsRegistry.add(MetricName.name(WebappMetricsFilter.class,
+                                   metricRegistry.add(MetricName.name(WebappMetricsFilter.class,
                                                                        entry.getValue()),
                                                        new Meter("responses")));
         }
-        this.otherMeter = metricsRegistry.add(MetricName.name(WebappMetricsFilter.class,
+        this.otherMeter = metricRegistry.add(MetricName.name(WebappMetricsFilter.class,
                                                               otherMetricName),
                                               new Meter("responses"));
-        this.activeRequests = metricsRegistry.add(MetricName.name(WebappMetricsFilter.class,
+        this.activeRequests = metricRegistry.add(MetricName.name(WebappMetricsFilter.class,
                                                                   "activeRequests"), new Counter());
-        this.requestTimer = metricsRegistry.add(MetricName.name(WebappMetricsFilter.class,
+        this.requestTimer = metricRegistry.add(MetricName.name(WebappMetricsFilter.class,
                                                                 "requests"),
                                                 new Timer());
 
     }
 
-    private MetricsRegistry getMetricsFactory(FilterConfig filterConfig) {
-        final MetricsRegistry metricsRegistry;
+    private MetricRegistry getMetricsFactory(FilterConfig filterConfig) {
+        final MetricRegistry metricRegistry;
 
         final Object o = filterConfig.getServletContext().getAttribute(this.registryAttribute);
-        if (o instanceof MetricsRegistry) {
-            metricsRegistry = (MetricsRegistry) o;
+        if (o instanceof MetricRegistry) {
+            metricRegistry = (MetricRegistry) o;
         } else {
-            metricsRegistry = Metrics.defaultRegistry();
+            metricRegistry = Metrics.defaultRegistry();
         }
-        return metricsRegistry;
+        return metricRegistry;
     }
 
     @Override

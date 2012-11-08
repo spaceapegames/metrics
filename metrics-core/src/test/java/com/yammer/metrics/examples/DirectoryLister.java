@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 public class DirectoryLister {
-    private final MetricsRegistry registry = Metrics.defaultRegistry();
+    private final MetricRegistry registry = Metrics.defaultRegistry();
     private final Counter counter = registry.add(MetricName.name(getClass(), "directories"),
                                                  new Counter());
     private final Meter meter = registry.add(MetricName.name(getClass(), "files"),

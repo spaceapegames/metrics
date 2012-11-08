@@ -5,7 +5,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.logback.InstrumentedAppender;
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +33,7 @@ public class InstrumentedAppenderTest {
         this.event = mock(ILoggingEvent.class);
         when(event.getLevel()).thenReturn(Level.INFO);
 
-        final MetricsRegistry registry = mock(MetricsRegistry.class);
+        final MetricRegistry registry = mock(MetricRegistry.class);
         when(registry.add(eq(MetricName.name(Appender.class, "all")),
                           any(Meter.class))).thenReturn(all);
         when(registry.add(eq(MetricName.name(Appender.class, "trace")),

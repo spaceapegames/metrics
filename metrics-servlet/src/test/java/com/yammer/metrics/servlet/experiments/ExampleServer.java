@@ -2,7 +2,8 @@ package com.yammer.metrics.servlet.experiments;
 
 import com.yammer.metrics.core.Gauge;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -17,7 +18,7 @@ import com.yammer.metrics.jetty.InstrumentedSelectChannelConnector;
 import com.yammer.metrics.servlet.AdminServlet;
 
 public class ExampleServer {
-    private static final MetricsRegistry REGISTRY = Metrics.defaultRegistry();
+    private static final MetricRegistry REGISTRY = Metrics.defaultRegistry();
     private static final Counter COUNTER_1 = REGISTRY.add(MetricName.name(ExampleServer.class,
                                                                           "wah",
                                                                           "doody"),

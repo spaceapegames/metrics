@@ -1,7 +1,7 @@
 package com.yammer.metrics.jdbi;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jdbi.strategies.SmartNameStrategy;
 import com.yammer.metrics.jdbi.strategies.StatementNameStrategy;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * method names for millisecond-precision timers.
  */
 public class InstrumentedTimingCollector implements TimingCollector {
-    private final MetricsRegistry registry;
+    private final MetricRegistry registry;
     private final StatementNameStrategy statementNameStrategy;
     private final TimeUnit durationUnit;
     private final TimeUnit rateUnit;
@@ -24,16 +24,16 @@ public class InstrumentedTimingCollector implements TimingCollector {
         this(Metrics.defaultRegistry());
     }
 
-    public InstrumentedTimingCollector(MetricsRegistry registry) {
+    public InstrumentedTimingCollector(MetricRegistry registry) {
         this(registry, new SmartNameStrategy(), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
     }
 
-    public InstrumentedTimingCollector(MetricsRegistry registry,
+    public InstrumentedTimingCollector(MetricRegistry registry,
                                        StatementNameStrategy statementNameStrategy) {
         this(registry, statementNameStrategy, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
     }
 
-    public InstrumentedTimingCollector(MetricsRegistry registry,
+    public InstrumentedTimingCollector(MetricRegistry registry,
                                        StatementNameStrategy statementNameStrategy,
                                        TimeUnit durationUnit,
                                        TimeUnit rateUnit) {

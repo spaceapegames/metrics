@@ -52,14 +52,14 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
      * Enables the graphite reporter to send data for the given metrics registry to graphite server
      * with the specified period.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param period          the period between successive outputs
      * @param unit            the time unit of {@code period}
      * @param host            the host name of graphite server (carbon-cache agent)
      * @param port            the port number on which the graphite server is listening
      */
-    public static void enable(MetricsRegistry metricsRegistry, long period, TimeUnit unit, String host, int port) {
-        enable(metricsRegistry, period, unit, host, port, null);
+    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String host, int port) {
+        enable(metricRegistry, period, unit, host, port, null);
     }
 
     /**
@@ -78,21 +78,21 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
     /**
      * Enables the graphite reporter to send data to graphite server with the specified period.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param period          the period between successive outputs
      * @param unit            the time unit of {@code period}
      * @param host            the host name of graphite server (carbon-cache agent)
      * @param port            the port number on which the graphite server is listening
      * @param prefix          the string which is prepended to all metric names
      */
-    public static void enable(MetricsRegistry metricsRegistry, long period, TimeUnit unit, String host, int port, String prefix) {
-        enable(metricsRegistry, period, unit, host, port, prefix, MetricPredicate.ALL);
+    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String host, int port, String prefix) {
+        enable(metricRegistry, period, unit, host, port, prefix, MetricPredicate.ALL);
     }
 
     /**
      * Enables the graphite reporter to send data to graphite server with the specified period.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param period          the period between successive outputs
      * @param unit            the time unit of {@code period}
      * @param host            the host name of graphite server (carbon-cache agent)
@@ -100,9 +100,9 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
      * @param prefix          the string which is prepended to all metric names
      * @param predicate       filters metrics to be reported
      */
-    public static void enable(MetricsRegistry metricsRegistry, long period, TimeUnit unit, String host, int port, String prefix, MetricPredicate predicate) {
+    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String host, int port, String prefix, MetricPredicate predicate) {
         try {
-            final GraphiteReporter reporter = new GraphiteReporter(metricsRegistry,
+            final GraphiteReporter reporter = new GraphiteReporter(metricRegistry,
                                                                    prefix,
                                                                    predicate,
                                                                    new DefaultSocketProvider(host,
@@ -129,14 +129,14 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
     /**
      * Creates a new {@link GraphiteReporter}.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param host            is graphite server
      * @param port            is port on which graphite server is running
      * @param prefix          is prepended to all names reported to graphite
      * @throws IOException if there is an error connecting to the Graphite server
      */
-    public GraphiteReporter(MetricsRegistry metricsRegistry, String host, int port, String prefix) throws IOException {
-        this(metricsRegistry,
+    public GraphiteReporter(MetricRegistry metricRegistry, String host, int port, String prefix) throws IOException {
+        this(metricRegistry,
              prefix,
              MetricPredicate.ALL,
              new DefaultSocketProvider(host, port),
@@ -146,22 +146,22 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
     /**
      * Creates a new {@link GraphiteReporter}.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param prefix          is prepended to all names reported to graphite
      * @param predicate       filters metrics to be reported
      * @param socketProvider  a {@link SocketProvider} instance
      * @param clock           a {@link Clock} instance
      * @throws IOException if there is an error connecting to the Graphite server
      */
-    public GraphiteReporter(MetricsRegistry metricsRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock) throws IOException {
-        this(metricsRegistry, prefix, predicate, socketProvider, clock,
+    public GraphiteReporter(MetricRegistry metricRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock) throws IOException {
+        this(metricRegistry, prefix, predicate, socketProvider, clock,
              VirtualMachineMetrics.getInstance());
     }
 
     /**
      * Creates a new {@link GraphiteReporter}.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param prefix          is prepended to all names reported to graphite
      * @param predicate       filters metrics to be reported
      * @param socketProvider  a {@link SocketProvider} instance
@@ -169,14 +169,14 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
      * @param vm              a {@link VirtualMachineMetrics} instance
      * @throws IOException if there is an error connecting to the Graphite server
      */
-    public GraphiteReporter(MetricsRegistry metricsRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock, VirtualMachineMetrics vm) throws IOException {
-        this(metricsRegistry, prefix, predicate, socketProvider, clock, vm, "graphite-reporter");
+    public GraphiteReporter(MetricRegistry metricRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock, VirtualMachineMetrics vm) throws IOException {
+        this(metricRegistry, prefix, predicate, socketProvider, clock, vm, "graphite-reporter");
     }
     
     /**
      * Creates a new {@link GraphiteReporter}.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param prefix          is prepended to all names reported to graphite
      * @param predicate       filters metrics to be reported
      * @param socketProvider  a {@link SocketProvider} instance
@@ -184,8 +184,8 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
      * @param vm              a {@link VirtualMachineMetrics} instance
      * @throws IOException if there is an error connecting to the Graphite server
      */
-    public GraphiteReporter(MetricsRegistry metricsRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock, VirtualMachineMetrics vm, String name) throws IOException {    
-        super(metricsRegistry, name);
+    public GraphiteReporter(MetricRegistry metricRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock, VirtualMachineMetrics vm, String name) throws IOException {
+        super(metricRegistry, name);
         this.socketProvider = socketProvider;
         this.vm = vm;
 
@@ -239,7 +239,7 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
     }
 
     protected void printRegularMetrics(final Long epoch) {
-        for (Entry<String, Metric> entry : getMetricsRegistry().filter(predicate)) {
+        for (Entry<String, Metric> entry : getMetricRegistry().filter(predicate)) {
             final String name = entry.getKey();
             final Metric metric = entry.getValue();
             if (metric != null) {

@@ -1,7 +1,8 @@
 package com.yammer.metrics.httpclient;
 
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
 import org.apache.commons.logging.Log;
@@ -35,7 +36,7 @@ class InstrumentedRequestDirector extends DefaultRequestDirector {
     private final Timer patchTimer;
     private final Timer otherTimer;
 
-    InstrumentedRequestDirector(MetricsRegistry registry,
+    InstrumentedRequestDirector(MetricRegistry registry,
                                 Log log,
                                 HttpRequestExecutor requestExec,
                                 ClientConnectionManager conman,

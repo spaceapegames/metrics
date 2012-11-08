@@ -17,7 +17,7 @@ public class InstrumentedSslSocketConnector extends SslSocketConnector {
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedSslSocketConnector(MetricsRegistry registry, int port) {
+    public InstrumentedSslSocketConnector(MetricRegistry registry, int port) {
         super();
         setPort(port);
         this.duration = registry.add(MetricName.name(SslSocketConnector.class,

@@ -2,7 +2,8 @@ package com.yammer.metrics.graphite;
 
 import com.yammer.metrics.core.Clock;
 import com.yammer.metrics.core.MetricPredicate;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.graphite.GraphiteReporter;
 import com.yammer.metrics.graphite.SocketProvider;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
@@ -16,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 public class GraphiteReporterTest extends AbstractPollingReporterTest {
     @Override
-    protected AbstractPollingReporter createReporter(MetricsRegistry registry, OutputStream out, Clock clock) throws Exception {
+    protected AbstractPollingReporter createReporter(MetricRegistry registry, OutputStream out, Clock clock) throws Exception {
         final Socket socket = mock(Socket.class);
         when(socket.getOutputStream()).thenReturn(out);
 

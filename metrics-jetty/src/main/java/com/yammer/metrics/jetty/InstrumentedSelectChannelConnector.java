@@ -17,7 +17,7 @@ public class InstrumentedSelectChannelConnector extends SelectChannelConnector {
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedSelectChannelConnector(MetricsRegistry registry,
+    public InstrumentedSelectChannelConnector(MetricRegistry registry,
                                               int port) {
         super();
         setPort(port);

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A reporter which exposes application metric as JMX MBeans.
  */
-public class JmxReporter extends AbstractReporter implements MetricsRegistryListener,
+public class JmxReporter extends AbstractReporter implements MetricRegistryListener,
                                                              MetricProcessor<JmxReporter.Context> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JmxReporter.class);
@@ -352,9 +352,9 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
     /**
      * Creates a new {@link JmxReporter} for the given registry.
      *
-     * @param registry    a {@link MetricsRegistry}
+     * @param registry    a {@link com.yammer.metrics.core.MetricRegistry}
      */
-    public JmxReporter(MetricsRegistry registry) {
+    public JmxReporter(MetricRegistry registry) {
         super(registry);
         this.registryName = registry.getName();
         this.registeredBeans = new ConcurrentHashMap<String, ObjectName>(100);
@@ -436,7 +436,7 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
 
     @Override
     public void shutdown() {
-        getMetricsRegistry().removeListener(this);
+        getMetricRegistry().removeListener(this);
         for (ObjectName name : registeredBeans.values()) {
             unregisterBean(name);
         }
@@ -447,7 +447,7 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
      * Starts the reporter.
      */
     public final void start() {
-        getMetricsRegistry().addListener(this);
+        getMetricRegistry().addListener(this);
     }
 
     private void registerBean(String name, MetricMBean bean, ObjectName objectName)

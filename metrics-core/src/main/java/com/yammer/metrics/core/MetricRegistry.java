@@ -11,27 +11,27 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * A registry of metric instances.
  */
-public class MetricsRegistry implements Iterable<Map.Entry<String, Metric>> {
+public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
     private final ConcurrentMap<String, Metric> metrics;
-    private final List<MetricsRegistryListener> listeners;
+    private final List<MetricRegistryListener> listeners;
     private final String name;
 
     /**
-     * Creates a new {@link MetricsRegistry}.
+     * Creates a new {@link MetricRegistry}.
      */
-    public MetricsRegistry() {
+    public MetricRegistry() {
         this(null);
     }
 
     /**
-     * Creates a new {@link MetricsRegistry} with the given name and {@link Clock} instance.
+     * Creates a new {@link MetricRegistry} with the given name and {@link Clock} instance.
      *
      * @param name     the name of the registry
      */
-    public MetricsRegistry(String name) {
+    public MetricRegistry(String name) {
         this.name = name;
         this.metrics = new ConcurrentSkipListMap<String, Metric>();
-        this.listeners = new CopyOnWriteArrayList<MetricsRegistryListener>();
+        this.listeners = new CopyOnWriteArrayList<MetricRegistryListener>();
     }
 
     /**
@@ -72,14 +72,14 @@ public class MetricsRegistry implements Iterable<Map.Entry<String, Metric>> {
     }
 
     /**
-     * Adds a {@link MetricsRegistryListener} to a collection of listeners that will be notified on
+     * Adds a {@link MetricRegistryListener} to a collection of listeners that will be notified on
      * metric creation.  Listeners will be notified in the order in which they are added.
      * <p/>
      * <b>N.B.:</b> The listener will be notified of all existing metrics when it first registers.
      *
      * @param listener the listener that will be notified
      */
-    public void addListener(MetricsRegistryListener listener) {
+    public void addListener(MetricRegistryListener listener) {
         listeners.add(listener);
         for (Map.Entry<String, Metric> entry : metrics.entrySet()) {
             listener.onMetricAdded(entry.getKey(), entry.getValue());
@@ -87,22 +87,22 @@ public class MetricsRegistry implements Iterable<Map.Entry<String, Metric>> {
     }
 
     /**
-     * Removes a {@link MetricsRegistryListener} from this registry's collection of listeners.
+     * Removes a {@link MetricRegistryListener} from this registry's collection of listeners.
      *
      * @param listener the listener that will be removed
      */
-    public void removeListener(MetricsRegistryListener listener) {
+    public void removeListener(MetricRegistryListener listener) {
         listeners.remove(listener);
     }
 
     private void notifyMetricUnregistered(String name) {
-        for (MetricsRegistryListener listener : listeners) {
+        for (MetricRegistryListener listener : listeners) {
             listener.onMetricRemoved(name);
         }
     }
 
     private void notifyMetricRegistered(String name, Metric metric) {
-        for (MetricsRegistryListener listener : listeners) {
+        for (MetricRegistryListener listener : listeners) {
             listener.onMetricAdded(name, metric);
         }
     }
@@ -137,7 +137,7 @@ public class MetricsRegistry implements Iterable<Map.Entry<String, Metric>> {
         return new Iterable<Map.Entry<String, Metric>>() {
             @Override
             public Iterator<Map.Entry<String, Metric>> iterator() {
-                final Iterator<Map.Entry<String, Metric>> iterator = MetricsRegistry.this.iterator();
+                final Iterator<Map.Entry<String, Metric>> iterator = MetricRegistry.this.iterator();
                 return new Iterator<Map.Entry<String, Metric>>() {
                     private Map.Entry<String, Metric> element;
 

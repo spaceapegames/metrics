@@ -3,7 +3,7 @@ package com.yammer.metrics.httpclient;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Gauge;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -31,42 +31,42 @@ public class InstrumentedClientConnManager extends PoolingClientConnectionManage
         this(Metrics.defaultRegistry(), registry, connTTL, connTTLTimeUnit);
     }
 
-    public InstrumentedClientConnManager(MetricsRegistry metricsRegistry,
+    public InstrumentedClientConnManager(MetricRegistry metricRegistry,
                                          SchemeRegistry registry,
                                          long connTTL,
                                          TimeUnit connTTLTimeUnit) {
-        this(metricsRegistry, registry, connTTL, connTTLTimeUnit, new SystemDefaultDnsResolver());
+        this(metricRegistry, registry, connTTL, connTTLTimeUnit, new SystemDefaultDnsResolver());
     }
 
-    public InstrumentedClientConnManager(MetricsRegistry metricsRegistry,
+    public InstrumentedClientConnManager(MetricRegistry metricRegistry,
                                          SchemeRegistry schemeRegistry,
                                          long connTTL,
                                          TimeUnit connTTLTimeUnit,
                                          DnsResolver dnsResolver) {
         super(schemeRegistry, connTTL, connTTLTimeUnit, dnsResolver);
         final Class<?> klass = ClientConnectionManager.class;
-        metricsRegistry.add(MetricName.name(klass, "available-connections"), new Gauge<Integer>() {
+        metricRegistry.add(MetricName.name(klass, "available-connections"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 // this acquires a lock on the connection pool; remove if contention sucks
                 return getTotalStats().getAvailable();
             }
         });
-        metricsRegistry.add(MetricName.name(klass, "leased-connections"), new Gauge<Integer>() {
+        metricRegistry.add(MetricName.name(klass, "leased-connections"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 // this acquires a lock on the connection pool; remove if contention sucks
                 return getTotalStats().getLeased();
             }
         });
-        metricsRegistry.add(MetricName.name(klass, "max-connections"), new Gauge<Integer>() {
+        metricRegistry.add(MetricName.name(klass, "max-connections"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 // this acquires a lock on the connection pool; remove if contention sucks
                 return getTotalStats().getMax();
             }
         });
-        metricsRegistry.add(MetricName.name(klass, "pending-connections"), new Gauge<Integer>() {
+        metricRegistry.add(MetricName.name(klass, "pending-connections"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 // this acquires a lock on the connection pool; remove if contention sucks

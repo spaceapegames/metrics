@@ -17,7 +17,7 @@ public class InstrumentedBlockingChannelConnector extends BlockingChannelConnect
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedBlockingChannelConnector(MetricsRegistry registry,
+    public InstrumentedBlockingChannelConnector(MetricRegistry registry,
                                                 int port) {
         super();
         setPort(port);

@@ -17,7 +17,7 @@ public class InstrumentedSslSelectChannelConnector extends SslSelectChannelConne
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedSslSelectChannelConnector(MetricsRegistry registry,
+    public InstrumentedSslSelectChannelConnector(MetricRegistry registry,
                                                  int port) {
         super();
         setPort(port);

@@ -40,13 +40,13 @@ public class CsvReporter extends AbstractPollingReporter implements
      * Enables the CSV reporter for the given metrics registry, and causes it to write to files in
      * {@code outputDir} with the specified period.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param outputDir       the directory in which {@code .csv} files will be created
      * @param period          the period between successive outputs
      * @param unit            the time unit of {@code period}
      */
-    public static void enable(MetricsRegistry metricsRegistry, File outputDir, long period, TimeUnit unit) {
-        final CsvReporter reporter = new CsvReporter(metricsRegistry, outputDir);
+    public static void enable(MetricRegistry metricRegistry, File outputDir, long period, TimeUnit unit) {
+        final CsvReporter reporter = new CsvReporter(metricRegistry, outputDir);
         reporter.start(period, unit);
     }
 
@@ -73,50 +73,50 @@ public class CsvReporter extends AbstractPollingReporter implements
 
     /**
      * Creates a new {@link CsvReporter} which will write all metrics from the given
-     * {@link MetricsRegistry} to CSV files in the given output directory.
+     * {@link com.yammer.metrics.core.MetricRegistry} to CSV files in the given output directory.
      *
      * @param outputDir          the directory to which files will be written
-     * @param metricsRegistry    the {@link MetricsRegistry} containing the metrics this reporter
+     * @param metricRegistry    the {@link com.yammer.metrics.core.MetricRegistry} containing the metrics this reporter
      *                           will report
      */
-    public CsvReporter(MetricsRegistry metricsRegistry, File outputDir) {
-        this(metricsRegistry, MetricPredicate.ALL, outputDir);
+    public CsvReporter(MetricRegistry metricRegistry, File outputDir) {
+        this(metricRegistry, MetricPredicate.ALL, outputDir);
     }
 
     /**
      * Creates a new {@link CsvReporter} which will write metrics from the given
-     * {@link MetricsRegistry} which match the given {@link MetricPredicate} to CSV files in the
+     * {@link com.yammer.metrics.core.MetricRegistry} which match the given {@link MetricPredicate} to CSV files in the
      * given output directory.
      *
-     * @param metricsRegistry    the {@link MetricsRegistry} containing the metrics this reporter
+     * @param metricRegistry    the {@link com.yammer.metrics.core.MetricRegistry} containing the metrics this reporter
      *                           will report
      * @param predicate          the {@link MetricPredicate} which metrics are required to match
      *                           before being written to files
      * @param outputDir          the directory to which files will be written
      */
-    public CsvReporter(MetricsRegistry metricsRegistry,
+    public CsvReporter(MetricRegistry metricRegistry,
                        MetricPredicate predicate,
                        File outputDir) {
-        this(metricsRegistry, predicate, outputDir, Clock.defaultClock());
+        this(metricRegistry, predicate, outputDir, Clock.defaultClock());
     }
 
     /**
      * Creates a new {@link CsvReporter} which will write metrics from the given
-     * {@link MetricsRegistry} which match the given {@link MetricPredicate} to CSV files in the
+     * {@link com.yammer.metrics.core.MetricRegistry} which match the given {@link MetricPredicate} to CSV files in the
      * given output directory.
      *
-     * @param metricsRegistry    the {@link MetricsRegistry} containing the metrics this reporter
+     * @param metricRegistry    the {@link com.yammer.metrics.core.MetricRegistry} containing the metrics this reporter
      *                           will report
      * @param predicate          the {@link MetricPredicate} which metrics are required to match
      *                           before being written to files
      * @param outputDir          the directory to which files will be written
      * @param clock              the clock used to measure time
      */
-    public CsvReporter(MetricsRegistry metricsRegistry,
+    public CsvReporter(MetricRegistry metricRegistry,
                        MetricPredicate predicate,
                        File outputDir,
                        Clock clock) {
-        super(metricsRegistry, "csv-reporter");
+        super(metricRegistry, "csv-reporter");
         if (outputDir.exists() && !outputDir.isDirectory()) {
             throw new IllegalArgumentException(outputDir + " is not a directory");
         }
@@ -148,7 +148,7 @@ public class CsvReporter extends AbstractPollingReporter implements
         final long time = TimeUnit.MILLISECONDS.toSeconds(clock.getTime() - startTime);
         final MetricDispatcher dispatcher = new MetricDispatcher();
         try {
-            for (Entry<String, Metric> entry : getMetricsRegistry().filter(predicate)) {
+            for (Entry<String, Metric> entry : getMetricRegistry().filter(predicate)) {
                 final String name = entry.getKey();
                 final Metric metric = entry.getValue();
                 if (metric != null) {

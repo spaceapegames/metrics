@@ -6,14 +6,14 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 
 public class InstrumentedQueuedThreadPool extends QueuedThreadPool {
     public InstrumentedQueuedThreadPool() {
         this(Metrics.defaultRegistry());
     }
 
-    public InstrumentedQueuedThreadPool(MetricsRegistry registry) {
+    public InstrumentedQueuedThreadPool(MetricRegistry registry) {
         super();
         registry.add(MetricName.name(QueuedThreadPool.class, "percent-idle"),
                      new RatioGauge() {

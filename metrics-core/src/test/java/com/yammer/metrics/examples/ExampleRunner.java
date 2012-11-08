@@ -4,7 +4,8 @@ import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Histogram;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.reporting.ConsoleReporter;
 
 import java.io.File;
@@ -15,7 +16,7 @@ public class ExampleRunner {
     private static final int WORKER_COUNT = 10;
     private static final BlockingQueue<File> JOBS = new LinkedBlockingQueue<File>();
     private static final ExecutorService POOL = Executors.newFixedThreadPool(WORKER_COUNT);
-    private static final MetricsRegistry REGISTRY = Metrics.defaultRegistry();
+    private static final MetricRegistry REGISTRY = Metrics.defaultRegistry();
     private static final Counter QUEUE_DEPTH = REGISTRY.add(
             MetricName.name(ExampleRunner.class, "queue-depth"),
             new Counter());

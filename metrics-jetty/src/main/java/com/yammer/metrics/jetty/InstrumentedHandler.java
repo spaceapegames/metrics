@@ -58,7 +58,7 @@ public class InstrumentedHandler extends HandlerWrapper {
      * @param underlying the handler about which metrics will be collected
      * @param registry the registry for the metrics
      */
-    public InstrumentedHandler(Handler underlying, MetricsRegistry registry) {
+    public InstrumentedHandler(Handler underlying, MetricRegistry registry) {
         super();
         final Class<?> klass = underlying.getClass();
         this.dispatches = registry.add(MetricName.name(klass, "dispatches"), new Timer());

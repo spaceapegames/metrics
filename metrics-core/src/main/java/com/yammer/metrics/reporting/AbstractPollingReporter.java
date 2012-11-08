@@ -1,6 +1,6 @@
 package com.yammer.metrics.reporting;
 
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,12 +43,12 @@ public abstract class AbstractPollingReporter extends AbstractReporter implement
     /**
      * Creates a new {@link AbstractPollingReporter} instance.
      *
-     * @param registry    the {@link MetricsRegistry} containing the metrics this reporter will
+     * @param registry    the {@link com.yammer.metrics.core.MetricRegistry} containing the metrics this reporter will
      *                    report
      * @param name        the reporter's name
-     * @see AbstractReporter#AbstractReporter(MetricsRegistry)
+     * @see AbstractReporter#AbstractReporter(com.yammer.metrics.core.MetricRegistry)
      */
-    protected AbstractPollingReporter(MetricsRegistry registry, String name) {
+    protected AbstractPollingReporter(MetricRegistry registry, String name) {
         super(registry);
         this.executor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(name));
     }

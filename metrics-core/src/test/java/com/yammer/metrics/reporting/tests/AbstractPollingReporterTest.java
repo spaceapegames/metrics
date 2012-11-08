@@ -23,13 +23,13 @@ public abstract class AbstractPollingReporterTest {
     protected final Clock clock = mock(Clock.class);
     protected AbstractPollingReporter reporter;
     protected ByteArrayOutputStream out;
-    protected MetricsRegistry registry;
+    protected MetricRegistry registry;
 
     @Before
     public void init() throws Exception {
         when(clock.getTick()).thenReturn(1234L);
         when(clock.getTime()).thenReturn(5678L);
-        registry = new MetricsRegistry();
+        registry = new MetricRegistry();
         out = new ByteArrayOutputStream();
         reporter = createReporter(registry, out, clock);
     }
@@ -60,7 +60,7 @@ public abstract class AbstractPollingReporterTest {
         }
     }
 
-    protected abstract AbstractPollingReporter createReporter(MetricsRegistry registry, OutputStream out, Clock clock) throws Exception;
+    protected abstract AbstractPollingReporter createReporter(MetricRegistry registry, OutputStream out, Clock clock) throws Exception;
 
     @Test
     public final void counter() throws Exception {

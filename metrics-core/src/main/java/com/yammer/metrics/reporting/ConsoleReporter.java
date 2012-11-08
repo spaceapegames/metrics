@@ -34,12 +34,12 @@ public class ConsoleReporter extends AbstractPollingReporter implements
      * Enables the console reporter for the given metrics registry, and causes it to print to STDOUT
      * with the specified period and unrestricted output.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param period          the period between successive outputs
      * @param unit            the time unit of {@code period}
      */
-    public static void enable(MetricsRegistry metricsRegistry, long period, TimeUnit unit) {
-        final ConsoleReporter reporter = new ConsoleReporter(metricsRegistry,
+    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit) {
+        final ConsoleReporter reporter = new ConsoleReporter(metricRegistry,
                                                              System.out,
                                                              MetricPredicate.ALL);
         reporter.start(period, unit);
@@ -64,37 +64,37 @@ public class ConsoleReporter extends AbstractPollingReporter implements
     /**
      * Creates a new {@link ConsoleReporter} for a given metrics registry.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param out             the {@link PrintStream} to which output will be written
      * @param predicate       the {@link MetricPredicate} used to determine whether a metric will be
      *                        output
      */
-    public ConsoleReporter(MetricsRegistry metricsRegistry, PrintStream out, MetricPredicate predicate) {
-        this(metricsRegistry, out, predicate, Clock.defaultClock(), TimeZone.getDefault());
+    public ConsoleReporter(MetricRegistry metricRegistry, PrintStream out, MetricPredicate predicate) {
+        this(metricRegistry, out, predicate, Clock.defaultClock(), TimeZone.getDefault());
     }
 
     /**
      * Creates a new {@link ConsoleReporter} for a given metrics registry.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param out             the {@link PrintStream} to which output will be written
      * @param predicate       the {@link MetricPredicate} used to determine whether a metric will be
      *                        output
      * @param clock           the {@link Clock} used to print time
      * @param timeZone        the {@link TimeZone} used to print time
      */
-    public ConsoleReporter(MetricsRegistry metricsRegistry,
+    public ConsoleReporter(MetricRegistry metricRegistry,
                            PrintStream out,
                            MetricPredicate predicate,
                            Clock clock,
                            TimeZone timeZone) {
-        this(metricsRegistry, out, predicate, clock, timeZone, Locale.getDefault());
+        this(metricRegistry, out, predicate, clock, timeZone, Locale.getDefault());
     }
 
     /**
      * Creates a new {@link ConsoleReporter} for a given metrics registry.
      *
-     * @param metricsRegistry the metrics registry
+     * @param metricRegistry the metrics registry
      * @param out             the {@link PrintStream} to which output will be written
      * @param predicate       the {@link MetricPredicate} used to determine whether a metric will be
      *                        output
@@ -102,12 +102,12 @@ public class ConsoleReporter extends AbstractPollingReporter implements
      * @param timeZone        the {@link TimeZone} used to print time
      * @param locale          the {@link Locale} used to print values
      */
-    public ConsoleReporter(MetricsRegistry metricsRegistry,
+    public ConsoleReporter(MetricRegistry metricRegistry,
                            PrintStream out,
                            MetricPredicate predicate,
                            Clock clock,
                            TimeZone timeZone, Locale locale) {
-        super(metricsRegistry, "console-reporter");
+        super(metricRegistry, "console-reporter");
         this.out = out;
         this.predicate = predicate;
         this.clock = clock;
@@ -130,7 +130,7 @@ public class ConsoleReporter extends AbstractPollingReporter implements
                 out.print('=');
             }
             out.println();
-            for (Entry<String, Metric> entry : getMetricsRegistry()) {
+            for (Entry<String, Metric> entry : getMetricRegistry()) {
                 out.print(entry.getKey());
                 out.println(':');
                 dispatcher.dispatch(entry.getValue(), entry.getKey(), this, out);

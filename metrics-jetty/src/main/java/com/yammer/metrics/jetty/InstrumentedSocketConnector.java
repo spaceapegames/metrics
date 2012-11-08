@@ -17,7 +17,7 @@ public class InstrumentedSocketConnector extends SocketConnector {
         this(Metrics.defaultRegistry(), port);
     }
 
-    public InstrumentedSocketConnector(MetricsRegistry registry, int port) {
+    public InstrumentedSocketConnector(MetricRegistry registry, int port) {
         super();
         setPort(port);
         this.duration = registry.add(MetricName.name(SocketConnector.class,

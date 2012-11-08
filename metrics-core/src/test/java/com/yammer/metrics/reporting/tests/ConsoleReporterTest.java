@@ -2,7 +2,8 @@ package com.yammer.metrics.reporting.tests;
 
 import com.yammer.metrics.core.Clock;
 import com.yammer.metrics.core.MetricPredicate;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
 import com.yammer.metrics.reporting.ConsoleReporter;
 import org.junit.Test;
@@ -18,7 +19,7 @@ import static org.junit.Assert.fail;
 public class ConsoleReporterTest extends AbstractPollingReporterTest {
 
     @Override
-    protected AbstractPollingReporter createReporter(MetricsRegistry registry, OutputStream out, Clock clock) {
+    protected AbstractPollingReporter createReporter(MetricRegistry registry, OutputStream out, Clock clock) {
         return new ConsoleReporter(registry,
                                    new PrintStream(out),
                                    MetricPredicate.ALL,

@@ -3,7 +3,7 @@ package com.yammer.metrics.log4j;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
@@ -26,7 +26,7 @@ public class InstrumentedAppender extends AppenderSkeleton {
         this(Metrics.defaultRegistry());
     }
 
-    public InstrumentedAppender(MetricsRegistry registry) {
+    public InstrumentedAppender(MetricRegistry registry) {
         super();
         this.all = registry.add(MetricName.name(Appender.class, "all"), new Meter("statements"));
         this.trace = registry.add(MetricName.name(Appender.class, "trace"), new Meter("statements"));

@@ -2,7 +2,7 @@ package com.yammer.metrics.jdbi.tests;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jdbi.InstrumentedTimingCollector;
 import com.yammer.metrics.jdbi.strategies.NameStrategies;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 public class InstrumentedTimingCollectorTest {
-    private final MetricsRegistry registry = Metrics.defaultRegistry();
+    private final MetricRegistry registry = Metrics.defaultRegistry();
 
     @Test
     public void updatesTimerForSqlObjects() throws Exception {

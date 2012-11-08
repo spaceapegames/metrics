@@ -22,13 +22,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * An HTTP servlet which outputs the metrics in a {@link MetricsRegistry} (and optionally the data
+ * An HTTP servlet which outputs the metrics in a {@link com.yammer.metrics.core.MetricRegistry} (and optionally the data
  * provided by {@link VirtualMachineMetrics}) in a JSON object. Only responds to {@code GET}
  * requests.
  * <p/>
  * If the servlet context has an attribute named
  * {@code com.yammer.metrics.servlet.MetricsServlet.registry} which is a
- * {@link MetricsRegistry} instance, {@link MetricsServlet} will use it instead of {@link Metrics}.
+ * {@link com.yammer.metrics.core.MetricRegistry} instance, {@link MetricsServlet} will use it instead of {@link Metrics}.
  * <p/>
  * {@link MetricsServlet} also takes an initialization parameter, {@code show-jvm-metrics}, which
  * should be a boolean value (e.g., {@code "true"} or {@code "false"}). It determines whether or not
@@ -63,7 +63,7 @@ import java.util.concurrent.TimeUnit;
 public class MetricsServlet extends HttpServlet implements MetricProcessor<MetricsServlet.Context> {
 
     /**
-     * The attribute name of the {@link MetricsRegistry} instance in the servlet context.
+     * The attribute name of the {@link com.yammer.metrics.core.MetricRegistry} instance in the servlet context.
      */
     public static final String REGISTRY_ATTRIBUTE = MetricsServlet.class.getName() + ".registry";
 
@@ -94,7 +94,7 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
 
     private final Clock clock;
     private final VirtualMachineMetrics vm;
-    private MetricsRegistry registry;
+    private MetricRegistry registry;
     private JsonFactory factory;
     private boolean showJvmMetrics;
 
@@ -121,13 +121,13 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
      *
      * @param clock             the clock used for the current time
      * @param vm                a {@link VirtualMachineMetrics} instance
-     * @param registry          a {@link MetricsRegistry}
+     * @param registry          a {@link com.yammer.metrics.core.MetricRegistry}
      * @param factory           a {@link JsonFactory}
      * @param showJvmMetrics    whether or not JVM-level metrics will be included in the output
      */
     public MetricsServlet(Clock clock,
                           VirtualMachineMetrics vm,
-                          MetricsRegistry registry,
+                          MetricRegistry registry,
                           JsonFactory factory,
                           boolean showJvmMetrics) {
         this.clock = clock;
@@ -146,8 +146,8 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
         }
 
         final Object o = config.getServletContext().getAttribute(REGISTRY_ATTRIBUTE);
-        if (o instanceof MetricsRegistry) {
-            this.registry = (MetricsRegistry) o;
+        if (o instanceof MetricRegistry) {
+            this.registry = (MetricRegistry) o;
         }
 
         final String showJvmMetricsParam = config.getInitParameter(SHOW_JVM_METRICS);

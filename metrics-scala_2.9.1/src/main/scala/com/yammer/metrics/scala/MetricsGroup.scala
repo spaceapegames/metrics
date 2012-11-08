@@ -2,13 +2,13 @@ package com.yammer.metrics.scala
 
 import java.util.concurrent.TimeUnit
 import com.yammer.metrics.Metrics
-import com.yammer.metrics.core.{MetricName, MetricsRegistry, Gauge}
+import com.yammer.metrics.core.{MetricName, MetricRegistry, Gauge}
 import com.yammer.metrics.core.Histogram.SampleType
 
 /**
  * A helper class for creating and registering metrics.
  */
-class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricsRegistry = Metrics.defaultRegistry()) {
+class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricRegistry = Metrics.defaultRegistry()) {
 
   /**
    * Registers a new gauge metric.
@@ -17,7 +17,7 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricsRegistry = M
    * @param scope the scope of the gauge
    * @param registry the registry for the gauge
    */
-  def gauge[A](name: String, scope: String = null, registry: MetricsRegistry = metricsRegistry)(f: => A) = {
+  def gauge[A](name: String, scope: String = null, registry: MetricRegistry = metricsRegistry)(f: => A) = {
     registry.add(MetricName.name(klass, name, scope), new Gauge[A] {
       def getValue = f
     })
@@ -30,7 +30,7 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricsRegistry = M
    * @param scope the scope of the gauge
    * @param registry the registry for the gauge
    */
-  def counter(name: String, scope: String = null, registry: MetricsRegistry = metricsRegistry) =
+  def counter(name: String, scope: String = null, registry: MetricRegistry = metricsRegistry) =
     new Counter(registry.add(MetricName.name(klass, name, scope),
                 new com.yammer.metrics.core.Counter()))
 
@@ -45,7 +45,7 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricsRegistry = M
   def histogram(name: String,
                 scope: String = null,
                 biased: Boolean = false,
-                registry: MetricsRegistry = metricsRegistry) =
+                registry: MetricRegistry = metricsRegistry) =
     new Histogram(registry.add(MetricName.name(klass, name, scope),
                                    new com.yammer.metrics.core.Histogram(
                                      if (biased) SampleType.BIASED else SampleType.UNIFORM)))
@@ -64,7 +64,7 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricsRegistry = M
             eventType: String,
             scope: String = null,
             unit: TimeUnit = TimeUnit.SECONDS,
-            registry: MetricsRegistry = metricsRegistry) =
+            registry: MetricRegistry = metricsRegistry) =
     new Meter(registry.add(MetricName.name(klass, name, scope),
                                 new com.yammer.metrics.core.Meter(eventType, unit)))
 
@@ -81,7 +81,7 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricsRegistry = M
             scope: String = null,
             durationUnit: TimeUnit = TimeUnit.MILLISECONDS,
             rateUnit: TimeUnit = TimeUnit.SECONDS,
-            registry: MetricsRegistry = metricsRegistry) =
+            registry: MetricRegistry = metricsRegistry) =
     new Timer(registry.add(MetricName.name(klass, name, scope),
       new com.yammer.metrics.core.Timer(durationUnit, rateUnit)))
 }

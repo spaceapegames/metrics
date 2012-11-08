@@ -1,7 +1,7 @@
 package com.yammer.metrics.ehcache.tests;
 
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
+import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.ehcache.InstrumentedEhcache;
 import net.sf.ehcache.Cache;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 
 public class InstrumentedEhcacheTest {
     private static final CacheManager MANAGER = CacheManager.create();
-    private static final MetricsRegistry REGISTRY = new MetricsRegistry();
+    private static final MetricRegistry REGISTRY = new MetricRegistry();
 
     private Ehcache cache;
 

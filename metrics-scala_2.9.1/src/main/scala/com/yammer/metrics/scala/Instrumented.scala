@@ -14,7 +14,7 @@ trait Instrumented {
   def metrics = metricsGroup
 
   /**
-   * Returns the MetricsRegistry for the class.
+   * Returns the MetricRegistry for the class.
    */
   def metricsRegistry = Metrics.defaultRegistry()
 }
