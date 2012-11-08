@@ -130,7 +130,7 @@ public class ConsoleReporter extends AbstractPollingReporter implements
                 out.print('=');
             }
             out.println();
-            for (Entry<String, Metric> entry : getMetricRegistry()) {
+            for (Entry<String, Metric> entry : getMetricRegistry().filter(predicate)) {
                 out.print(entry.getKey());
                 out.println(':');
                 dispatcher.dispatch(entry.getValue(), entry.getKey(), this, out);
