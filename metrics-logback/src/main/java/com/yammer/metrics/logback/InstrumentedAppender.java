@@ -6,7 +6,6 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AppenderBase;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricRegistry;
 
 /**
@@ -26,12 +25,12 @@ public class InstrumentedAppender extends AppenderBase<ILoggingEvent> {
     }
 
     public InstrumentedAppender(MetricRegistry registry) {
-        this.all = registry.add(MetricName.name(Appender.class, "all"), new Meter("statements"));
-        this.trace = registry.add(MetricName.name(Appender.class, "trace"), new Meter("statements"));
-        this.debug = registry.add(MetricName.name(Appender.class, "debug"), new Meter("statements"));
-        this.info = registry.add(MetricName.name(Appender.class, "info"), new Meter("statements"));
-        this.warn = registry.add(MetricName.name(Appender.class, "warn"), new Meter("statements"));
-        this.error = registry.add(MetricName.name(Appender.class, "error"), new Meter("statements"));
+        this.all = registry.add(Metrics.name(Appender.class, "all"), new Meter("statements"));
+        this.trace = registry.add(Metrics.name(Appender.class, "trace"), new Meter("statements"));
+        this.debug = registry.add(Metrics.name(Appender.class, "debug"), new Meter("statements"));
+        this.info = registry.add(Metrics.name(Appender.class, "info"), new Meter("statements"));
+        this.warn = registry.add(Metrics.name(Appender.class, "warn"), new Meter("statements"));
+        this.error = registry.add(Metrics.name(Appender.class, "error"), new Meter("statements"));
     }
 
     @Override

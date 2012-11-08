@@ -11,11 +11,11 @@ import java.util.concurrent.Callable;
 
 public class DirectoryLister {
     private final MetricRegistry registry = Metrics.defaultRegistry();
-    private final Counter counter = registry.add(MetricName.name(getClass(), "directories"),
+    private final Counter counter = registry.add(Metrics.name(getClass(), "directories"),
                                                  new Counter());
-    private final Meter meter = registry.add(MetricName.name(getClass(), "files"),
+    private final Meter meter = registry.add(Metrics.name(getClass(), "files"),
                                              new Meter("files"));
-    private final Timer timer = registry.add(MetricName.name(getClass(), "directory-listing"),
+    private final Timer timer = registry.add(Metrics.name(getClass(), "directory-listing"),
                                              new Timer());
     private final File directory;
 

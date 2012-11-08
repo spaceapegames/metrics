@@ -51,17 +51,17 @@ public abstract class WebappMetricsFilter implements Filter {
                 .size());
         for (Entry<Integer, String> entry : meterNamesByStatusCode.entrySet()) {
             metersByStatusCode.put(entry.getKey(),
-                                   metricRegistry.add(MetricName.name(WebappMetricsFilter.class,
-                                                                       entry.getValue()),
+                                   metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
+                                                                   entry.getValue()),
                                                        new Meter("responses")));
         }
-        this.otherMeter = metricRegistry.add(MetricName.name(WebappMetricsFilter.class,
-                                                              otherMetricName),
+        this.otherMeter = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
+                                                          otherMetricName),
                                               new Meter("responses"));
-        this.activeRequests = metricRegistry.add(MetricName.name(WebappMetricsFilter.class,
-                                                                  "activeRequests"), new Counter());
-        this.requestTimer = metricRegistry.add(MetricName.name(WebappMetricsFilter.class,
-                                                                "requests"),
+        this.activeRequests = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
+                                                              "activeRequests"), new Counter());
+        this.requestTimer = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
+                                                            "requests"),
                                                 new Timer());
 
     }

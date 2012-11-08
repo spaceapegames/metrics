@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.*;
 import com.yammer.metrics.servlet.MetricsServlet;
 import org.junit.Before;
@@ -125,7 +126,7 @@ public class MetricsServletTest {
 
     @Test
     public void generatesGauges() throws Exception {
-        registry.add(MetricName.name(MetricsServletTest.class, "gauge"),
+        registry.add(Metrics.name(MetricsServletTest.class, "gauge"),
                      new Gauge<Double>() {
                          @Override
                          public Double getValue() {
@@ -141,7 +142,7 @@ public class MetricsServletTest {
 
     @Test
     public void generatesCounters() throws Exception {
-        registry.add(MetricName.name(MetricsServletTest.class, "counter"), new Counter())
+        registry.add(Metrics.name(MetricsServletTest.class, "counter"), new Counter())
                 .inc(12);
 
         servlet.service(request, response);
@@ -152,7 +153,7 @@ public class MetricsServletTest {
 
     @Test
     public void generatesHistograms() throws Exception {
-        registry.add(MetricName.name(MetricsServletTest.class, "histogram"),
+        registry.add(Metrics.name(MetricsServletTest.class, "histogram"),
                      new Histogram(Histogram.SampleType.UNIFORM))
                 .update(12);
 
@@ -168,7 +169,7 @@ public class MetricsServletTest {
     public void generatesMeters() throws Exception {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.add(MetricName.name(MetricsServletTest.class, "meter"),
+        registry.add(Metrics.name(MetricsServletTest.class, "meter"),
                      new Meter("things", TimeUnit.SECONDS, clock))
                 .mark(12);
 
@@ -185,7 +186,7 @@ public class MetricsServletTest {
     public void generatesTimers() throws Exception {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.add(MetricName.name(MetricsServletTest.class, "timer"),
+        registry.add(Metrics.name(MetricsServletTest.class, "timer"),
                      new Timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock))
                 .update(100, TimeUnit.MILLISECONDS);
 

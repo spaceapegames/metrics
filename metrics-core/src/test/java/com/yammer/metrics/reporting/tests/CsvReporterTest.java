@@ -1,7 +1,6 @@
 package com.yammer.metrics.reporting.tests;
 
 import com.yammer.metrics.core.Clock;
-import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricPredicate;
 import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.reporting.AbstractPollingReporter;

@@ -81,7 +81,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param gangliaHost          the gangliaHost name of ganglia server (carbon-cache agent)
      * @param port                 the port number on which the ganglia server is listening
      * @param compressPackageNames if true reporter will compress package names e.g.
-     *                             com.foo.MetricName becomes c.f.MetricName
+     *                             com.foo.Metric becomes c.f.Metric
      */
     public static void enable(long period, TimeUnit unit, String gangliaHost, int port, boolean compressPackageNames) {
         enable(Metrics.defaultRegistry(),
@@ -136,7 +136,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param groupPrefix          prefix to the ganglia group name (such as myapp_counter)
      * @param predicate            filters metrics to be reported
      * @param compressPackageNames if true reporter will compress package names e.g.
-     *                             com.foo.MetricName becomes c.f.MetricName
+     *                             com.foo.Metric becomes c.f.Metric
      */
     public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String gangliaHost,
                               int port, String groupPrefix, MetricPredicate predicate, boolean compressPackageNames) {
@@ -217,7 +217,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param groupPrefix          prefix to the ganglia group name (such as myapp_counter)
      * @param predicate            filters metrics to be reported
      * @param compressPackageNames if true reporter will compress package names e.g.
-     *                             com.foo.MetricName becomes c.f.MetricName
+     *                             com.foo.Metric becomes c.f.Metric
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
     public GangliaReporter(MetricRegistry metricRegistry, String gangliaHost, int port, String groupPrefix,
@@ -236,9 +236,9 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param groupPrefix              prefix to the ganglia group name (such as myapp_counter)
      * @param predicate                filters metrics to be reported
      * @param compressPackageNames     if true reporter will compress package names e.g.
-     *                                 com.foo.MetricName becomes c.f.MetricName
+     *                                 com.foo.Metric becomes c.f.Metric
      * @param gangliaMessageBuilder    a {@link GangliaMessageBuilder} instance
-     * @param vm                       a {@link VirtualMachineMetrics} isntance
+     * @param vm                       a {@link VirtualMachineMetrics} instance
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
     public GangliaReporter(MetricRegistry metricRegistry, String groupPrefix,

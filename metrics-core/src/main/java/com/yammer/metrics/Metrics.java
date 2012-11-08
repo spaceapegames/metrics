@@ -1,7 +1,6 @@
 package com.yammer.metrics;
 
 import com.yammer.metrics.core.MetricRegistry;
-import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.reporting.JmxReporter;
 
 /**
@@ -24,5 +23,28 @@ public class Metrics {
      */
     public static MetricRegistry defaultRegistry() {
         return DEFAULT_REGISTRY;
+    }
+
+
+    public static String name(String name, String... names) {
+        final StringBuilder builder = new StringBuilder();
+        append(builder, name);
+        for (String s : names) {
+            append(builder, s);
+        }
+        return builder.toString();
+    }
+
+    public static String name(Class<?> klass, String... names) {
+        return name(klass.getCanonicalName(), names);
+    }
+
+    private static void append(StringBuilder builder, String part) {
+        if (part != null && !part.isEmpty()) {
+            if (builder.length() > 0) {
+                builder.append('.');
+            }
+            builder.append(part);
+        }
     }
 }

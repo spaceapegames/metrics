@@ -1,7 +1,6 @@
 package com.yammer.metrics.jdbi.tests;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jdbi.InstrumentedTimingCollector;
@@ -39,7 +38,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name(getClass(), "updatesTimerForSqlObjects")));
+                   is(Metrics.name(getClass(), "updatesTimerForSqlObjects")));
         assertThat(timer.getMax(),
                    is(closeTo(1000.0, 1)));
     }
@@ -59,7 +58,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name(getClass(), "SELECT_1")));
+                   is(Metrics.name(getClass(), "SELECT_1")));
         assertThat(timer.getMax(),
                    is(closeTo(1000.0, 1)));
     }
@@ -78,7 +77,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name("sql", "raw", "SELECT_1")));
+                   is(Metrics.name("sql", "raw", "SELECT_1")));
         assertThat(timer.getMax(),
                    is(closeTo(2000.0, 1)));
     }
@@ -96,7 +95,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name("sql", "empty")));
+                   is(Metrics.name("sql", "empty")));
         assertThat(timer.getMax(),
                    is(closeTo(2000.0, 1)));
     }
@@ -115,7 +114,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name("sql", "raw", "don_t_know_what_it_is_but_it_s_not_SQL")));
+                   is(Metrics.name("sql", "raw", "don_t_know_what_it_is_but_it_s_not_SQL")));
         assertThat(timer.getMax(),
                    is(closeTo(3000.0, 1)));
     }
@@ -136,7 +135,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name(getClass(), "updatesTimerForContextClass")));
+                   is(Metrics.name(getClass(), "updatesTimerForContextClass")));
         assertThat(timer.getMax(),
                    is(closeTo(3000.0, 1)));
     }
@@ -157,7 +156,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name("foo", "bar", "updatesTimerForTemplateFile")));
+                   is(Metrics.name("foo", "bar", "updatesTimerForTemplateFile")));
         assertThat(timer.getMax(),
                    is(closeTo(4000.0, 1)));
     }
@@ -178,7 +177,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name("my-group", "updatesTimerForContextGroupAndName")));
+                   is(Metrics.name("my-group", "updatesTimerForContextGroupAndName")));
         assertThat(timer.getMax(),
                    is(closeTo(4000.0, 1)));
     }
@@ -200,7 +199,7 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name("my-group", "my-type", "updatesTimerForContextGroupTypeAndName")));
+                   is(Metrics.name("my-group", "my-type", "updatesTimerForContextGroupTypeAndName")));
         assertThat(timer.getMax(),
                    is(closeTo(5000.0, 1)));
     }
@@ -221,7 +220,9 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name("jdbi", getClass().getSimpleName(), "updatesTimerForShortSqlObjectStrategy")));
+                   is(Metrics.name("jdbi",
+                                   getClass().getSimpleName(),
+                                   "updatesTimerForShortSqlObjectStrategy")));
         assertThat(timer.getMax(),
                    is(closeTo(1000.0, 1)));
     }
@@ -242,7 +243,9 @@ public class InstrumentedTimingCollectorTest {
                                          new Timer());
 
         assertThat(name,
-                   is(MetricName.name("jdbi", getClass().getSimpleName(), "updatesTimerForShortContextClassStrategy")));
+                   is(Metrics.name("jdbi",
+                                   getClass().getSimpleName(),
+                                   "updatesTimerForShortContextClassStrategy")));
         assertThat(timer.getMax(),
                    is(closeTo(3000.0, 1)));
     }

@@ -6,7 +6,6 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
 import com.yammer.metrics.jersey.tests.resources.InstrumentedResource;
@@ -40,7 +39,7 @@ public class MetricsJerseyTest extends JerseyTest {
                    is("yay"));
 
         final Timer timer = Metrics.defaultRegistry()
-                                   .add(MetricName.name(InstrumentedResource.class, "timed"),
+                                   .add(Metrics.name(InstrumentedResource.class, "timed"),
                                         new Timer());
         assertThat(timer.getCount(),
                    is(1L));
@@ -52,7 +51,7 @@ public class MetricsJerseyTest extends JerseyTest {
                    is("woo"));
 
         final Meter meter = Metrics.defaultRegistry()
-                                   .add(MetricName.name(InstrumentedResource.class, "metered"),
+                                   .add(Metrics.name(InstrumentedResource.class, "metered"),
                                         new Meter("blah"));
         assertThat(meter.getCount(),
                    is(1L));
@@ -61,8 +60,8 @@ public class MetricsJerseyTest extends JerseyTest {
     @Test
     public void exceptionMeteredMethodsAreExceptionMetered() {
         final Meter meter = Metrics.defaultRegistry()
-                                   .add(MetricName.name(InstrumentedResource.class,
-                                                        "exceptionMetered", "exceptions"),
+                                   .add(Metrics.name(InstrumentedResource.class,
+                                                     "exceptionMetered", "exceptions"),
                                         new Meter("blah"));
         
         assertThat(resource().path("exception-metered").get(String.class),

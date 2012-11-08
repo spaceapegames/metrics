@@ -7,7 +7,6 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
@@ -46,12 +45,12 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
 
     @Test
     public void registryIsNotDefault() {
-        final Timer timer1 = registry.add(MetricName.name(InstrumentedResource.class, "timed"),
+        final Timer timer1 = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
                                           new Timer());
-        final Timer timer2 = registry.add(MetricName.name(InstrumentedResource.class, "timed"),
+        final Timer timer2 = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
                                           new Timer());
         final Timer timer3 = Metrics.defaultRegistry()
-                                    .add(MetricName.name(InstrumentedResource.class, "timed"),
+                                    .add(Metrics.name(InstrumentedResource.class, "timed"),
                                          new Timer());
 
         assertThat(timer1, sameInstance(timer2));
@@ -63,7 +62,7 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("timed").get(String.class),
                    is("yay"));
 
-        final Timer timer = registry.add(MetricName.name(InstrumentedResource.class, "timed"),
+        final Timer timer = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
                                          new Timer());
         assertThat(timer.getCount(),
                    is(1L));
@@ -74,8 +73,8 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("metered").get(String.class),
                    is("woo"));
 
-        final Meter meter = registry.add(MetricName.name(InstrumentedResource.class,
-                                                         "metered"),
+        final Meter meter = registry.add(Metrics.name(InstrumentedResource.class,
+                                                      "metered"),
                                          new Meter("blah"));
         assertThat(meter.getCount(),
                    is(1L));
@@ -83,8 +82,8 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
 
     @Test
     public void exceptionMeteredMethodsAreExceptionMetered() {
-        final Meter meter = registry.add(MetricName.name(InstrumentedResource.class,
-                                                         "exceptionMetered", "exceptions"),
+        final Meter meter = registry.add(Metrics.name(InstrumentedResource.class,
+                                                      "exceptionMetered", "exceptions"),
                                          new Meter("blah"));
         
         assertThat(resource().path("exception-metered").get(String.class),

@@ -1,12 +1,11 @@
 package com.yammer.metrics.reporting.tests;
 
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.*;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
 import com.yammer.metrics.stats.Snapshot;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -16,7 +15,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractPollingReporterTest {
 
@@ -39,7 +39,7 @@ public abstract class AbstractPollingReporterTest {
         final T metric = action.call();
         try {
             // Add the metric to the registry, run the reporter and flush the result
-            registry.add(MetricName.name(Object.class, "metric"), metric);
+            registry.add(Metrics.name(Object.class, "metric"), metric);
             reporter.run();
             out.flush();
             final String[] lines = out.toString().split("\r?\n|\r");
@@ -159,20 +159,6 @@ public abstract class AbstractPollingReporterTest {
         final Meter mock = mock(Meter.class);
         setupMeteredMock(mock);
         return mock;
-    }
-
-    static abstract class MetricsProcessorAction implements Answer<Object> {
-        @Override
-        public Object answer(InvocationOnMock invocation) throws Throwable {
-            @SuppressWarnings("unchecked")
-            final MetricProcessor<Object> processor = (MetricProcessor<Object>) invocation.getArguments()[0];
-            final MetricName name = (MetricName) invocation.getArguments()[1];
-            final Object context = invocation.getArguments()[2];
-            delegateToProcessor(processor, name, context);
-            return null;
-        }
-
-        abstract void delegateToProcessor(MetricProcessor<Object> processor, MetricName name, Object context) throws Exception;
     }
 
     static void setupSummarizableMock(Summarizable summarizable) {

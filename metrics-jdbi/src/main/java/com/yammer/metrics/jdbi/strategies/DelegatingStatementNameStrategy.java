@@ -1,6 +1,5 @@
 package com.yammer.metrics.jdbi.strategies;
 
-import com.yammer.metrics.core.MetricName;
 import org.skife.jdbi.v2.StatementContext;
 
 import java.util.ArrayList;

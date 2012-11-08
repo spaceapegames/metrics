@@ -21,25 +21,25 @@ public class InstrumentedSelectChannelConnector extends SelectChannelConnector {
                                               int port) {
         super();
         setPort(port);
-        this.duration = registry.add(MetricName.name(SelectChannelConnector.class,
-                                                     "connection-duration",
-                                                     Integer.toString(port)),
+        this.duration = registry.add(Metrics.name(SelectChannelConnector.class,
+                                                  "connection-duration",
+                                                  Integer.toString(port)),
                                      new Timer());
-        this.accepts = registry.add(MetricName.name(SelectChannelConnector.class,
-                                                    "accepts",
-                                                    Integer.toString(port)),
+        this.accepts = registry.add(Metrics.name(SelectChannelConnector.class,
+                                                 "accepts",
+                                                 Integer.toString(port)),
                                     new Meter("connections"));
-        this.connects = registry.add(MetricName.name(SelectChannelConnector.class,
-                                                     "connects",
-                                                     Integer.toString(port)),
+        this.connects = registry.add(Metrics.name(SelectChannelConnector.class,
+                                                  "connects",
+                                                  Integer.toString(port)),
                                      new Meter("connections"));
-        this.disconnects = registry.add(MetricName.name(SelectChannelConnector.class,
-                                                        "disconnects",
-                                                        Integer.toString(port)),
+        this.disconnects = registry.add(Metrics.name(SelectChannelConnector.class,
+                                                     "disconnects",
+                                                     Integer.toString(port)),
                                         new Meter("connections"));
-        this.connections = registry.add(MetricName.name(SelectChannelConnector.class,
-                                                        "active-connections",
-                                                        Integer.toString(port)),
+        this.connections = registry.add(Metrics.name(SelectChannelConnector.class,
+                                                     "active-connections",
+                                                     Integer.toString(port)),
                                         new Counter());
     }
 

@@ -20,25 +20,25 @@ public class InstrumentedSslSocketConnector extends SslSocketConnector {
     public InstrumentedSslSocketConnector(MetricRegistry registry, int port) {
         super();
         setPort(port);
-        this.duration = registry.add(MetricName.name(SslSocketConnector.class,
-                                                     "connection-duration",
-                                                     Integer.toString(port)),
+        this.duration = registry.add(Metrics.name(SslSocketConnector.class,
+                                                  "connection-duration",
+                                                  Integer.toString(port)),
                                      new Timer());
-        this.accepts = registry.add(MetricName.name(SslSocketConnector.class,
-                                                    "accepts",
-                                                    Integer.toString(port)),
+        this.accepts = registry.add(Metrics.name(SslSocketConnector.class,
+                                                 "accepts",
+                                                 Integer.toString(port)),
                                     new Meter("connections"));
-        this.connects = registry.add(MetricName.name(SslSocketConnector.class,
-                                                     "connects",
-                                                     Integer.toString(port)),
+        this.connects = registry.add(Metrics.name(SslSocketConnector.class,
+                                                  "connects",
+                                                  Integer.toString(port)),
                                      new Meter("connections"));
-        this.disconnects = registry.add(MetricName.name(SslSocketConnector.class,
-                                                        "disconnects",
-                                                        Integer.toString(port)),
+        this.disconnects = registry.add(Metrics.name(SslSocketConnector.class,
+                                                     "disconnects",
+                                                     Integer.toString(port)),
                                         new Meter("connections"));
-        this.connections = registry.add(MetricName.name(SslSocketConnector.class,
-                                                        "active-connections",
-                                                        Integer.toString(port)),
+        this.connections = registry.add(Metrics.name(SslSocketConnector.class,
+                                                     "active-connections",
+                                                     Integer.toString(port)),
                                         new Counter());
     }
 

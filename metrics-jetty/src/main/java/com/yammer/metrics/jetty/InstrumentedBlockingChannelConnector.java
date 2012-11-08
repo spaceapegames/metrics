@@ -21,25 +21,25 @@ public class InstrumentedBlockingChannelConnector extends BlockingChannelConnect
                                                 int port) {
         super();
         setPort(port);
-        this.duration = registry.add(MetricName.name(BlockingChannelConnector.class,
-                                                     "connection-duration",
-                                                     Integer.toString(port)),
+        this.duration = registry.add(Metrics.name(BlockingChannelConnector.class,
+                                                  "connection-duration",
+                                                  Integer.toString(port)),
                                      new Timer());
-        this.accepts = registry.add(MetricName.name(BlockingChannelConnector.class,
-                                                    "accepts",
-                                                    Integer.toString(port)),
+        this.accepts = registry.add(Metrics.name(BlockingChannelConnector.class,
+                                                 "accepts",
+                                                 Integer.toString(port)),
                                     new Meter("connections"));
-        this.connects = registry.add(MetricName.name(BlockingChannelConnector.class,
-                                                     "connects",
-                                                     Integer.toString(port)),
+        this.connects = registry.add(Metrics.name(BlockingChannelConnector.class,
+                                                  "connects",
+                                                  Integer.toString(port)),
                                      new Meter("connections"));
-        this.disconnects = registry.add(MetricName.name(BlockingChannelConnector.class,
-                                                        "disconnects",
-                                                        Integer.toString(port)),
+        this.disconnects = registry.add(Metrics.name(BlockingChannelConnector.class,
+                                                     "disconnects",
+                                                     Integer.toString(port)),
                                         new Meter("connections"));
-        this.connections = registry.add(MetricName.name(BlockingChannelConnector.class,
-                                                        "active-connections",
-                                                        Integer.toString(port)),
+        this.connections = registry.add(Metrics.name(BlockingChannelConnector.class,
+                                                     "active-connections",
+                                                     Integer.toString(port)),
                                         new Counter());
     }
 

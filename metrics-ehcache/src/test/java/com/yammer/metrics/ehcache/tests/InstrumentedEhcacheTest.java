@@ -1,6 +1,6 @@
 package com.yammer.metrics.ehcache.tests;
 
-import com.yammer.metrics.core.MetricName;
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.ehcache.InstrumentedEhcache;
@@ -38,7 +38,7 @@ public class InstrumentedEhcacheTest {
     public void measuresGets() throws Exception {
         cache.get("woo");
 
-        final Timer gets = REGISTRY.add(MetricName.name(Cache.class, "get", "test"),
+        final Timer gets = REGISTRY.add(Metrics.name(Cache.class, "get", "test"),
                                         (Timer) null);
 
         assertThat(gets.getCount(), is(1L));
@@ -49,7 +49,7 @@ public class InstrumentedEhcacheTest {
     public void measuresPuts() throws Exception {
         cache.put(new Element("woo", "whee"));
 
-        final Timer puts = REGISTRY.add(MetricName.name(Cache.class, "put", "test"),
+        final Timer puts = REGISTRY.add(Metrics.name(Cache.class, "put", "test"),
                                         (Timer) null);
 
         assertThat(puts.getCount(), is(1L));

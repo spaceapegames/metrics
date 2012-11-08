@@ -128,7 +128,7 @@ public class CsvReporter extends AbstractPollingReporter implements
     }
 
     /**
-     * Returns an opened {@link PrintStream} for the given {@link MetricName} which outputs data
+     * Returns an opened {@link PrintStream} for the given metric name which outputs data
      * to a metric-specific {@code .csv} file in the output directory.
      *
      * @param metricName    the name of the metric

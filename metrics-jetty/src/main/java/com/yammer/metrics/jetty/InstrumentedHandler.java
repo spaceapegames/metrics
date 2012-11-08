@@ -61,25 +61,25 @@ public class InstrumentedHandler extends HandlerWrapper {
     public InstrumentedHandler(Handler underlying, MetricRegistry registry) {
         super();
         final Class<?> klass = underlying.getClass();
-        this.dispatches = registry.add(MetricName.name(klass, "dispatches"), new Timer());
-        this.requests = registry.add(MetricName.name(klass, "requests"), new Meter("requests"));
-        this.resumes = registry.add(MetricName.name(klass, "resumes"), new Meter("requests"));
-        this.suspends = registry.add(MetricName.name(klass, "suspends"), new Meter("requests"));
-        this.expires = registry.add(MetricName.name(klass, "expires"), new Meter("requests"));
+        this.dispatches = registry.add(Metrics.name(klass, "dispatches"), new Timer());
+        this.requests = registry.add(Metrics.name(klass, "requests"), new Meter("requests"));
+        this.resumes = registry.add(Metrics.name(klass, "resumes"), new Meter("requests"));
+        this.suspends = registry.add(Metrics.name(klass, "suspends"), new Meter("requests"));
+        this.expires = registry.add(Metrics.name(klass, "expires"), new Meter("requests"));
 
-        this.activeRequests = registry.add(MetricName.name(klass, "active-requests"), new Counter());
-        this.activeSuspendedRequests = registry.add(MetricName.name(klass, "active-suspended-requests"), new Counter());
-        this.activeDispatches = registry.add(MetricName.name(klass, "active-dispatches"), new Counter());
+        this.activeRequests = registry.add(Metrics.name(klass, "active-requests"), new Counter());
+        this.activeSuspendedRequests = registry.add(Metrics.name(klass, "active-suspended-requests"), new Counter());
+        this.activeDispatches = registry.add(Metrics.name(klass, "active-dispatches"), new Counter());
 
         this.responses = new Meter[]{
-                registry.add(MetricName.name(klass, "1xx-responses"), new Meter("responses")), // 1xx
-                registry.add(MetricName.name(klass, "2xx-responses"), new Meter("responses")), // 2xx
-                registry.add(MetricName.name(klass, "3xx-responses"), new Meter("responses")), // 3xx
-                registry.add(MetricName.name(klass, "4xx-responses"), new Meter("responses")), // 4xx
-                registry.add(MetricName.name(klass, "5xx-responses"), new Meter("responses"))  // 5xx
+                registry.add(Metrics.name(klass, "1xx-responses"), new Meter("responses")), // 1xx
+                registry.add(Metrics.name(klass, "2xx-responses"), new Meter("responses")), // 2xx
+                registry.add(Metrics.name(klass, "3xx-responses"), new Meter("responses")), // 3xx
+                registry.add(Metrics.name(klass, "4xx-responses"), new Meter("responses")), // 4xx
+                registry.add(Metrics.name(klass, "5xx-responses"), new Meter("responses"))  // 5xx
         };
 
-        registry.add(MetricName.name(klass, "percent-4xx-1m"),
+        registry.add(Metrics.name(klass, "percent-4xx-1m"),
                      new RatioGauge() {
                          @Override
                          protected double getNumerator() {
@@ -92,7 +92,7 @@ public class InstrumentedHandler extends HandlerWrapper {
                          }
                      });
 
-        registry.add(MetricName.name(klass, "percent-4xx-5m"),
+        registry.add(Metrics.name(klass, "percent-4xx-5m"),
                      new RatioGauge() {
                          @Override
                          protected double getNumerator() {
@@ -105,7 +105,7 @@ public class InstrumentedHandler extends HandlerWrapper {
                          }
                      });
 
-        registry.add(MetricName.name(klass, "percent-4xx-15m"),
+        registry.add(Metrics.name(klass, "percent-4xx-15m"),
                      new RatioGauge() {
                          @Override
                          protected double getNumerator() {
@@ -118,7 +118,7 @@ public class InstrumentedHandler extends HandlerWrapper {
                          }
                      });
 
-        registry.add(MetricName.name(klass, "percent-5xx-1m"),
+        registry.add(Metrics.name(klass, "percent-5xx-1m"),
                      new RatioGauge() {
                          @Override
                          protected double getNumerator() {
@@ -131,7 +131,7 @@ public class InstrumentedHandler extends HandlerWrapper {
                          }
                      });
 
-        registry.add(MetricName.name(klass, "percent-5xx-5m"),
+        registry.add(Metrics.name(klass, "percent-5xx-5m"),
                      new RatioGauge() {
                          @Override
                          protected double getNumerator() {
@@ -144,7 +144,7 @@ public class InstrumentedHandler extends HandlerWrapper {
                          }
                      });
 
-        registry.add(MetricName.name(klass, "percent-5xx-15m"),
+        registry.add(Metrics.name(klass, "percent-5xx-15m"),
                      new RatioGauge() {
                          @Override
                          protected double getNumerator() {
@@ -173,16 +173,16 @@ public class InstrumentedHandler extends HandlerWrapper {
             }
         };
 
-        this.getRequests = registry.add(MetricName.name(klass, "get-requests"), new Timer());
-        this.postRequests = registry.add(MetricName.name(klass, "post-requests"), new Timer());
-        this.headRequests = registry.add(MetricName.name(klass, "head-requests"), new Timer());
-        this.putRequests = registry.add(MetricName.name(klass, "put-requests"), new Timer());
-        this.deleteRequests = registry.add(MetricName.name(klass, "delete-requests"), new Timer());
-        this.optionsRequests = registry.add(MetricName.name(klass, "options-requests"), new Timer());
-        this.traceRequests = registry.add(MetricName.name(klass, "trace-requests"), new Timer());
-        this.connectRequests = registry.add(MetricName.name(klass, "connect-requests"), new Timer());
-        this.patchRequests = registry.add(MetricName.name(klass, "patch-requests"), new Timer());
-        this.otherRequests = registry.add(MetricName.name(klass, "other-requests"), new Timer());
+        this.getRequests = registry.add(Metrics.name(klass, "get-requests"), new Timer());
+        this.postRequests = registry.add(Metrics.name(klass, "post-requests"), new Timer());
+        this.headRequests = registry.add(Metrics.name(klass, "head-requests"), new Timer());
+        this.putRequests = registry.add(Metrics.name(klass, "put-requests"), new Timer());
+        this.deleteRequests = registry.add(Metrics.name(klass, "delete-requests"), new Timer());
+        this.optionsRequests = registry.add(Metrics.name(klass, "options-requests"), new Timer());
+        this.traceRequests = registry.add(Metrics.name(klass, "trace-requests"), new Timer());
+        this.connectRequests = registry.add(Metrics.name(klass, "connect-requests"), new Timer());
+        this.patchRequests = registry.add(Metrics.name(klass, "patch-requests"), new Timer());
+        this.otherRequests = registry.add(Metrics.name(klass, "other-requests"), new Timer());
 
         setHandler(underlying);
     }

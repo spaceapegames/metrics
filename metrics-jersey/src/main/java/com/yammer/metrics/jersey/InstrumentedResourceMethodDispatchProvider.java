@@ -4,6 +4,7 @@ import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.model.AbstractResourceMethod;
 import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.annotation.ExceptionMetered;
 import com.yammer.metrics.annotation.Metered;
 import com.yammer.metrics.annotation.Timed;
@@ -98,39 +99,38 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
 
         if (method.getMethod().isAnnotationPresent(Timed.class)) {
             final Timed annotation = method.getMethod().getAnnotation(Timed.class);
-            final String name = MetricName.forTimedMethod(method.getDeclaringResource().getResourceClass(),
-                                                          method.getMethod(),
-                                                          annotation);
-            final Timer timer = registry.add(name,
-                                             new Timer(annotation.durationUnit(),
-                                                       annotation.rateUnit()));
+            final String name = chooseName(annotation.name(), method);
+            final Timer timer = registry.add(name, new Timer(annotation.durationUnit(),
+                                                             annotation.rateUnit()));
             dispatcher = new TimedRequestDispatcher(dispatcher, timer);
         }
 
         if (method.getMethod().isAnnotationPresent(Metered.class)) {
             final Metered annotation = method.getMethod().getAnnotation(Metered.class);
-            final String name = MetricName.forMeteredMethod(method.getDeclaringResource()
-                                                                  .getResourceClass(),
-                                                            method.getMethod(),
-                                                            annotation);
-            final Meter meter = registry.add(name,
-                                             new Meter(annotation.eventType(),
-                                                       annotation.rateUnit()));
+            final String name = chooseName(annotation.name(), method);
+            final Meter meter = registry.add(name, new Meter(annotation.eventType(),
+                                                             annotation.rateUnit()));
             dispatcher = new MeteredRequestDispatcher(dispatcher, meter);
         }
 
         if (method.getMethod().isAnnotationPresent(ExceptionMetered.class)) {
             final ExceptionMetered annotation = method.getMethod().getAnnotation(ExceptionMetered.class);
-            final String name = MetricName.forExceptionMeteredMethod(method.getDeclaringResource()
-                                                                           .getResourceClass(),
-                                                                     method.getMethod(),
-                                                                     annotation);
-            final Meter meter = registry.add(name,
-                                             new Meter(annotation.eventType(),
-                                                       annotation.rateUnit()));
+            final String name = chooseName(annotation.name(),
+                                           method,
+                                           ExceptionMetered.DEFAULT_NAME_SUFFIX);
+            final Meter meter = registry.add(name, new Meter(annotation.eventType(),
+                                                             annotation.rateUnit()));
             dispatcher = new ExceptionMeteredRequestDispatcher(dispatcher, meter, annotation.cause());
         }
 
         return dispatcher;
+    }
+
+    private String chooseName(String explicitName, AbstractResourceMethod method, String... suffixes) {
+        if (explicitName != null && !explicitName.isEmpty()) {
+            return explicitName;
+        }
+        return Metrics.name(Metrics.name(method.getDeclaringResource().getResourceClass(),
+                                         method.getMethod().getName()), suffixes);
     }
 }

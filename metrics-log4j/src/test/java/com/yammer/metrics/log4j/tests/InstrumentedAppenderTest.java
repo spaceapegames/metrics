@@ -1,7 +1,7 @@
 package com.yammer.metrics.log4j.tests;
 
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.log4j.InstrumentedAppender;
 import org.apache.log4j.Appender;
@@ -31,19 +31,19 @@ public class InstrumentedAppenderTest {
         when(event.getLevel()).thenReturn(Level.INFO);
 
         final MetricRegistry registry = mock(MetricRegistry.class);
-        when(registry.add(eq(MetricName.name(Appender.class, "all")),
+        when(registry.add(eq(Metrics.name(Appender.class, "all")),
                           any(Meter.class))).thenReturn(all);
-        when(registry.add(eq(MetricName.name(Appender.class, "trace")),
+        when(registry.add(eq(Metrics.name(Appender.class, "trace")),
                           any(Meter.class))).thenReturn(trace);
-        when(registry.add(eq(MetricName.name(Appender.class, "debug")),
+        when(registry.add(eq(Metrics.name(Appender.class, "debug")),
                           any(Meter.class))).thenReturn(debug);
-        when(registry.add(eq(MetricName.name(Appender.class, "info")),
+        when(registry.add(eq(Metrics.name(Appender.class, "info")),
                           any(Meter.class))).thenReturn(info);
-        when(registry.add(eq(MetricName.name(Appender.class, "warn")),
+        when(registry.add(eq(Metrics.name(Appender.class, "warn")),
                           any(Meter.class))).thenReturn(warn);
-        when(registry.add(eq(MetricName.name(Appender.class, "error")),
+        when(registry.add(eq(Metrics.name(Appender.class, "error")),
                           any(Meter.class))).thenReturn(error);
-        when(registry.add(eq(MetricName.name(Appender.class, "fatal")),
+        when(registry.add(eq(Metrics.name(Appender.class, "fatal")),
                           any(Meter.class))).thenReturn(fatal);
 
         this.instrumented = new InstrumentedAppender(registry);

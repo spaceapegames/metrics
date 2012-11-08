@@ -2,7 +2,6 @@ package com.yammer.metrics.httpclient;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.MetricRegistry;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.DnsResolver;
@@ -45,28 +44,28 @@ public class InstrumentedClientConnManager extends PoolingClientConnectionManage
                                          DnsResolver dnsResolver) {
         super(schemeRegistry, connTTL, connTTLTimeUnit, dnsResolver);
         final Class<?> klass = ClientConnectionManager.class;
-        metricRegistry.add(MetricName.name(klass, "available-connections"), new Gauge<Integer>() {
+        metricRegistry.add(Metrics.name(klass, "available-connections"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 // this acquires a lock on the connection pool; remove if contention sucks
                 return getTotalStats().getAvailable();
             }
         });
-        metricRegistry.add(MetricName.name(klass, "leased-connections"), new Gauge<Integer>() {
+        metricRegistry.add(Metrics.name(klass, "leased-connections"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 // this acquires a lock on the connection pool; remove if contention sucks
                 return getTotalStats().getLeased();
             }
         });
-        metricRegistry.add(MetricName.name(klass, "max-connections"), new Gauge<Integer>() {
+        metricRegistry.add(Metrics.name(klass, "max-connections"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 // this acquires a lock on the connection pool; remove if contention sucks
                 return getTotalStats().getMax();
             }
         });
-        metricRegistry.add(MetricName.name(klass, "pending-connections"), new Gauge<Integer>() {
+        metricRegistry.add(Metrics.name(klass, "pending-connections"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 // this acquires a lock on the connection pool; remove if contention sucks

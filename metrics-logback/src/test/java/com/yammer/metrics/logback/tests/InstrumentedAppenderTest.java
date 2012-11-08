@@ -3,9 +3,8 @@ package com.yammer.metrics.logback.tests;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.logback.InstrumentedAppender;
 import org.junit.After;
@@ -34,17 +33,17 @@ public class InstrumentedAppenderTest {
         when(event.getLevel()).thenReturn(Level.INFO);
 
         final MetricRegistry registry = mock(MetricRegistry.class);
-        when(registry.add(eq(MetricName.name(Appender.class, "all")),
+        when(registry.add(eq(Metrics.name(Appender.class, "all")),
                           any(Meter.class))).thenReturn(all);
-        when(registry.add(eq(MetricName.name(Appender.class, "trace")),
+        when(registry.add(eq(Metrics.name(Appender.class, "trace")),
                           any(Meter.class))).thenReturn(trace);
-        when(registry.add(eq(MetricName.name(Appender.class, "debug")),
+        when(registry.add(eq(Metrics.name(Appender.class, "debug")),
                           any(Meter.class))).thenReturn(debug);
-        when(registry.add(eq(MetricName.name(Appender.class, "info")),
+        when(registry.add(eq(Metrics.name(Appender.class, "info")),
                           any(Meter.class))).thenReturn(info);
-        when(registry.add(eq(MetricName.name(Appender.class, "warn")),
+        when(registry.add(eq(Metrics.name(Appender.class, "warn")),
                           any(Meter.class))).thenReturn(warn);
-        when(registry.add(eq(MetricName.name(Appender.class, "error")),
+        when(registry.add(eq(Metrics.name(Appender.class, "error")),
                           any(Meter.class))).thenReturn(error);
 
         this.instrumented = new InstrumentedAppender(registry);

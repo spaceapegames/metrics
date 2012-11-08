@@ -1,6 +1,6 @@
 package com.yammer.metrics.jdbi.strategies;
 
-import com.yammer.metrics.core.MetricName;
+import com.yammer.metrics.Metrics;
 
 import java.util.regex.Pattern;
 
@@ -11,9 +11,9 @@ public class StatementName {
     private static final Pattern JMX_SAFE_CHARS = Pattern.compile("[^a-zA-Z0-9_\\.-]");
 
     public static String getJmxSafeName(String groupName, String typeName, String statementName) {
-        return MetricName.name(getJmxSafeName(groupName),
-                               getJmxSafeName(typeName),
-                               getJmxSafeName(statementName));
+        return Metrics.name(getJmxSafeName(groupName),
+                            getJmxSafeName(typeName),
+                            getJmxSafeName(statementName));
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.yammer.metrics.jdbi.strategies;
 
-import com.yammer.metrics.core.MetricName;
+import com.yammer.metrics.Metrics;
 import org.skife.jdbi.v2.ClasspathStatementLocator;
 import org.skife.jdbi.v2.StatementContext;
 
@@ -19,12 +19,12 @@ public final class NameStrategies {
     /**
      * An empty SQL statement.
      */
-    private static final String EMPTY_SQL = MetricName.name("sql", "empty", "");
+    private static final String EMPTY_SQL = Metrics.name("sql", "empty", "");
 
     /**
      * Unknown SQL.
      */
-    static final String UNKNOWN_SQL = MetricName.name("sql", "unknown", "");
+    static final String UNKNOWN_SQL = Metrics.name("sql", "unknown", "");
 
     /**
      * Context attribute name for the metric class.
