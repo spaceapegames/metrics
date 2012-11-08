@@ -11,13 +11,8 @@ public class RatioGaugeTest {
     public void calculatesTheRatioOfTheNumeratorToTheDenominator() throws Exception {
         final RatioGauge regular = new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return 2;
-            }
-
-            @Override
-            protected double getDenominator() {
-                return 4;
+            protected Ratio getRatio() {
+                return Ratio.of(2, 4);
             }
         };
 
@@ -29,13 +24,8 @@ public class RatioGaugeTest {
     public void handlesDivideByZeroIssues() throws Exception {
         final RatioGauge divByZero = new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return 100;
-            }
-
-            @Override
-            protected double getDenominator() {
-                return 0;
+            protected Ratio getRatio() {
+                return Ratio.of(100, 0);
             }
         };
 
@@ -47,13 +37,8 @@ public class RatioGaugeTest {
     public void handlesInfiniteDenominators() throws Exception {
         final RatioGauge infinite = new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return 10;
-            }
-
-            @Override
-            protected double getDenominator() {
-                return Double.POSITIVE_INFINITY;
+            protected Ratio getRatio() {
+                return Ratio.of(10, Double.POSITIVE_INFINITY);
             }
         };
         
@@ -65,13 +50,8 @@ public class RatioGaugeTest {
     public void handlesNaNDenominators() throws Exception {
         final RatioGauge nan = new RatioGauge() {
             @Override
-            protected double getNumerator() {
-                return 10;
-            }
-
-            @Override
-            protected double getDenominator() {
-                return Double.NaN;
+            protected Ratio getRatio() {
+                return Ratio.of(10, Double.NaN);
             }
         };
         

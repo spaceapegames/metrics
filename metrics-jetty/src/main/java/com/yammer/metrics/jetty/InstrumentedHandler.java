@@ -82,78 +82,54 @@ public class InstrumentedHandler extends HandlerWrapper {
         registry.add(Metrics.name(klass, "percent-4xx-1m"),
                      new RatioGauge() {
                          @Override
-                         protected double getNumerator() {
-                             return responses[3].getOneMinuteRate();
-                         }
-
-                         @Override
-                         protected double getDenominator() {
-                             return requests.getOneMinuteRate();
+                         protected Ratio getRatio() {
+                             return Ratio.of(responses[3].getOneMinuteRate(),
+                                             requests.getOneMinuteRate());
                          }
                      });
 
         registry.add(Metrics.name(klass, "percent-4xx-5m"),
                      new RatioGauge() {
                          @Override
-                         protected double getNumerator() {
-                             return responses[3].getFiveMinuteRate();
-                         }
-
-                         @Override
-                         protected double getDenominator() {
-                             return requests.getFiveMinuteRate();
+                         protected Ratio getRatio() {
+                             return Ratio.of(responses[3].getFiveMinuteRate(),
+                                             requests.getFiveMinuteRate());
                          }
                      });
 
         registry.add(Metrics.name(klass, "percent-4xx-15m"),
                      new RatioGauge() {
                          @Override
-                         protected double getNumerator() {
-                             return responses[3].getFifteenMinuteRate();
-                         }
-
-                         @Override
-                         protected double getDenominator() {
-                             return requests.getFifteenMinuteRate();
+                         protected Ratio getRatio() {
+                             return Ratio.of(responses[3].getFifteenMinuteRate(),
+                                             requests.getFifteenMinuteRate());
                          }
                      });
 
         registry.add(Metrics.name(klass, "percent-5xx-1m"),
                      new RatioGauge() {
                          @Override
-                         protected double getNumerator() {
-                             return responses[4].getOneMinuteRate();
-                         }
-
-                         @Override
-                         protected double getDenominator() {
-                             return requests.getOneMinuteRate();
+                         protected Ratio getRatio() {
+                             return Ratio.of(responses[4].getOneMinuteRate(),
+                                             requests.getOneMinuteRate());
                          }
                      });
 
         registry.add(Metrics.name(klass, "percent-5xx-5m"),
                      new RatioGauge() {
                          @Override
-                         protected double getNumerator() {
-                             return responses[4].getFiveMinuteRate();
-                         }
-
-                         @Override
-                         protected double getDenominator() {
-                             return requests.getFiveMinuteRate();
+                         protected Ratio getRatio() {
+                             return Ratio.of(responses[4].getFiveMinuteRate(),
+                                             requests.getFiveMinuteRate());
                          }
                      });
 
         registry.add(Metrics.name(klass, "percent-5xx-15m"),
                      new RatioGauge() {
                          @Override
-                         protected double getNumerator() {
-                             return responses[4].getFifteenMinuteRate();
-                         }
-
-                         @Override
-                         protected double getDenominator() {
-                             return requests.getFifteenMinuteRate();
+                         protected Ratio getRatio() {
+                             return Ratio.of(responses[4].getFifteenMinuteRate(),
+                                             requests.getFifteenMinuteRate());
                          }
                      });
 

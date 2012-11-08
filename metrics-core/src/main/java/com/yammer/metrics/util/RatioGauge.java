@@ -11,28 +11,32 @@ import static java.lang.Double.isNaN;
  * If the denominator is zero, not a number, or infinite, the resulting ratio is not a number.
  */
 public abstract class RatioGauge implements Gauge<Double> {
-    /**
-     * Returns the numerator (the value on the top half of the fraction or the left-hand side of the
-     * ratio).
-     *
-     * @return the numerator
-     */
-    protected abstract double getNumerator();
+    public static class Ratio {
+        public static Ratio of(double numerator, double denominator) {
+            return new Ratio(numerator, denominator);
+        }
 
-    /**
-     * Returns the denominator (the value on the bottom half of the fraction or the right-hand side
-     * of the ratio).
-     *
-     * @return the denominator
-     */
-    protected abstract double getDenominator();
+        private final double numerator;
+        private final double denominator;
+
+        private Ratio(double numerator, double denominator) {
+            this.numerator = numerator;
+            this.denominator = denominator;
+        }
+
+        public double getValue() {
+            final double d = denominator;
+            if (isNaN(d) || isInfinite(d) || d == 0) {
+                return Double.NaN;
+            }
+            return numerator / d;
+        }
+    }
+
+    protected abstract Ratio getRatio();
 
     @Override
     public Double getValue() {
-        final double d = getDenominator();
-        if (isNaN(d) || isInfinite(d) || d == 0.0) {
-            return Double.NaN;
-        }
-        return getNumerator() / d;
+        return getRatio().getValue();
     }
 }
