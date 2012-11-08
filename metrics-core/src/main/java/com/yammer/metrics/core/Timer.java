@@ -54,7 +54,6 @@ public class Timer implements Metered, Sampling, Summarizable {
         this.rateUnit = rateUnit;
         this.meter = new Meter("calls", rateUnit, clock);
         this.clock = clock;
-        clear();
     }
 
     /**
@@ -69,13 +68,6 @@ public class Timer implements Metered, Sampling, Summarizable {
     @Override
     public TimeUnit getRateUnit() {
         return rateUnit;
-    }
-
-    /**
-     * Clears all recorded durations.
-     */
-    public void clear() {
-        histogram.clear();
     }
 
     /**
