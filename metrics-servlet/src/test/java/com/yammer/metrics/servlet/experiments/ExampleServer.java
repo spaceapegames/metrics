@@ -1,38 +1,33 @@
 package com.yammer.metrics.servlet.experiments;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Gauge;
-import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.jetty.InstrumentedHandler;
+import com.yammer.metrics.jetty.InstrumentedQueuedThreadPool;
+import com.yammer.metrics.jetty.InstrumentedSelectChannelConnector;
+import com.yammer.metrics.servlet.AdminServlet;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
-import com.yammer.metrics.jetty.InstrumentedHandler;
-import com.yammer.metrics.jetty.InstrumentedQueuedThreadPool;
-import com.yammer.metrics.jetty.InstrumentedSelectChannelConnector;
-import com.yammer.metrics.servlet.AdminServlet;
-
 public class ExampleServer {
-    private static final MetricRegistry REGISTRY = Metrics.defaultRegistry();
-    private static final Counter COUNTER_1 = REGISTRY.add(Metrics.name(ExampleServer.class,
-                                                                       "wah",
-                                                                       "doody"),
-                                                          new Counter());
-    private static final Counter COUNTER_2 = REGISTRY.add(Metrics.name(ExampleServer.class,
-                                                                       "woo"),
-                                                          new Counter());
+    private static final Counter COUNTER_1 = Metrics.add(Metrics.name(ExampleServer.class,
+                                                                      "wah",
+                                                                      "doody"),
+                                                         new Counter());
+    private static final Counter COUNTER_2 = Metrics.add(Metrics.name(ExampleServer.class, "woo"),
+                                                         new Counter());
 
     static {
-        Metrics.defaultRegistry()
-               .add(Metrics.name(ExampleServer.class, "boo"), new Gauge<Integer>() {
-                   @Override
-                   public Integer getValue() {
-                       throw new RuntimeException("asplode!");
-                   }
-               });
+        Metrics.add(Metrics.name(ExampleServer.class, "boo"), new Gauge<Integer>() {
+            @Override
+            public Integer getValue() {
+                throw new RuntimeException("asplode!");
+            }
+        });
     }
 
     public static void main(String[] args) throws Exception {

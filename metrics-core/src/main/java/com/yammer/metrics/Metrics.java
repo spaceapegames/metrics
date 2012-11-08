@@ -1,5 +1,6 @@
 package com.yammer.metrics;
 
+import com.yammer.metrics.core.Metric;
 import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.reporting.JmxReporter;
 
@@ -25,6 +26,13 @@ public class Metrics {
         return DEFAULT_REGISTRY;
     }
 
+    public static <T extends Metric> T add(String name, T metric) {
+        return DEFAULT_REGISTRY.add(name, metric);
+    }
+
+    public static boolean remove(String name) {
+        return DEFAULT_REGISTRY.remove(name);
+    }
 
     public static String name(String name, String... names) {
         final StringBuilder builder = new StringBuilder();

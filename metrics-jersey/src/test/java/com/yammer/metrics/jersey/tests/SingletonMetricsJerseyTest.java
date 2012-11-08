@@ -49,8 +49,7 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
                                           new Timer());
         final Timer timer2 = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
                                           new Timer());
-        final Timer timer3 = Metrics.defaultRegistry()
-                                    .add(Metrics.name(InstrumentedResource.class, "timed"),
+        final Timer timer3 = Metrics.add(Metrics.name(InstrumentedResource.class, "timed"),
                                          new Timer());
 
         assertThat(timer1, sameInstance(timer2));

@@ -8,7 +8,7 @@ import com.yammer.metrics.Metrics.name
 
 class TimerSpec extends Spec {
   class `A timer` {
-    val metric = Metrics.defaultRegistry().add(name(classOf[TimerSpec], "timer"), new com.yammer.metrics.core.Timer())
+    val metric = Metrics.add(name(classOf[TimerSpec], "timer"), new com.yammer.metrics.core.Timer())
     val timer = new Timer(metric)
 
     @Test def `updates the underlying metric` = {

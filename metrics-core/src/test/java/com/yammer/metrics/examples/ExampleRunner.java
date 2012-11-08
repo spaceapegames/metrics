@@ -3,24 +3,22 @@ package com.yammer.metrics.examples;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Histogram;
-import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.reporting.ConsoleReporter;
 
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static com.yammer.metrics.Metrics.name;
+
 public class ExampleRunner {
     private static final int WORKER_COUNT = 10;
     private static final BlockingQueue<File> JOBS = new LinkedBlockingQueue<File>();
     private static final ExecutorService POOL = Executors.newFixedThreadPool(WORKER_COUNT);
-    private static final MetricRegistry REGISTRY = Metrics.defaultRegistry();
-    private static final Counter QUEUE_DEPTH = REGISTRY.add(
-            Metrics.name(ExampleRunner.class, "queue-depth"),
-            new Counter());
-    private static final Histogram DIRECTORY_SIZE = REGISTRY.add(
-            Metrics.name(ExampleRunner.class, "directory-size"),
-            new Histogram(Histogram.SampleType.UNIFORM));
+    private static final Counter QUEUE_DEPTH = Metrics.add(name(ExampleRunner.class, "queue-depth"),
+                                                           new Counter());
+    private static final Histogram DIRECTORY_SIZE = Metrics.add(name(ExampleRunner.class, "directory-size"),
+                                                                new Histogram(Histogram.SampleType.UNIFORM));
 
     public static class Job implements Runnable {
         @Override
