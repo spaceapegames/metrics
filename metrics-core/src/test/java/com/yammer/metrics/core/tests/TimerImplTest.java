@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class TimerTest {
+public class TimerImplTest {
     private final Clock clock = new Clock() {
         // a mock clock that increments its ticker by 50msec per call
         private long val = 0;

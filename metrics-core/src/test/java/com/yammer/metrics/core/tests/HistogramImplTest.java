@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class HistogramTest {
+public class HistogramImplTest {
     private final Histogram histogram = Metrics.histogram(Histogram.SampleType.UNIFORM);
 
     @Test

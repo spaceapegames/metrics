@@ -75,23 +75,23 @@ public class Metrics {
     }
 
     public static Counter counter() {
-        return new Counter();
+        return new CounterImpl();
     }
 
     public static Histogram histogram() {
         return histogram(Histogram.SampleType.UNIFORM);
     }
 
-    public static Histogram histogram(Histogram.SampleType type) {
+    public static Histogram histogram(HistogramImpl.SampleType type) {
         return histogram(type.newSample());
     }
 
     public static Histogram histogram(Sample sample) {
-        return new Histogram(sample);
+        return new HistogramImpl(sample);
     }
 
     public static Meter meter(String eventType, TimeUnit rateUnit, Clock clock) {
-        return new Meter(eventType, rateUnit, clock);
+        return new MeterImpl(eventType, rateUnit, clock);
     }
 
     public static Meter meter(String eventType, TimeUnit rateUnit) {
@@ -107,7 +107,7 @@ public class Metrics {
     }
 
     public static Timer timer(TimeUnit durationUnit, TimeUnit rateUnit, Clock clock) {
-        return new Timer(durationUnit, rateUnit, clock);
+        return new TimerImpl(durationUnit, rateUnit, clock);
     }
 
     public static Timer timer(TimeUnit durationUnit, TimeUnit rateUnit) {

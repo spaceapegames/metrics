@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class MeterTest {
+public class MeterImplTest {
     private final Meter meter = Metrics.meter("thing");
 
     @Test

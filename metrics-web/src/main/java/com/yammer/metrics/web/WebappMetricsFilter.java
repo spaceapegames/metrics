@@ -47,8 +47,7 @@ public abstract class WebappMetricsFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         final MetricRegistry metricRegistry = getMetricsFactory(filterConfig);
 
-        this.metersByStatusCode = new ConcurrentHashMap<Integer, Meter>(meterNamesByStatusCode
-                .size());
+        this.metersByStatusCode = new ConcurrentHashMap<Integer, Meter>(meterNamesByStatusCode.size());
         for (Entry<Integer, String> entry : meterNamesByStatusCode.entrySet()) {
             metersByStatusCode.put(entry.getKey(),
                                    metricRegistry.add(Metrics.name(WebappMetricsFilter.class,

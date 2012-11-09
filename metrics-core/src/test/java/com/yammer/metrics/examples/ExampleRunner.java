@@ -20,7 +20,8 @@ public class ExampleRunner {
                                                               Metrics.counter());
     private static final Histogram DIRECTORY_SIZE = Metrics.metric(name(ExampleRunner.class,
                                                                         "directory-size"),
-                                                                   Metrics.histogram(Histogram.SampleType.UNIFORM));
+                                                                   Metrics.histogram(
+                                                                           Histogram.SampleType.UNIFORM));
 
     public static class Job implements Runnable {
         @Override
