@@ -6,17 +6,15 @@ import com.yammer.metrics.core.{MetricRegistry, Gauge}
 /**
  * A helper class for creating and registering metrics.
  */
-class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricRegistry = Metrics.defaultRegistry()) {
+class MetricsGroup(val klass: Class[_], val registry: MetricRegistry = Metrics.defaultRegistry()) {
 
   /**
    * Registers a new gauge metric.
    *
    * @param name  the name of the gauge
-   * @param scope the scope of the gauge
-   * @param registry the registry for the gauge
    */
-  def gauge[A](name: String, scope: String = null, registry: MetricRegistry = metricsRegistry)(f: => A) = {
-    registry.add(Metrics.name(klass, name, scope), new Gauge[A] {
+  def gauge[A](name: String*)(f: => A) = {
+    registry.add(Metrics.name(klass, name:_*), new Gauge[A] {
       def getValue = f
     })
   }
@@ -25,46 +23,32 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricRegistry = Me
    * Creates a new counter metric.
    *
    * @param name  the name of the counter
-   * @param scope the scope of the gauge
-   * @param registry the registry for the gauge
    */
-  def counter(name: String, scope: String = null, registry: MetricRegistry = metricsRegistry) =
-    new Counter(registry.counter(Metrics.name(klass, name, scope)))
+  def counter(name: String*) =
+    new Counter(registry.counter(Metrics.name(klass, name:_*)))
 
   /**
    * Creates a new histogram metrics.
    *
    * @param name   the name of the histogram
-   * @param scope  the scope of the histogram
-   * @param registry the registry for the gauge
    */
-  def histogram(name: String,
-                scope: String = null,
-                registry: MetricRegistry = metricsRegistry) =
-    new Histogram(registry.histogram(Metrics.name(klass, name, scope)))
+  def histogram(name: String*) =
+    new Histogram(registry.histogram(Metrics.name(klass, name:_*)))
 
   /**
    * Creates a new meter metric.
    *
    * @param name the name of the meter
-   * @param scope the scope of the meter
-   * @param registry the registry for the gauge
    */
-  def meter(name: String,
-            scope: String = null,
-            registry: MetricRegistry = metricsRegistry) =
-    new Meter(registry.meter(Metrics.name(klass, name, scope)))
+  def meter(name: String*) =
+    new Meter(registry.meter(Metrics.name(klass, name:_*)))
 
   /**
    * Creates a new timer metric.
    *
    * @param name the name of the timer
-   * @param scope the scope of the timer
-   * @param registry the registry for the gauge
    */
-  def timer(name: String,
-            scope: String = null,
-            registry: MetricRegistry = metricsRegistry) =
-    new Timer(registry.timer(Metrics.name(klass, name, scope)))
+  def timer(name: String*) =
+    new Timer(registry.timer(Metrics.name(klass, name:_*)))
 }
 

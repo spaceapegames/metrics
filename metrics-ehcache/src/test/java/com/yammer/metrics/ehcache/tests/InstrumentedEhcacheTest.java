@@ -38,7 +38,7 @@ public class InstrumentedEhcacheTest {
     public void measuresGets() throws Exception {
         cache.get("woo");
 
-        final Timer gets = REGISTRY.timer(Metrics.name(Cache.class, "get", "test"));
+        final Timer gets = REGISTRY.timer(Metrics.name(Cache.class, "test", "get"));
 
         assertThat(gets.getCount(), is(1L));
 
@@ -48,7 +48,7 @@ public class InstrumentedEhcacheTest {
     public void measuresPuts() throws Exception {
         cache.put(new Element("woo", "whee"));
 
-        final Timer puts = REGISTRY.timer(Metrics.name(Cache.class, "put", "test"));
+        final Timer puts = REGISTRY.timer(Metrics.name(Cache.class, "test", "put"));
 
         assertThat(puts.getCount(), is(1L));
     }

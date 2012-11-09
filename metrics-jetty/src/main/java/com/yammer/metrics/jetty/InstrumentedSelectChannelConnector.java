@@ -24,20 +24,20 @@ public class InstrumentedSelectChannelConnector extends SelectChannelConnector {
         super();
         setPort(port);
         this.duration = registry.timer(name(SelectChannelConnector.class,
-                                            "connection-duration",
-                                            Integer.toString(port)));
+                                            Integer.toString(port),
+                                            "connection-duration"));
         this.accepts = registry.meter(name(SelectChannelConnector.class,
-                                           "accepts",
-                                           Integer.toString(port)));
+                                           Integer.toString(port),
+                                           "accepts"));
         this.connects = registry.meter(name(SelectChannelConnector.class,
-                                            "connects",
-                                            Integer.toString(port)));
+                                            Integer.toString(port),
+                                            "connects"));
         this.disconnects = registry.meter(name(SelectChannelConnector.class,
-                                               "disconnects",
-                                               Integer.toString(port)));
+                                               Integer.toString(port),
+                                               "disconnects"));
         this.connections = registry.counter(name(SelectChannelConnector.class,
-                                                 "active-connections",
-                                                 Integer.toString(port)));
+                                                 Integer.toString(port),
+                                                 "active-connections"));
     }
 
     @Override

@@ -19,12 +19,12 @@ public final class NameStrategies {
     /**
      * An empty SQL statement.
      */
-    private static final String EMPTY_SQL = Metrics.name("sql", "empty", "");
+    private static final String EMPTY_SQL = Metrics.name("sql", "empty");
 
     /**
      * Unknown SQL.
      */
-    static final String UNKNOWN_SQL = Metrics.name("sql", "unknown", "");
+    static final String UNKNOWN_SQL = Metrics.name("sql", "unknown");
 
     /**
      * Context attribute name for the metric class.

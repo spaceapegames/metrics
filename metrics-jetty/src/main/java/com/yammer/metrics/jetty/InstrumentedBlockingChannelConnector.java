@@ -24,20 +24,20 @@ public class InstrumentedBlockingChannelConnector extends BlockingChannelConnect
         super();
         setPort(port);
         this.duration = registry.timer(name(BlockingChannelConnector.class,
-                                            "connection-duration",
-                                            Integer.toString(port)));
+                                            Integer.toString(port),
+                                            "connection-duration"));
         this.accepts = registry.meter(name(BlockingChannelConnector.class,
-                                           "accepts",
-                                           Integer.toString(port)));
+                                           Integer.toString(port),
+                                           "accepts"));
         this.connects = registry.meter(name(BlockingChannelConnector.class,
-                                            "connects",
-                                            Integer.toString(port)));
+                                            Integer.toString(port),
+                                            "connects"));
         this.disconnects = registry.meter(name(BlockingChannelConnector.class,
-                                               "disconnects",
-                                               Integer.toString(port)));
+                                               Integer.toString(port),
+                                               "disconnects"));
         this.connections = registry.counter(name(BlockingChannelConnector.class,
-                                                 "active-connections",
-                                                 Integer.toString(port)));
+                                                 Integer.toString(port),
+                                                 "active-connections"));
     }
 
     @Override

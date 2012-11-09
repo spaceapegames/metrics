@@ -26,20 +26,20 @@ public class InstrumentedSslSocketConnector extends SslSocketConnector {
         super();
         setPort(port);
         this.duration = registry.timer(name(SslSocketConnector.class,
-                                            "connection-duration",
-                                            Integer.toString(port)));
+                                            Integer.toString(port),
+                                            "connection-duration"));
         this.accepts = registry.meter(name(SslSocketConnector.class,
-                                           "accepts",
-                                           Integer.toString(port)));
+                                           Integer.toString(port),
+                                           "accepts"));
         this.connects = registry.meter(name(SslSocketConnector.class,
-                                            "connects",
-                                            Integer.toString(port)));
+                                            Integer.toString(port),
+                                            "connects"));
         this.disconnects = registry.meter(name(SslSocketConnector.class,
-                                               "disconnects",
-                                               Integer.toString(port)));
+                                               Integer.toString(port),
+                                               "disconnects"));
         this.connections = registry.counter(name(SslSocketConnector.class,
-                                                 "active-connections",
-                                                 Integer.toString(port)));
+                                                 Integer.toString(port),
+                                                 "active-connections"));
     }
 
     @Override

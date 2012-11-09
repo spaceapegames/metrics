@@ -216,7 +216,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
         cache.setStatisticsAccuracy(Statistics.STATISTICS_ACCURACY_NONE);
 
         final Class<?> klass = cache.getClass();
-        registry.add(Metrics.name(klass, "hits", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "hits"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -224,7 +224,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "in-memory-hits", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "in-memory-hits"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -232,7 +232,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "off-heap-hits", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "off-heap-hits"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -240,7 +240,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "on-disk-hits", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "on-disk-hits"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -248,7 +248,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "misses", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "misses"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -256,7 +256,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "in-memory-misses", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "in-memory-misses"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -264,7 +264,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "off-heap-misses", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "off-heap-misses"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -272,7 +272,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "on-disk-misses", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "on-disk-misses"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -280,7 +280,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "objects", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "objects"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -288,7 +288,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "in-memory-objects", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "in-memory-objects"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -296,7 +296,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "off-heap-objects", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "off-heap-objects"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -304,7 +304,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "on-disk-objects", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "on-disk-objects"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -312,7 +312,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "mean-get-time", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "mean-get-time"),
                      new Gauge<Float>() {
                          @Override
                          public Float getValue() {
@@ -320,7 +320,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "mean-search-time", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "mean-search-time"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -328,7 +328,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "eviction-count", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "eviction-count"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -336,7 +336,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "searches-per-second", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "searches-per-second"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -344,7 +344,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "writer-queue-size", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "writer-queue-size"),
                      new Gauge<Long>() {
                          @Override
                          public Long getValue() {
@@ -352,7 +352,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                          }
                      });
 
-        registry.add(Metrics.name(klass, "accuracy", cache.getName()),
+        registry.add(Metrics.name(klass, cache.getName(), "accuracy"),
                      new Gauge<String>() {
                          @Override
                          public String getValue() {
@@ -368,8 +368,8 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
 
     private InstrumentedEhcache(MetricRegistry registry, Ehcache cache) {
         super(cache);
-        this.getTimer = registry.timer(Metrics.name(cache.getClass(), "get", cache.getName()));
-        this.putTimer = registry.timer(Metrics.name(cache.getClass(), "put", cache.getName()));
+        this.getTimer = registry.timer(Metrics.name(cache.getClass(), cache.getName(), "get"));
+        this.putTimer = registry.timer(Metrics.name(cache.getClass(), cache.getName(), "put"));
     }
 
     @Override

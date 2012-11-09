@@ -24,20 +24,20 @@ public class InstrumentedSslSelectChannelConnector extends SslSelectChannelConne
         super();
         setPort(port);
         this.duration = registry.timer(name(SslSelectChannelConnector.class,
-                                            "connection-duration",
-                                            Integer.toString(port)));
+                                            Integer.toString(port),
+                                            "connection-duration"));
         this.accepts = registry.meter(name(SslSelectChannelConnector.class,
-                                           "accepts",
-                                           Integer.toString(port)));
+                                           Integer.toString(port),
+                                           "accepts"));
         this.connects = registry.meter(name(SslSelectChannelConnector.class,
-                                            "connects",
-                                            Integer.toString(port)));
+                                            Integer.toString(port),
+                                            "connects"));
         this.disconnects = registry.meter(name(SslSelectChannelConnector.class,
-                                               "disconnects",
-                                               Integer.toString(port)));
+                                               Integer.toString(port),
+                                               "disconnects"));
         this.connections = registry.counter(name(SslSelectChannelConnector.class,
-                                                 "active-connections",
-                                                 Integer.toString(port)));
+                                                 Integer.toString(port),
+                                                 "active-connections"));
     }
 
     @Override
