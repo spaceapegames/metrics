@@ -2,7 +2,6 @@ package com.yammer.metrics.core.tests;
 
 import com.yammer.metrics.core.Clock;
 import com.yammer.metrics.core.Timer;
-import com.yammer.metrics.core.TimerImpl;
 import com.yammer.metrics.stats.Snapshot;
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class TimerImplTest {
+public class TimerTest {
     private final Clock clock = new Clock() {
         // a mock clock that increments its ticker by 50msec per call
         private long val = 0;
@@ -23,7 +22,7 @@ public class TimerImplTest {
             return val += 50000000;
         }
     };
-    private final Timer timer = new TimerImpl(clock);
+    private final Timer timer = new Timer(clock);
 
     @Test
     public void aBlankTimer() throws Exception {

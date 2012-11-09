@@ -1,9 +1,7 @@
 package com.yammer.metrics.scala
 
-import java.util.concurrent.TimeUnit
 import com.yammer.metrics.Metrics
 import com.yammer.metrics.core.{MetricRegistry, Gauge}
-import com.yammer.metrics.core.Histogram.SampleType
 
 /**
  * A helper class for creating and registering metrics.

@@ -1,42 +1,62 @@
 package com.yammer.metrics.core;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * An incrementing and decrementing counter metric.
  */
-public interface Counter extends Metric {
+public class Counter implements Metric {
+    private final AtomicLong count;
+
+    public Counter() {
+        this.count = new AtomicLong(0);
+    }
+
     /**
      * Increment the counter by one.
      */
-    void inc();
+    public void inc() {
+        inc(1);
+    }
 
     /**
      * Increment the counter by {@code n}.
      *
      * @param n the amount by which the counter will be increased
      */
-    void inc(long n);
+    public void inc(long n) {
+        count.addAndGet(n);
+    }
 
     /**
      * Decrement the counter by one.
      */
-    void dec();
+    public void dec() {
+        dec(1);
+    }
 
     /**
      * Decrement the counter by {@code n}.
      *
      * @param n the amount by which the counter will be increased
      */
-    void dec(long n);
+    public void dec(long n) {
+        count.addAndGet(0 - n);
+    }
 
     /**
      * Returns the counter's current value.
      *
      * @return the counter's current value
      */
-    long getCount();
+    public long getCount() {
+        return count.get();
+    }
 
     /**
      * Resets the counter to 0.
      */
-    void clear();
+    public void clear() {
+        count.set(0);
+    }
 }

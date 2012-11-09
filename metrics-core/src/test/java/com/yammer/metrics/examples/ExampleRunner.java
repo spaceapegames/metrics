@@ -2,6 +2,7 @@ package com.yammer.metrics.examples;
 
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Histogram;
+import com.yammer.metrics.core.Histogram;
 import com.yammer.metrics.reporting.ConsoleReporter;
 
 import java.io.File;
@@ -15,7 +16,8 @@ public class ExampleRunner {
     private static final BlockingQueue<File> JOBS = new LinkedBlockingQueue<File>();
     private static final ExecutorService POOL = Executors.newFixedThreadPool(WORKER_COUNT);
     private static final Counter QUEUE_DEPTH = counter(name(ExampleRunner.class, "queue-depth"));
-    private static final Histogram DIRECTORY_SIZE = histogram(name(ExampleRunner.class, "directory-size"));
+    private static final Histogram DIRECTORY_SIZE = histogram(name(ExampleRunner.class,
+                                                                       "directory-size"));
 
     public static class Job implements Runnable {
         @Override

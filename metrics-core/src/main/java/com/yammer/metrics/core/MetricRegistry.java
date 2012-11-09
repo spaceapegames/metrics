@@ -49,7 +49,7 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
     public Counter counter(String name) {
         final Metric existingMetric = metrics.get(name);
         if (existingMetric == null) {
-            final Counter counter = new CounterImpl();
+            final Counter counter = new Counter();
             final Metric justAddedMetric = metrics.putIfAbsent(name, counter);
             if (justAddedMetric == null) {
                 notifyMetricRegistered(name, counter);
@@ -63,7 +63,7 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
     public Meter meter(String name) {
         final Metric existingMetric = metrics.get(name);
         if (existingMetric == null) {
-            final Meter meter = new MeterImpl(Clock.defaultClock());
+            final Meter meter = new Meter(Clock.defaultClock());
             final Metric justAddedMetric = metrics.putIfAbsent(name, meter);
             if (justAddedMetric == null) {
                 notifyMetricRegistered(name, meter);
@@ -77,7 +77,7 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
     public Histogram histogram(String name) {
         final Metric existingMetric = metrics.get(name);
         if (existingMetric == null) {
-            final Histogram histogram = new HistogramImpl(Histogram.SampleType.UNIFORM);
+            final Histogram histogram = new Histogram(Histogram.SampleType.UNIFORM);
             final Metric justAddedMetric = metrics.putIfAbsent(name, histogram);
             if (justAddedMetric == null) {
                 notifyMetricRegistered(name, histogram);
@@ -91,7 +91,7 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
     public Timer timer(String name) {
         final Metric existingMetric = metrics.get(name);
         if (existingMetric == null) {
-            final Timer timer = new TimerImpl(Clock.defaultClock());
+            final Timer timer = new Timer(Clock.defaultClock());
             final Metric justAddedMetric = metrics.putIfAbsent(name, timer);
             if (justAddedMetric == null) {
                 notifyMetricRegistered(name, timer);

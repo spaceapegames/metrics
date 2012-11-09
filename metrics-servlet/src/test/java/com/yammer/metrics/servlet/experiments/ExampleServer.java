@@ -18,7 +18,7 @@ public class ExampleServer {
                                                                           "wah",
                                                                           "doody"));
     private static final Counter COUNTER_2 = Metrics.counter(Metrics.name(ExampleServer.class,
-                                                                         "woo"));
+                                                                          "woo"));
 
     static {
         Metrics.gauge(Metrics.name(ExampleServer.class, "boo"), new Gauge<Integer>() {
@@ -46,9 +46,9 @@ public class ExampleServer {
 
         final ServletHolder holder = new ServletHolder(new AdminServlet());
         context.addServlet(holder, "/dingo/*");
-        
+
         server.setHandler(new InstrumentedHandler(context));
-        
+
         server.start();
         server.join();
     }

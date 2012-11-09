@@ -1,10 +1,7 @@
 package com.yammer.metrics.jetty;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.Counter;
-import com.yammer.metrics.core.Meter;
-import com.yammer.metrics.core.MetricRegistry;
-import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.*;
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.server.bio.SocketConnector;
 

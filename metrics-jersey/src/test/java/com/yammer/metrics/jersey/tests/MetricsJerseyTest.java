@@ -56,8 +56,8 @@ public class MetricsJerseyTest extends JerseyTest {
     @Test
     public void exceptionMeteredMethodsAreExceptionMetered() {
         final Meter meter = Metrics.meter(Metrics.name(InstrumentedResource.class,
-                                                       "exceptionMetered",
-                                                       "exceptions"));
+                                                           "exceptionMetered",
+                                                           "exceptions"));
 
         assertThat(resource().path("exception-metered").get(String.class),
                    is("fuh"));
