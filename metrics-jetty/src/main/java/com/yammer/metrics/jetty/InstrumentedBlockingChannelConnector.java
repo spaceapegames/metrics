@@ -24,23 +24,23 @@ public class InstrumentedBlockingChannelConnector extends BlockingChannelConnect
         this.duration = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                   "connection-duration",
                                                   Integer.toString(port)),
-                                     new Timer());
+                                     Metrics.timer());
         this.accepts = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                  "accepts",
                                                  Integer.toString(port)),
-                                    new Meter("connections"));
+                                    Metrics.meter("connections"));
         this.connects = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                   "connects",
                                                   Integer.toString(port)),
-                                     new Meter("connections"));
+                                     Metrics.meter("connections"));
         this.disconnects = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                      "disconnects",
                                                      Integer.toString(port)),
-                                        new Meter("connections"));
+                                        Metrics.meter("connections"));
         this.connections = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                      "active-connections",
                                                      Integer.toString(port)),
-                                        new Counter());
+                                        Metrics.counter());
     }
 
     @Override

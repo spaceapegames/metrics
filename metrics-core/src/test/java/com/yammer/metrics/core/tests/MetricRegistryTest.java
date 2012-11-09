@@ -18,13 +18,13 @@ public class MetricRegistryTest {
         final Gauge<?> gauge = registry.add(Metrics.name(MetricRegistryTest.class, "gauge"),
                                             mock(Gauge.class));
         final Counter counter = registry.add(Metrics.name(MetricRegistryTest.class, "counter"),
-                                             new Counter());
+                                             Metrics.counter());
         final Histogram histogram = registry.add(Metrics.name(MetricRegistryTest.class, "histogram"),
-                                                 new Histogram(Histogram.SampleType.UNIFORM));
+                                                 Metrics.histogram(Histogram.SampleType.UNIFORM));
         final Meter meter = registry.add(Metrics.name(MetricRegistryTest.class, "meter"),
-                                         new Meter("things"));
+                                         Metrics.meter("things"));
         final Timer timer = registry.add(Metrics.name(MetricRegistryTest.class, "timer"),
-                                         new Timer());
+                                         Metrics.timer());
 
         verify(listener).onMetricAdded(Metrics.name(MetricRegistryTest.class, "gauge"),
                                        gauge);
@@ -49,13 +49,13 @@ public class MetricRegistryTest {
 
         final Counter counter1 = registry.add(Metrics.name(MetricRegistryTest.class,
                                                            "counter1"),
-                                              new Counter());
+                                              Metrics.counter());
 
         registry.removeListener(listener);
 
         final Counter counter2 = registry.add(Metrics.name(MetricRegistryTest.class,
                                                            "counter2"),
-                                              new Counter());
+                                              Metrics.counter());
 
         verify(listener).onMetricAdded(Metrics.name(MetricRegistryTest.class, "counter1"),
                                        counter1);
@@ -74,7 +74,7 @@ public class MetricRegistryTest {
 
         final Counter counter1 = registry.add(Metrics.name(MetricRegistryTest.class,
                                                            "counter1"),
-                                              new Counter());
+                                              Metrics.counter());
         registry.remove(Metrics.name(MetricRegistryTest.class, "counter1"));
 
         final InOrder inOrder = inOrder(listener);

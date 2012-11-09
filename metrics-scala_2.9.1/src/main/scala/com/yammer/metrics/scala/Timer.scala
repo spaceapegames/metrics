@@ -39,11 +39,6 @@ class Timer(metric: com.yammer.metrics.core.Timer) {
   def count = metric.getCount
 
   /**
-   * Clears all recorded durations.
-   */
-  def clear() { metric.clear() }
-
-  /**
    * Returns the longest recorded duration.
    */
   def max = metric.getMax

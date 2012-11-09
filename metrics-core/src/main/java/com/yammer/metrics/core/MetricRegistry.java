@@ -36,16 +36,28 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
         this.listeners = new CopyOnWriteArrayList<MetricRegistryListener>();
     }
 
-    /**
-     * Gets any existing metric with the given name or, if none exists, adds the given metric.
-     *
-     * @param name   the metric's name
-     * @param metric the new metric
-     * @param <T>    the type of the metric
-     * @return either the existing metric or {@code metric}
-     */
     @SuppressWarnings("unchecked")
-    public <T extends Metric> T add(String name, T metric) {
+    public <T> Gauge<T> add(String name, Gauge<T> gauge) {
+        return (Gauge<T>) add(name, (Metric) gauge);
+    }
+
+    public Counter add(String name, Counter counter) {
+        return (Counter) add(name, (Metric) counter);
+    }
+
+    public Histogram add(String name, Histogram histogram) {
+        return (Histogram) add(name, (Metric) histogram);
+    }
+
+    public Meter add(String name, Meter meter) {
+        return (Meter) add(name, (Metric) meter);
+    }
+
+    public Timer add(String name, Timer timer) {
+        return (Timer) add(name, (Metric) timer);
+    }
+
+    public Metric add(String name, Metric metric) {
         final Metric existingMetric = metrics.get(name);
         if (existingMetric == null) {
             final Metric justAddedMetric = metrics.putIfAbsent(name, metric);
@@ -53,9 +65,9 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
                 notifyMetricRegistered(name, metric);
                 return metric;
             }
-            return (T) justAddedMetric;
+            return justAddedMetric;
         }
-        return (T) existingMetric;
+        return existingMetric;
     }
 
     /**

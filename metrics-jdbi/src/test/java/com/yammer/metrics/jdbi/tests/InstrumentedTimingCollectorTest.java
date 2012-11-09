@@ -35,7 +35,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name(getClass(), "updatesTimerForSqlObjects")));
@@ -55,7 +55,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name(getClass(), "SELECT_1")));
@@ -74,7 +74,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name("sql", "raw", "SELECT_1")));
@@ -92,7 +92,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name("sql", "empty")));
@@ -111,7 +111,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name("sql", "raw", "don_t_know_what_it_is_but_it_s_not_SQL")));
@@ -132,7 +132,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name(getClass(), "updatesTimerForContextClass")));
@@ -153,7 +153,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name("foo", "bar", "updatesTimerForTemplateFile")));
@@ -174,7 +174,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name("my-group", "updatesTimerForContextGroupAndName")));
@@ -196,7 +196,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name("my-group", "my-type", "updatesTimerForContextGroupTypeAndName")));
@@ -217,7 +217,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name("jdbi",
@@ -240,7 +240,7 @@ public class InstrumentedTimingCollectorTest {
 
         final String name = strategy.getStatementName(ctx);
         final Timer timer = registry.add(name,
-                                         new Timer());
+                                         Metrics.timer());
 
         assertThat(name,
                    is(Metrics.name("jdbi",

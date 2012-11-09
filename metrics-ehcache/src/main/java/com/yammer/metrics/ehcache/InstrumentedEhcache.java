@@ -370,9 +370,9 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
     private InstrumentedEhcache(MetricRegistry registry, Ehcache cache) {
         super(cache);
         this.getTimer = registry.add(Metrics.name(cache.getClass(), "get", cache.getName()),
-                                     new Timer(TimeUnit.MICROSECONDS));
+                                     Metrics.timer(TimeUnit.MICROSECONDS));
         this.putTimer = registry.add(Metrics.name(cache.getClass(), "put", cache.getName()),
-                                     new Timer(TimeUnit.MICROSECONDS));
+                                     Metrics.timer(TimeUnit.MICROSECONDS));
     }
 
     @Override

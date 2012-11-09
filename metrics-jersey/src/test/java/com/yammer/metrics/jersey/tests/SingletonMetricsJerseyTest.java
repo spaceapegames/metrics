@@ -46,11 +46,11 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
     @Test
     public void registryIsNotDefault() {
         final Timer timer1 = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
-                                          new Timer());
+                                          Metrics.timer());
         final Timer timer2 = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
-                                          new Timer());
-        final Timer timer3 = Metrics.add(Metrics.name(InstrumentedResource.class, "timed"),
-                                         new Timer());
+                                          Metrics.timer());
+        final Timer timer3 = Metrics.metric(Metrics.name(InstrumentedResource.class, "timed"),
+                                            Metrics.timer());
 
         assertThat(timer1, sameInstance(timer2));
         assertThat(timer1, not(sameInstance(timer3)));
@@ -62,7 +62,7 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
                    is("yay"));
 
         final Timer timer = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
-                                         new Timer());
+                                         Metrics.timer());
         assertThat(timer.getCount(),
                    is(1L));
     }
@@ -74,7 +74,7 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
 
         final Meter meter = registry.add(Metrics.name(InstrumentedResource.class,
                                                       "metered"),
-                                         new Meter("blah"));
+                                         Metrics.meter("blah"));
         assertThat(meter.getCount(),
                    is(1L));
     }
@@ -83,7 +83,7 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
     public void exceptionMeteredMethodsAreExceptionMetered() {
         final Meter meter = registry.add(Metrics.name(InstrumentedResource.class,
                                                       "exceptionMetered", "exceptions"),
-                                         new Meter("blah"));
+                                         Metrics.meter("blah"));
         
         assertThat(resource().path("exception-metered").get(String.class),
                    is("fuh"));

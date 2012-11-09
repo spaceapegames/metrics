@@ -15,10 +15,12 @@ public class ExampleRunner {
     private static final int WORKER_COUNT = 10;
     private static final BlockingQueue<File> JOBS = new LinkedBlockingQueue<File>();
     private static final ExecutorService POOL = Executors.newFixedThreadPool(WORKER_COUNT);
-    private static final Counter QUEUE_DEPTH = Metrics.add(name(ExampleRunner.class, "queue-depth"),
-                                                           new Counter());
-    private static final Histogram DIRECTORY_SIZE = Metrics.add(name(ExampleRunner.class, "directory-size"),
-                                                                new Histogram(Histogram.SampleType.UNIFORM));
+    private static final Counter QUEUE_DEPTH = Metrics.metric(name(ExampleRunner.class,
+                                                                   "queue-depth"),
+                                                              Metrics.counter());
+    private static final Histogram DIRECTORY_SIZE = Metrics.metric(name(ExampleRunner.class,
+                                                                        "directory-size"),
+                                                                   Metrics.histogram(Histogram.SampleType.UNIFORM));
 
     public static class Job implements Runnable {
         @Override

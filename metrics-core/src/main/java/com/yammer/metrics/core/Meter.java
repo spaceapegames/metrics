@@ -27,34 +27,6 @@ public class Meter implements Metered {
 
     /**
      * Creates a new {@link Meter}.
-     */
-    public Meter() {
-        this("events", TimeUnit.SECONDS, Clock.defaultClock());
-    }
-
-    /**
-     * Creates a new {@link Meter}.
-     *
-     * @param eventType the plural name of the event the meter is measuring (e.g., {@code
-     *                  "requests"})
-     */
-    public Meter(String eventType) {
-        this(eventType, TimeUnit.SECONDS, Clock.defaultClock());
-    }
-
-    /**
-     * Creates a new {@link Meter}.
-     *
-     * @param eventType the plural name of the event the meter is measuring (e.g., {@code
-     *                  "requests"})
-     * @param rateUnit  the rate unit of the new meter
-     */
-    public Meter(String eventType, TimeUnit rateUnit) {
-        this(eventType, rateUnit, Clock.defaultClock());
-    }
-
-    /**
-     * Creates a new {@link Meter}.
      *
      * @param eventType  the plural name of the event the meter is measuring (e.g., {@code
      *                   "requests"})

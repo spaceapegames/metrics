@@ -1,5 +1,6 @@
 package com.yammer.metrics.core.tests;
 
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
 import org.junit.Test;
 
@@ -8,7 +9,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class MeterTest {
-    private final Meter meter = new Meter("thing");
+    private final Meter meter = Metrics.meter("thing");
 
     @Test
     public void aBlankMeter() throws Exception {

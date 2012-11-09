@@ -63,27 +63,27 @@ class InstrumentedRequestDirector extends DefaultRequestDirector {
               userTokenHandler,
               params);
         getTimer = registry.add(Metrics.name(HttpClient.class, "get-requests"),
-                                new Timer());
+                                Metrics.timer());
         postTimer = registry.add(Metrics.name(HttpClient.class, "post-requests"),
-                                 new Timer());
+                                 Metrics.timer());
         headTimer = registry.add(Metrics.name(HttpClient.class, "head-requests"),
-                                 new Timer());
+                                 Metrics.timer());
         putTimer = registry.add(Metrics.name(HttpClient.class, "put-requests"),
-                                new Timer());
+                                Metrics.timer());
         deleteTimer = registry.add(Metrics.name(HttpClient.class, "delete-requests"),
-                                   new Timer());
+                                   Metrics.timer());
         optionsTimer = registry.add(Metrics.name(HttpClient.class, "options-requests"),
-                                    new Timer());
+                                    Metrics.timer());
         traceTimer = registry.add(Metrics.name(HttpClient.class, "trace-requests"),
-                                  new Timer());
+                                  Metrics.timer());
         connectTimer = registry.add(Metrics.name(HttpClient.class, "connect-requests"),
-                                    new Timer());
+                                    Metrics.timer());
         moveTimer = registry.add(Metrics.name(HttpClient.class, "move-requests"),
-                                 new Timer());
+                                 Metrics.timer());
         patchTimer = registry.add(Metrics.name(HttpClient.class, "patch-requests"),
-                                  new Timer());
+                                  Metrics.timer());
         otherTimer = registry.add(Metrics.name(HttpClient.class, "other-requests"),
-                                  new Timer());
+                                  Metrics.timer());
     }
 
     @Override

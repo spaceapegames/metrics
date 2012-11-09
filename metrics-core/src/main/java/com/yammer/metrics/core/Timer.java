@@ -1,5 +1,6 @@
 package com.yammer.metrics.core;
 
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Histogram.SampleType;
 import com.yammer.metrics.stats.Snapshot;
 
@@ -13,34 +14,8 @@ import java.util.concurrent.TimeUnit;
 public class Timer implements Metered, Sampling, Summarizable {
     private final TimeUnit durationUnit, rateUnit;
     private final Meter meter;
-    private final Histogram histogram = new Histogram(SampleType.BIASED);
+    private final Histogram histogram = Metrics.histogram(SampleType.BIASED);
     private final Clock clock;
-
-    /**
-     * Creates a new {@link Timer}.
-     */
-    public Timer() {
-        this(TimeUnit.MILLISECONDS);
-    }
-
-    /**
-     * Creates a new {@link Timer}.
-     *
-     * @param durationUnit the scale unit for this timer's duration metrics
-     */
-    public Timer(TimeUnit durationUnit) {
-        this(durationUnit, TimeUnit.SECONDS);
-    }
-
-    /**
-     * Creates a new {@link Timer}.
-     *
-     * @param durationUnit the scale unit for this timer's duration metrics
-     * @param rateUnit     the scale unit for this timer's rate metrics
-     */
-    public Timer(TimeUnit durationUnit, TimeUnit rateUnit) {
-        this(durationUnit, rateUnit, Clock.defaultClock());
-    }
 
     /**
      * Creates a new {@link Timer}.

@@ -1,7 +1,8 @@
 package com.yammer.metrics.examples;
 
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.*;
+import com.yammer.metrics.core.Counter;
+import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.Timer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,14 +10,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import static com.yammer.metrics.Metrics.*;
+
 public class DirectoryLister {
-    private final MetricRegistry registry = Metrics.defaultRegistry();
-    private final Counter counter = registry.add(Metrics.name(getClass(), "directories"),
-                                                 new Counter());
-    private final Meter meter = registry.add(Metrics.name(getClass(), "files"),
-                                             new Meter("files"));
-    private final Timer timer = registry.add(Metrics.name(getClass(), "directory-listing"),
-                                             new Timer());
+    private static final Counter DIRECTORIES = metric(name(DirectoryLister.class, "directories"),
+                                                      counter());
+    private static final Meter FILES = metric(name(DirectoryLister.class, "files"),
+                                              meter("files"));
+    private static final Timer LISTING = metric(name(DirectoryLister.class, "directory-listing"),
+                                                timer());
     private final File directory;
 
     public DirectoryLister(File directory) {
@@ -24,14 +26,14 @@ public class DirectoryLister {
     }
 
     public List<File> list() throws Exception {
-        counter.inc();
-        final File[] list = timer.time(new Callable<File[]>() {
+        DIRECTORIES.inc();
+        final File[] list = LISTING.time(new Callable<File[]>() {
             @Override
             public File[] call() throws Exception {
                 return directory.listFiles();
             }
         });
-        counter.dec();
+        DIRECTORIES.dec();
 
         if (list == null) {
             return Collections.emptyList();
@@ -39,7 +41,7 @@ public class DirectoryLister {
 
         final List<File> result = new ArrayList<File>(list.length);
         for (File file : list) {
-            meter.mark();
+            FILES.mark();
             result.add(file);
         }
         return result;

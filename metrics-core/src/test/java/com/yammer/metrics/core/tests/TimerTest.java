@@ -1,5 +1,6 @@
 package com.yammer.metrics.core.tests;
 
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Clock;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.stats.Snapshot;
@@ -22,7 +23,7 @@ public class TimerTest {
             return val += 50000000;
         }
     };
-    private final Timer timer = new Timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock);
+    private final Timer timer = Metrics.timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock);
 
     @Test
     public void hasADurationUnit() throws Exception {

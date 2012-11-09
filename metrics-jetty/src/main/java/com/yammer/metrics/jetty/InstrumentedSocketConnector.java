@@ -23,23 +23,23 @@ public class InstrumentedSocketConnector extends SocketConnector {
         this.duration = registry.add(Metrics.name(SocketConnector.class,
                                                   "connection-duration",
                                                   Integer.toString(port)),
-                                     new Timer());
+                                     Metrics.timer());
         this.accepts = registry.add(Metrics.name(SocketConnector.class,
                                                  "accepts",
                                                  Integer.toString(port)),
-                                    new Meter("connections"));
+                                    Metrics.meter("connections"));
         this.connects = registry.add(Metrics.name(SocketConnector.class,
                                                   "connects",
                                                   Integer.toString(port)),
-                                     new Meter("connections"));
+                                     Metrics.meter("connections"));
         this.disconnects = registry.add(Metrics.name(SocketConnector.class,
                                                      "disconnects",
                                                      Integer.toString(port)),
-                                        new Meter("connections"));
+                                        Metrics.meter("connections"));
         this.connections = registry.add(Metrics.name(SocketConnector.class,
                                                      "active-connections",
                                                      Integer.toString(port)),
-                                        new Counter());
+                                        Metrics.counter());
     }
 
     @Override

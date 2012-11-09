@@ -27,13 +27,13 @@ public class InstrumentedAppender extends AppenderSkeleton {
 
     public InstrumentedAppender(MetricRegistry registry) {
         super();
-        this.all = registry.add(Metrics.name(Appender.class, "all"), new Meter("statements"));
-        this.trace = registry.add(Metrics.name(Appender.class, "trace"), new Meter("statements"));
-        this.debug = registry.add(Metrics.name(Appender.class, "debug"), new Meter("statements"));
-        this.info = registry.add(Metrics.name(Appender.class, "info"), new Meter("statements"));
-        this.warn = registry.add(Metrics.name(Appender.class, "warn"), new Meter("statements"));
-        this.error = registry.add(Metrics.name(Appender.class, "error"), new Meter("statements"));
-        this.fatal = registry.add(Metrics.name(Appender.class, "fatal"), new Meter("statements"));
+        this.all = registry.add(Metrics.name(Appender.class, "all"), Metrics.meter("statements"));
+        this.trace = registry.add(Metrics.name(Appender.class, "trace"), Metrics.meter("statements"));
+        this.debug = registry.add(Metrics.name(Appender.class, "debug"), Metrics.meter("statements"));
+        this.info = registry.add(Metrics.name(Appender.class, "info"), Metrics.meter("statements"));
+        this.warn = registry.add(Metrics.name(Appender.class, "warn"), Metrics.meter("statements"));
+        this.error = registry.add(Metrics.name(Appender.class, "error"), Metrics.meter("statements"));
+        this.fatal = registry.add(Metrics.name(Appender.class, "fatal"), Metrics.meter("statements"));
     }
 
     @Override

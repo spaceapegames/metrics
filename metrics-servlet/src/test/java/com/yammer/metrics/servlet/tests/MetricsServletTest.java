@@ -142,7 +142,7 @@ public class MetricsServletTest {
 
     @Test
     public void generatesCounters() throws Exception {
-        registry.add(Metrics.name(MetricsServletTest.class, "counter"), new Counter())
+        registry.add(Metrics.name(MetricsServletTest.class, "counter"), Metrics.counter())
                 .inc(12);
 
         servlet.service(request, response);
@@ -154,7 +154,7 @@ public class MetricsServletTest {
     @Test
     public void generatesHistograms() throws Exception {
         registry.add(Metrics.name(MetricsServletTest.class, "histogram"),
-                     new Histogram(Histogram.SampleType.UNIFORM))
+                     Metrics.histogram(Histogram.SampleType.UNIFORM))
                 .update(12);
 
         servlet.service(request, response);
@@ -170,7 +170,7 @@ public class MetricsServletTest {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
         registry.add(Metrics.name(MetricsServletTest.class, "meter"),
-                     new Meter("things", TimeUnit.SECONDS, clock))
+                     Metrics.meter("things", TimeUnit.SECONDS, clock))
                 .mark(12);
 
         servlet.service(request, response);
@@ -187,7 +187,7 @@ public class MetricsServletTest {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
         registry.add(Metrics.name(MetricsServletTest.class, "timer"),
-                     new Timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock))
+                     Metrics.timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock))
                 .update(100, TimeUnit.MILLISECONDS);
 
         servlet.service(request, response);

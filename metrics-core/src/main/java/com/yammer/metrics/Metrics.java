@@ -1,8 +1,10 @@
 package com.yammer.metrics;
 
-import com.yammer.metrics.core.Metric;
-import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.core.*;
 import com.yammer.metrics.reporting.JmxReporter;
+import com.yammer.metrics.stats.Sample;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A default metrics registry.
@@ -26,11 +28,27 @@ public class Metrics {
         return DEFAULT_REGISTRY;
     }
 
-    public static <T extends Metric> T add(String name, T metric) {
-        return DEFAULT_REGISTRY.add(name, metric);
+    public static Timer metric(String name, Timer timer) {
+        return DEFAULT_REGISTRY.add(name, timer);
     }
 
-    public static boolean remove(String name) {
+    public static Meter metric(String name, Meter meter) {
+        return DEFAULT_REGISTRY.add(name, meter);
+    }
+
+    public static Histogram metric(String name, Histogram histogram) {
+        return DEFAULT_REGISTRY.add(name, histogram);
+    }
+
+    public static Counter metric(String name, Counter counter) {
+        return DEFAULT_REGISTRY.add(name, counter);
+    }
+
+    public static <T> Gauge<T> metric(String name, Gauge<T> gauge) {
+        return DEFAULT_REGISTRY.add(name, gauge);
+    }
+
+    public static boolean unregister(String name) {
         return DEFAULT_REGISTRY.remove(name);
     }
 
@@ -54,5 +72,53 @@ public class Metrics {
             }
             builder.append(part);
         }
+    }
+
+    public static Counter counter() {
+        return new Counter();
+    }
+
+    public static Histogram histogram() {
+        return histogram(Histogram.SampleType.UNIFORM);
+    }
+
+    public static Histogram histogram(Histogram.SampleType type) {
+        return histogram(type.newSample());
+    }
+
+    public static Histogram histogram(Sample sample) {
+        return new Histogram(sample);
+    }
+
+    public static Meter meter(String eventType, TimeUnit rateUnit, Clock clock) {
+        return new Meter(eventType, rateUnit, clock);
+    }
+
+    public static Meter meter(String eventType, TimeUnit rateUnit) {
+        return meter(eventType, rateUnit, Clock.defaultClock());
+    }
+
+    public static Meter meter(String eventType) {
+        return meter(eventType, TimeUnit.SECONDS);
+    }
+
+    public static Meter meter() {
+        return meter("events");
+    }
+
+    public static Timer timer(TimeUnit durationUnit, TimeUnit rateUnit, Clock clock) {
+        return new Timer(durationUnit, rateUnit, clock);
+    }
+
+    public static Timer timer(TimeUnit durationUnit, TimeUnit rateUnit) {
+        return timer(durationUnit, rateUnit, Clock.defaultClock());
+    }
+
+    public static Timer timer(TimeUnit durationUnit) {
+        return timer(durationUnit, TimeUnit.SECONDS);
+    }
+
+    public static Timer timer() {
+        return timer(TimeUnit.MILLISECONDS);
     }
 }
