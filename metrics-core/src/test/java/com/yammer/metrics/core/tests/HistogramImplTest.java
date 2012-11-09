@@ -1,7 +1,7 @@
 package com.yammer.metrics.core.tests;
 
-import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Histogram;
+import com.yammer.metrics.core.HistogramImpl;
 import com.yammer.metrics.stats.Snapshot;
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class HistogramImplTest {
-    private final Histogram histogram = Metrics.histogram(Histogram.SampleType.UNIFORM);
+    private final Histogram histogram = new HistogramImpl(Histogram.SampleType.UNIFORM);
 
     @Test
     public void anEmptyHistogram() throws Exception {

@@ -1,12 +1,17 @@
 package com.yammer.metrics.jetty;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.*;
+import com.yammer.metrics.core.Counter;
+import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricRegistry;
+import com.yammer.metrics.core.Timer;
 import org.eclipse.jetty.io.Connection;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import static com.yammer.metrics.Metrics.name;
 
 public class InstrumentedSslSocketConnector extends SslSocketConnector {
     private final Timer duration;
@@ -20,26 +25,21 @@ public class InstrumentedSslSocketConnector extends SslSocketConnector {
     public InstrumentedSslSocketConnector(MetricRegistry registry, int port) {
         super();
         setPort(port);
-        this.duration = registry.add(Metrics.name(SslSocketConnector.class,
-                                                  "connection-duration",
-                                                  Integer.toString(port)),
-                                     Metrics.timer());
-        this.accepts = registry.add(Metrics.name(SslSocketConnector.class,
-                                                 "accepts",
-                                                 Integer.toString(port)),
-                                    Metrics.meter());
-        this.connects = registry.add(Metrics.name(SslSocketConnector.class,
-                                                  "connects",
-                                                  Integer.toString(port)),
-                                     Metrics.meter());
-        this.disconnects = registry.add(Metrics.name(SslSocketConnector.class,
-                                                     "disconnects",
-                                                     Integer.toString(port)),
-                                        Metrics.meter());
-        this.connections = registry.add(Metrics.name(SslSocketConnector.class,
-                                                     "active-connections",
-                                                     Integer.toString(port)),
-                                        Metrics.counter());
+        this.duration = registry.timer(name(SslSocketConnector.class,
+                                            "connection-duration",
+                                            Integer.toString(port)));
+        this.accepts = registry.meter(name(SslSocketConnector.class,
+                                           "accepts",
+                                           Integer.toString(port)));
+        this.connects = registry.meter(name(SslSocketConnector.class,
+                                            "connects",
+                                            Integer.toString(port)));
+        this.disconnects = registry.meter(name(SslSocketConnector.class,
+                                               "disconnects",
+                                               Integer.toString(port)));
+        this.connections = registry.counter(name(SslSocketConnector.class,
+                                                 "active-connections",
+                                                 Integer.toString(port)));
     }
 
     @Override

@@ -31,20 +31,13 @@ public class InstrumentedAppenderTest {
         when(event.getLevel()).thenReturn(Level.INFO);
 
         final MetricRegistry registry = mock(MetricRegistry.class);
-        when(registry.add(eq(Metrics.name(Appender.class, "all")),
-                          any(Meter.class))).thenReturn(all);
-        when(registry.add(eq(Metrics.name(Appender.class, "trace")),
-                          any(Meter.class))).thenReturn(trace);
-        when(registry.add(eq(Metrics.name(Appender.class, "debug")),
-                          any(Meter.class))).thenReturn(debug);
-        when(registry.add(eq(Metrics.name(Appender.class, "info")),
-                          any(Meter.class))).thenReturn(info);
-        when(registry.add(eq(Metrics.name(Appender.class, "warn")),
-                          any(Meter.class))).thenReturn(warn);
-        when(registry.add(eq(Metrics.name(Appender.class, "error")),
-                          any(Meter.class))).thenReturn(error);
-        when(registry.add(eq(Metrics.name(Appender.class, "fatal")),
-                          any(Meter.class))).thenReturn(fatal);
+        when(registry.meter(Metrics.name(Appender.class, "all"))).thenReturn(all);
+        when(registry.meter(Metrics.name(Appender.class, "trace"))).thenReturn(trace);
+        when(registry.meter(Metrics.name(Appender.class, "debug"))).thenReturn(debug);
+        when(registry.meter(Metrics.name(Appender.class, "info"))).thenReturn(info);
+        when(registry.meter(Metrics.name(Appender.class, "warn"))).thenReturn(warn);
+        when(registry.meter(Metrics.name(Appender.class, "error"))).thenReturn(error);
+        when(registry.meter(Metrics.name(Appender.class, "fatal"))).thenReturn(fatal);
 
         this.instrumented = new InstrumentedAppender(registry);
     }

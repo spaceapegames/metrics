@@ -37,37 +37,73 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Gauge<T> add(String name, Gauge<T> gauge) {
-        return (Gauge<T>) add(name, (Metric) gauge);
+    public <T> Gauge<T> gauge(String name, Gauge<T> gauge) {
+        final Metric existingMetric = metrics.putIfAbsent(name, gauge);
+        if (existingMetric == null) {
+            notifyMetricRegistered(name, gauge);
+            return gauge;
+        }
+        return (Gauge<T>) existingMetric;
     }
 
-    public Counter add(String name, Counter counter) {
-        return (Counter) add(name, (Metric) counter);
-    }
-
-    public Histogram add(String name, Histogram histogram) {
-        return (Histogram) add(name, (Metric) histogram);
-    }
-
-    public Meter add(String name, Meter meter) {
-        return (Meter) add(name, (Metric) meter);
-    }
-
-    public Timer add(String name, Timer timer) {
-        return (Timer) add(name, (Metric) timer);
-    }
-
-    public Metric add(String name, Metric metric) {
+    public Counter counter(String name) {
         final Metric existingMetric = metrics.get(name);
         if (existingMetric == null) {
-            final Metric justAddedMetric = metrics.putIfAbsent(name, metric);
+            final Counter counter = new CounterImpl();
+            final Metric justAddedMetric = metrics.putIfAbsent(name, counter);
             if (justAddedMetric == null) {
-                notifyMetricRegistered(name, metric);
-                return metric;
+                notifyMetricRegistered(name, counter);
+                return counter;
             }
-            return justAddedMetric;
+            return (Counter) justAddedMetric;
         }
-        return existingMetric;
+        return (Counter) existingMetric;
+    }
+
+    public Meter meter(String name) {
+        final Metric existingMetric = metrics.get(name);
+        if (existingMetric == null) {
+            final Meter meter = new MeterImpl(Clock.defaultClock());
+            final Metric justAddedMetric = metrics.putIfAbsent(name, meter);
+            if (justAddedMetric == null) {
+                notifyMetricRegistered(name, meter);
+                return meter;
+            }
+            return (Meter) justAddedMetric;
+        }
+        return (Meter) existingMetric;
+    }
+
+    public Histogram histogram(String name) {
+        final Metric existingMetric = metrics.get(name);
+        if (existingMetric == null) {
+            final Histogram histogram = new HistogramImpl(Histogram.SampleType.UNIFORM);
+            final Metric justAddedMetric = metrics.putIfAbsent(name, histogram);
+            if (justAddedMetric == null) {
+                notifyMetricRegistered(name, histogram);
+                return histogram;
+            }
+            return (Histogram) justAddedMetric;
+        }
+        return (Histogram) existingMetric;
+    }
+
+    public Timer timer(String name) {
+        final Metric existingMetric = metrics.get(name);
+        if (existingMetric == null) {
+            final Timer timer = new TimerImpl(Clock.defaultClock());
+            final Metric justAddedMetric = metrics.putIfAbsent(name, timer);
+            if (justAddedMetric == null) {
+                notifyMetricRegistered(name, timer);
+                return timer;
+            }
+            return (Timer) justAddedMetric;
+        }
+        return (Timer) existingMetric;
+    }
+    
+    public boolean add(String name, Metric metric) {
+        return metrics.putIfAbsent(name, metric) == null;
     }
 
     /**

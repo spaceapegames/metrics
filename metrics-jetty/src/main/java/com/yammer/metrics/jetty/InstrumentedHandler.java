@@ -61,25 +61,22 @@ public class InstrumentedHandler extends HandlerWrapper {
     public InstrumentedHandler(Handler underlying, MetricRegistry registry) {
         super();
         final Class<?> klass = underlying.getClass();
-        this.dispatches = registry.add(Metrics.name(klass, "dispatches"), Metrics.timer());
-        this.requests = registry.add(Metrics.name(klass, "requests"), Metrics.meter());
-        this.resumes = registry.add(Metrics.name(klass, "resumes"), Metrics.meter());
-        this.suspends = registry.add(Metrics.name(klass, "suspends"), Metrics.meter());
-        this.expires = registry.add(Metrics.name(klass, "expires"), Metrics.meter());
+        this.dispatches = registry.timer(Metrics.name(klass, "dispatches"));
+        this.requests = registry.meter(Metrics.name(klass, "requests"));
+        this.resumes = registry.meter(Metrics.name(klass, "resumes"));
+        this.suspends = registry.meter(Metrics.name(klass, "suspends"));
+        this.expires = registry.meter(Metrics.name(klass, "expires"));
 
-        this.activeRequests = registry.add(Metrics.name(klass, "active-requests"),
-                                           Metrics.counter());
-        this.activeSuspendedRequests = registry.add(Metrics.name(klass, "active-suspended-requests"),
-                                                    Metrics.counter());
-        this.activeDispatches = registry.add(Metrics.name(klass, "active-dispatches"),
-                                             Metrics.counter());
+        this.activeRequests = registry.counter(Metrics.name(klass, "active-requests"));
+        this.activeSuspendedRequests = registry.counter(Metrics.name(klass, "active-suspended-requests"));
+        this.activeDispatches = registry.counter(Metrics.name(klass, "active-dispatches"));
 
         this.responses = new Meter[]{
-                registry.add(Metrics.name(klass, "1xx-responses"), Metrics.meter()), // 1xx
-                registry.add(Metrics.name(klass, "2xx-responses"), Metrics.meter()), // 2xx
-                registry.add(Metrics.name(klass, "3xx-responses"), Metrics.meter()), // 3xx
-                registry.add(Metrics.name(klass, "4xx-responses"), Metrics.meter()), // 4xx
-                registry.add(Metrics.name(klass, "5xx-responses"), Metrics.meter())  // 5xx
+                registry.meter(Metrics.name(klass, "1xx-responses")), // 1xx
+                registry.meter(Metrics.name(klass, "2xx-responses")), // 2xx
+                registry.meter(Metrics.name(klass, "3xx-responses")), // 3xx
+                registry.meter(Metrics.name(klass, "4xx-responses")), // 4xx
+                registry.meter(Metrics.name(klass, "5xx-responses"))  // 5xx
         };
 
         registry.add(Metrics.name(klass, "percent-4xx-1m"),
@@ -152,16 +149,16 @@ public class InstrumentedHandler extends HandlerWrapper {
             }
         };
 
-        this.getRequests = registry.add(Metrics.name(klass, "get-requests"), Metrics.timer());
-        this.postRequests = registry.add(Metrics.name(klass, "post-requests"), Metrics.timer());
-        this.headRequests = registry.add(Metrics.name(klass, "head-requests"), Metrics.timer());
-        this.putRequests = registry.add(Metrics.name(klass, "put-requests"), Metrics.timer());
-        this.deleteRequests = registry.add(Metrics.name(klass, "delete-requests"), Metrics.timer());
-        this.optionsRequests = registry.add(Metrics.name(klass, "options-requests"), Metrics.timer());
-        this.traceRequests = registry.add(Metrics.name(klass, "trace-requests"), Metrics.timer());
-        this.connectRequests = registry.add(Metrics.name(klass, "connect-requests"), Metrics.timer());
-        this.patchRequests = registry.add(Metrics.name(klass, "patch-requests"), Metrics.timer());
-        this.otherRequests = registry.add(Metrics.name(klass, "other-requests"), Metrics.timer());
+        this.getRequests = registry.timer(Metrics.name(klass, "get-requests"));
+        this.postRequests = registry.timer(Metrics.name(klass, "post-requests"));
+        this.headRequests = registry.timer(Metrics.name(klass, "head-requests"));
+        this.putRequests = registry.timer(Metrics.name(klass, "put-requests"));
+        this.deleteRequests = registry.timer(Metrics.name(klass, "delete-requests"));
+        this.optionsRequests = registry.timer(Metrics.name(klass, "options-requests"));
+        this.traceRequests = registry.timer(Metrics.name(klass, "trace-requests"));
+        this.connectRequests = registry.timer(Metrics.name(klass, "connect-requests"));
+        this.patchRequests = registry.timer(Metrics.name(klass, "patch-requests"));
+        this.otherRequests = registry.timer(Metrics.name(klass, "other-requests"));
 
         setHandler(underlying);
     }

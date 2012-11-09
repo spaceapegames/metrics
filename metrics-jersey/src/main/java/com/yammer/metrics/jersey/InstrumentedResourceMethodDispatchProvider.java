@@ -100,15 +100,14 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
         if (method.getMethod().isAnnotationPresent(Timed.class)) {
             final Timed annotation = method.getMethod().getAnnotation(Timed.class);
             final String name = chooseName(annotation.name(), method);
-            final Timer timer = registry.add(name, Metrics.timer(
-            ));
+            final Timer timer = registry.timer(name);
             dispatcher = new TimedRequestDispatcher(dispatcher, timer);
         }
 
         if (method.getMethod().isAnnotationPresent(Metered.class)) {
             final Metered annotation = method.getMethod().getAnnotation(Metered.class);
             final String name = chooseName(annotation.name(), method);
-            final Meter meter = registry.add(name, Metrics.meter());
+            final Meter meter = registry.meter(name);
             dispatcher = new MeteredRequestDispatcher(dispatcher, meter);
         }
 
@@ -117,7 +116,7 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
             final String name = chooseName(annotation.name(),
                                            method,
                                            ExceptionMetered.DEFAULT_NAME_SUFFIX);
-            final Meter meter = registry.add(name, Metrics.meter());
+            final Meter meter = registry.meter(name);
             dispatcher = new ExceptionMeteredRequestDispatcher(dispatcher, meter, annotation.cause());
         }
 

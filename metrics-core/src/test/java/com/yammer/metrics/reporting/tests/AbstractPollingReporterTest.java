@@ -136,7 +136,7 @@ public abstract class AbstractPollingReporterTest {
         return mock;
     }
 
-    
+
     static Gauge<String> createGauge() throws Exception {
         @SuppressWarnings("unchecked")
         final Gauge<String> mock = mock(Gauge.class);

@@ -8,6 +8,8 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import static com.yammer.metrics.Metrics.name;
+
 public class InstrumentedSelectChannelConnector extends SelectChannelConnector {
     private final Timer duration;
     private final Meter accepts, connects, disconnects;
@@ -21,26 +23,21 @@ public class InstrumentedSelectChannelConnector extends SelectChannelConnector {
                                               int port) {
         super();
         setPort(port);
-        this.duration = registry.add(Metrics.name(SelectChannelConnector.class,
-                                                  "connection-duration",
-                                                  Integer.toString(port)),
-                                     Metrics.timer());
-        this.accepts = registry.add(Metrics.name(SelectChannelConnector.class,
-                                                 "accepts",
-                                                 Integer.toString(port)),
-                                    Metrics.meter());
-        this.connects = registry.add(Metrics.name(SelectChannelConnector.class,
-                                                  "connects",
-                                                  Integer.toString(port)),
-                                     Metrics.meter());
-        this.disconnects = registry.add(Metrics.name(SelectChannelConnector.class,
-                                                     "disconnects",
-                                                     Integer.toString(port)),
-                                        Metrics.meter());
-        this.connections = registry.add(Metrics.name(SelectChannelConnector.class,
-                                                     "active-connections",
-                                                     Integer.toString(port)),
-                                        Metrics.counter());
+        this.duration = registry.timer(name(SelectChannelConnector.class,
+                                            "connection-duration",
+                                            Integer.toString(port)));
+        this.accepts = registry.meter(name(SelectChannelConnector.class,
+                                           "accepts",
+                                           Integer.toString(port)));
+        this.connects = registry.meter(name(SelectChannelConnector.class,
+                                            "connects",
+                                            Integer.toString(port)));
+        this.disconnects = registry.meter(name(SelectChannelConnector.class,
+                                               "disconnects",
+                                               Integer.toString(port)));
+        this.connections = registry.counter(name(SelectChannelConnector.class,
+                                                 "active-connections",
+                                                 Integer.toString(port)));
     }
 
     @Override

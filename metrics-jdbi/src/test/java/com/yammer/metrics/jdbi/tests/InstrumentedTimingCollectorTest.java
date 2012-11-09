@@ -34,8 +34,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(1), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name(getClass(), "updatesTimerForSqlObjects")));
@@ -54,8 +53,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(1), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name(getClass(), "SELECT_1")));
@@ -73,8 +71,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(2), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name("sql", "raw", "SELECT_1")));
@@ -91,8 +88,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(2), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name("sql", "empty")));
@@ -110,8 +106,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(3), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name("sql", "raw", "don_t_know_what_it_is_but_it_s_not_SQL")));
@@ -131,8 +126,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(3), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name(getClass(), "updatesTimerForContextClass")));
@@ -152,8 +146,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(4), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name("foo", "bar", "updatesTimerForTemplateFile")));
@@ -173,8 +166,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(4), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name("my-group", "updatesTimerForContextGroupAndName")));
@@ -195,8 +187,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(5), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name("my-group", "my-type", "updatesTimerForContextGroupTypeAndName")));
@@ -216,8 +207,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(1), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name("jdbi",
@@ -239,8 +229,7 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(3), ctx);
 
         final String name = strategy.getStatementName(ctx);
-        final Timer timer = registry.add(name,
-                                         Metrics.timer());
+        final Timer timer = registry.timer(name);
 
         assertThat(name,
                    is(Metrics.name("jdbi",

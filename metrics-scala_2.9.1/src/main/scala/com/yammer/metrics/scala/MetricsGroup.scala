@@ -31,23 +31,19 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricRegistry = Me
    * @param registry the registry for the gauge
    */
   def counter(name: String, scope: String = null, registry: MetricRegistry = metricsRegistry) =
-    new Counter(registry.add(Metrics.name(klass, name, scope),
-                             Metrics.counter()))
+    new Counter(registry.counter(Metrics.name(klass, name, scope)))
 
   /**
    * Creates a new histogram metrics.
    *
    * @param name   the name of the histogram
    * @param scope  the scope of the histogram
-   * @param biased whether or not to use a biased sample
    * @param registry the registry for the gauge
    */
   def histogram(name: String,
                 scope: String = null,
-                biased: Boolean = false,
                 registry: MetricRegistry = metricsRegistry) =
-    new Histogram(registry.add(Metrics.name(klass, name, scope),
-                               Metrics.histogram(if (biased) SampleType.BIASED else SampleType.UNIFORM)))
+    new Histogram(registry.histogram(Metrics.name(klass, name, scope)))
 
   /**
    * Creates a new meter metric.
@@ -59,8 +55,7 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricRegistry = Me
   def meter(name: String,
             scope: String = null,
             registry: MetricRegistry = metricsRegistry) =
-    new Meter(registry.add(Metrics.name(klass, name, scope),
-                           Metrics.meter()))
+    new Meter(registry.meter(Metrics.name(klass, name, scope)))
 
   /**
    * Creates a new timer metric.
@@ -72,7 +67,6 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricRegistry = Me
   def timer(name: String,
             scope: String = null,
             registry: MetricRegistry = metricsRegistry) =
-    new Timer(registry.add(Metrics.name(klass, name, scope),
-                           Metrics.timer()))
+    new Timer(registry.timer(Metrics.name(klass, name, scope)))
 }
 

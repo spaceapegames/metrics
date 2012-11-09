@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.*;
 import com.yammer.metrics.servlet.MetricsServlet;
+import com.yammer.metrics.stats.Snapshot;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -142,8 +143,7 @@ public class MetricsServletTest {
 
     @Test
     public void generatesCounters() throws Exception {
-        registry.add(Metrics.name(MetricsServletTest.class, "counter"), Metrics.counter())
-                .inc(12);
+        registry.counter(Metrics.name(MetricsServletTest.class, "counter")).inc(12);
 
         servlet.service(request, response);
 
@@ -153,9 +153,7 @@ public class MetricsServletTest {
 
     @Test
     public void generatesHistograms() throws Exception {
-        registry.add(Metrics.name(MetricsServletTest.class, "histogram"),
-                     Metrics.histogram(Histogram.SampleType.UNIFORM))
-                .update(12);
+        registry.histogram(Metrics.name(MetricsServletTest.class, "histogram")).update(12);
 
         servlet.service(request, response);
 
@@ -167,11 +165,13 @@ public class MetricsServletTest {
 
     @Test
     public void generatesMeters() throws Exception {
+        final Meter meter = mock(Meter.class);
+        when(meter.getCount()).thenReturn(12L);
+        when(meter.getMeanRate()).thenReturn(1200000.0);
+
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
-        registry.add(Metrics.name(MetricsServletTest.class, "meter"),
-                     Metrics.meter(clock))
-                .mark(12);
+        registry.add(Metrics.name(MetricsServletTest.class, "meter"), meter);
 
         servlet.service(request, response);
 
@@ -184,11 +184,23 @@ public class MetricsServletTest {
 
     @Test
     public void generatesTimers() throws Exception {
-        when(clock.getTick()).thenReturn(100000L, 110000L);
+        final Snapshot snapshot = mock(Snapshot.class);
+        when(snapshot.getMedian()).thenReturn(100.0);
+        when(snapshot.get75thPercentile()).thenReturn(100.0);
+        when(snapshot.get95thPercentile()).thenReturn(100.0);
+        when(snapshot.get98thPercentile()).thenReturn(100.0);
+        when(snapshot.get99thPercentile()).thenReturn(100.0);
+        when(snapshot.get999thPercentile()).thenReturn(100.0);
 
-        registry.add(Metrics.name(MetricsServletTest.class, "timer"),
-                     Metrics.timer(clock))
-                .update(100, TimeUnit.MILLISECONDS);
+        final Timer timer = mock(Timer.class);
+        when(timer.getMin()).thenReturn(100.0);
+        when(timer.getMax()).thenReturn(100.0);
+        when(timer.getMean()).thenReturn(100.0);
+        when(timer.getSnapshot()).thenReturn(snapshot);
+        when(timer.getMeanRate()).thenReturn(100000.0);
+        when(timer.getCount()).thenReturn(1L);
+
+        registry.add(Metrics.name(MetricsServletTest.class, "timer"), timer);
 
         servlet.service(request, response);
 

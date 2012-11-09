@@ -14,16 +14,14 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 public class ExampleServer {
-    private static final Counter COUNTER_1 = Metrics.metric(Metrics.name(ExampleServer.class,
-                                                                         "wah",
-                                                                         "doody"),
-                                                            Metrics.counter());
-    private static final Counter COUNTER_2 = Metrics.metric(Metrics.name(ExampleServer.class,
-                                                                         "woo"),
-                                                            Metrics.counter());
+    private static final Counter COUNTER_1 = Metrics.counter(Metrics.name(ExampleServer.class,
+                                                                          "wah",
+                                                                          "doody"));
+    private static final Counter COUNTER_2 = Metrics.counter(Metrics.name(ExampleServer.class,
+                                                                         "woo"));
 
     static {
-        Metrics.metric(Metrics.name(ExampleServer.class, "boo"), new Gauge<Integer>() {
+        Metrics.gauge(Metrics.name(ExampleServer.class, "boo"), new Gauge<Integer>() {
             @Override
             public Integer getValue() {
                 throw new RuntimeException("asplode!");

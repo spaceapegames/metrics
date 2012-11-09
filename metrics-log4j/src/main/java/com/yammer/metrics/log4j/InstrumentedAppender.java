@@ -27,13 +27,13 @@ public class InstrumentedAppender extends AppenderSkeleton {
 
     public InstrumentedAppender(MetricRegistry registry) {
         super();
-        this.all = registry.add(Metrics.name(Appender.class, "all"), Metrics.meter());
-        this.trace = registry.add(Metrics.name(Appender.class, "trace"), Metrics.meter());
-        this.debug = registry.add(Metrics.name(Appender.class, "debug"), Metrics.meter());
-        this.info = registry.add(Metrics.name(Appender.class, "info"), Metrics.meter());
-        this.warn = registry.add(Metrics.name(Appender.class, "warn"), Metrics.meter());
-        this.error = registry.add(Metrics.name(Appender.class, "error"), Metrics.meter());
-        this.fatal = registry.add(Metrics.name(Appender.class, "fatal"), Metrics.meter());
+        this.all = registry.meter(Metrics.name(Appender.class, "all"));
+        this.trace = registry.meter(Metrics.name(Appender.class, "trace"));
+        this.debug = registry.meter(Metrics.name(Appender.class, "debug"));
+        this.info = registry.meter(Metrics.name(Appender.class, "info"));
+        this.warn = registry.meter(Metrics.name(Appender.class, "warn"));
+        this.error = registry.meter(Metrics.name(Appender.class, "error"));
+        this.fatal = registry.meter(Metrics.name(Appender.class, "fatal"));
     }
 
     @Override

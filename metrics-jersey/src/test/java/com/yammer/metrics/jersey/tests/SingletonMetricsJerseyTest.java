@@ -45,12 +45,9 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
 
     @Test
     public void registryIsNotDefault() {
-        final Timer timer1 = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
-                                          Metrics.timer());
-        final Timer timer2 = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
-                                          Metrics.timer());
-        final Timer timer3 = Metrics.metric(Metrics.name(InstrumentedResource.class, "timed"),
-                                            Metrics.timer());
+        final Timer timer1 = registry.timer(Metrics.name(InstrumentedResource.class, "timed"));
+        final Timer timer2 = registry.timer(Metrics.name(InstrumentedResource.class, "timed"));
+        final Timer timer3 = Metrics.timer(Metrics.name(InstrumentedResource.class, "timed"));
 
         assertThat(timer1, sameInstance(timer2));
         assertThat(timer1, not(sameInstance(timer3)));
@@ -61,8 +58,7 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("timed").get(String.class),
                    is("yay"));
 
-        final Timer timer = registry.add(Metrics.name(InstrumentedResource.class, "timed"),
-                                         Metrics.timer());
+        final Timer timer = registry.timer(Metrics.name(InstrumentedResource.class, "timed"));
         assertThat(timer.getCount(),
                    is(1L));
     }
@@ -72,25 +68,23 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("metered").get(String.class),
                    is("woo"));
 
-        final Meter meter = registry.add(Metrics.name(InstrumentedResource.class,
-                                                      "metered"),
-                                         Metrics.meter());
+        final Meter meter = registry.meter(Metrics.name(InstrumentedResource.class, "metered"));
         assertThat(meter.getCount(),
                    is(1L));
     }
 
     @Test
     public void exceptionMeteredMethodsAreExceptionMetered() {
-        final Meter meter = registry.add(Metrics.name(InstrumentedResource.class,
-                                                      "exceptionMetered", "exceptions"),
-                                         Metrics.meter());
-        
+        final Meter meter = registry.meter(Metrics.name(InstrumentedResource.class,
+                                                        "exceptionMetered",
+                                                        "exceptions"));
+
         assertThat(resource().path("exception-metered").get(String.class),
                    is("fuh"));
 
         assertThat(meter.getCount(),
                    is(0L));
-        
+
         try {
             resource().path("exception-metered").queryParam("splode", "true").get(String.class);
             fail("should have thrown a MappableContainerException, but didn't");

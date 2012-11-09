@@ -13,11 +13,10 @@ import java.util.concurrent.Callable;
 import static com.yammer.metrics.Metrics.*;
 
 public class DirectoryLister {
-    private static final Counter DIRECTORIES = metric(name(DirectoryLister.class, "directories"),
-                                                      counter());
-    private static final Meter FILES = metric(name(DirectoryLister.class, "files"), meter());
-    private static final Timer LISTING = metric(name(DirectoryLister.class, "directory-listing"),
-                                                timer());
+    private static final Counter DIRECTORIES = counter(name(DirectoryLister.class, "directories"));
+    private static final Meter FILES = meter(name(DirectoryLister.class, "files"));
+    private static final Timer LISTING = timer(name(DirectoryLister.class, "directory-listing"));
+
     private final File directory;
 
     public DirectoryLister(File directory) {

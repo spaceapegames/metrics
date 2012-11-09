@@ -1,6 +1,5 @@
 package com.yammer.metrics.core;
 
-import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Histogram.SampleType;
 import com.yammer.metrics.stats.Snapshot;
 
@@ -11,11 +10,10 @@ import java.util.concurrent.TimeUnit;
  * The default implementation of {@link Timer}.
  */
 public class TimerImpl implements Timer {
-    private static final long NANOSECONDS_PER_MILLISECOND = TimeUnit.NANOSECONDS
-                                                                    .convert(1,
-                                                                             TimeUnit.MILLISECONDS);
+    private static final long NANOSECONDS_PER_MILLISECOND =
+            TimeUnit.NANOSECONDS.convert(1, TimeUnit.MILLISECONDS);
     private final Meter meter;
-    private final Histogram histogram = Metrics.histogram(SampleType.BIASED);
+    private final Histogram histogram = new HistogramImpl(SampleType.BIASED);
     private final Clock clock;
 
     /**

@@ -45,23 +45,20 @@ public abstract class WebappMetricsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        final MetricRegistry metricRegistry = getMetricsFactory(filterConfig);
+        final MetricRegistry registry = getMetricsFactory(filterConfig);
 
         this.metersByStatusCode = new ConcurrentHashMap<Integer, Meter>(meterNamesByStatusCode.size());
         for (Entry<Integer, String> entry : meterNamesByStatusCode.entrySet()) {
             metersByStatusCode.put(entry.getKey(),
-                                   metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
-                                                                   entry.getValue()),
-                                                      Metrics.meter()));
+                                   registry.meter(Metrics.name(WebappMetricsFilter.class,
+                                                                     entry.getValue())));
         }
-        this.otherMeter = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
-                                                          otherMetricName),
-                                             Metrics.meter());
-        this.activeRequests = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
-                                                              "activeRequests"), Metrics.counter());
-        this.requestTimer = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
-                                                            "requests"),
-                                               Metrics.timer());
+        this.otherMeter = registry.meter(Metrics.name(WebappMetricsFilter.class,
+                                                      otherMetricName));
+        this.activeRequests = registry.counter(Metrics.name(WebappMetricsFilter.class,
+                                                            "activeRequests"));
+        this.requestTimer = registry.timer(Metrics.name(WebappMetricsFilter.class,
+                                                        "requests"));
 
     }
 

@@ -1,8 +1,8 @@
 package com.yammer.metrics.core.tests;
 
-import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Clock;
 import com.yammer.metrics.core.Timer;
+import com.yammer.metrics.core.TimerImpl;
 import com.yammer.metrics.stats.Snapshot;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class TimerImplTest {
             return val += 50000000;
         }
     };
-    private final Timer timer = Metrics.timer(clock);
+    private final Timer timer = new TimerImpl(clock);
 
     @Test
     public void aBlankTimer() throws Exception {

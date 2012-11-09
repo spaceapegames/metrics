@@ -38,8 +38,7 @@ public class MetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("timed").get(String.class),
                    is("yay"));
 
-        final Timer timer = Metrics.metric(Metrics.name(InstrumentedResource.class, "timed"),
-                                           Metrics.timer());
+        final Timer timer = Metrics.timer(Metrics.name(InstrumentedResource.class, "timed"));
         assertThat(timer.getCount(),
                    is(1L));
     }
@@ -49,24 +48,23 @@ public class MetricsJerseyTest extends JerseyTest {
         assertThat(resource().path("metered").get(String.class),
                    is("woo"));
 
-        final Meter meter = Metrics.metric(Metrics.name(InstrumentedResource.class, "metered"),
-                                           Metrics.meter());
+        final Meter meter = Metrics.meter(Metrics.name(InstrumentedResource.class, "metered"));
         assertThat(meter.getCount(),
                    is(1L));
     }
 
     @Test
     public void exceptionMeteredMethodsAreExceptionMetered() {
-        final Meter meter = Metrics.metric(Metrics.name(InstrumentedResource.class,
-                                                        "exceptionMetered", "exceptions"),
-                                           Metrics.meter());
-        
+        final Meter meter = Metrics.meter(Metrics.name(InstrumentedResource.class,
+                                                       "exceptionMetered",
+                                                       "exceptions"));
+
         assertThat(resource().path("exception-metered").get(String.class),
                    is("fuh"));
 
         assertThat(meter.getCount(),
                    is(0L));
-        
+
         try {
             resource().path("exception-metered").queryParam("splode", "true").get(String.class);
             fail("should have thrown a MappableContainerException, but didn't");
