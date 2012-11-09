@@ -74,7 +74,7 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
 
         final Meter meter = registry.add(Metrics.name(InstrumentedResource.class,
                                                       "metered"),
-                                         Metrics.meter("blah"));
+                                         Metrics.meter());
         assertThat(meter.getCount(),
                    is(1L));
     }
@@ -83,7 +83,7 @@ public class SingletonMetricsJerseyTest extends JerseyTest {
     public void exceptionMeteredMethodsAreExceptionMetered() {
         final Meter meter = registry.add(Metrics.name(InstrumentedResource.class,
                                                       "exceptionMetered", "exceptions"),
-                                         Metrics.meter("blah"));
+                                         Metrics.meter());
         
         assertThat(resource().path("exception-metered").get(String.class),
                    is("fuh"));

@@ -15,6 +15,7 @@ public class MetricRegistryTest {
         final MetricRegistryListener listener = mock(MetricRegistryListener.class);
         registry.addListener(listener);
 
+        @SuppressWarnings("unchecked")
         final Gauge<?> gauge = registry.add(Metrics.name(MetricRegistryTest.class, "gauge"),
                                             mock(Gauge.class));
         final Counter counter = registry.add(Metrics.name(MetricRegistryTest.class, "counter"),
@@ -22,7 +23,7 @@ public class MetricRegistryTest {
         final Histogram histogram = registry.add(Metrics.name(MetricRegistryTest.class, "histogram"),
                                                  Metrics.histogram(Histogram.SampleType.UNIFORM));
         final Meter meter = registry.add(Metrics.name(MetricRegistryTest.class, "meter"),
-                                         Metrics.meter("things"));
+                                         Metrics.meter());
         final Timer timer = registry.add(Metrics.name(MetricRegistryTest.class, "timer"),
                                          Metrics.timer());
 

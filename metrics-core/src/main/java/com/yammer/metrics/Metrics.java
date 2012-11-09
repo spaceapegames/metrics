@@ -4,8 +4,6 @@ import com.yammer.metrics.core.*;
 import com.yammer.metrics.reporting.JmxReporter;
 import com.yammer.metrics.stats.Sample;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * A default metrics registry.
  */
@@ -48,10 +46,6 @@ public class Metrics {
         return DEFAULT_REGISTRY.add(name, gauge);
     }
 
-    public static boolean unregister(String name) {
-        return DEFAULT_REGISTRY.remove(name);
-    }
-
     public static String name(String name, String... names) {
         final StringBuilder builder = new StringBuilder();
         append(builder, name);
@@ -82,7 +76,7 @@ public class Metrics {
         return histogram(Histogram.SampleType.UNIFORM);
     }
 
-    public static Histogram histogram(HistogramImpl.SampleType type) {
+    public static Histogram histogram(Histogram.SampleType type) {
         return histogram(type.newSample());
     }
 
@@ -90,35 +84,19 @@ public class Metrics {
         return new HistogramImpl(sample);
     }
 
-    public static Meter meter(String eventType, TimeUnit rateUnit, Clock clock) {
-        return new MeterImpl(eventType, rateUnit, clock);
-    }
-
-    public static Meter meter(String eventType, TimeUnit rateUnit) {
-        return meter(eventType, rateUnit, Clock.defaultClock());
-    }
-
-    public static Meter meter(String eventType) {
-        return meter(eventType, TimeUnit.SECONDS);
+    public static Meter meter(Clock clock) {
+        return new MeterImpl(clock);
     }
 
     public static Meter meter() {
-        return meter("events");
+        return meter(Clock.defaultClock());
     }
 
-    public static Timer timer(TimeUnit durationUnit, TimeUnit rateUnit, Clock clock) {
-        return new TimerImpl(durationUnit, rateUnit, clock);
-    }
-
-    public static Timer timer(TimeUnit durationUnit, TimeUnit rateUnit) {
-        return timer(durationUnit, rateUnit, Clock.defaultClock());
-    }
-
-    public static Timer timer(TimeUnit durationUnit) {
-        return timer(durationUnit, TimeUnit.SECONDS);
+    public static Timer timer(Clock clock) {
+        return new TimerImpl(clock);
     }
 
     public static Timer timer() {
-        return timer(TimeUnit.MILLISECONDS);
+        return timer(Clock.defaultClock());
     }
 }

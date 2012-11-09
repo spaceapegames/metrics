@@ -155,24 +155,11 @@ public class ConsoleReporter extends AbstractPollingReporter implements
 
     @Override
     public void processMeter(String name, Metered meter, PrintStream stream) {
-        final String unit = abbrev(meter.getRateUnit());
         stream.printf(locale, "             count = %d\n", meter.getCount());
-        stream.printf(locale, "         mean rate = %2.2f %s/%s\n",
-                      meter.getMeanRate(),
-                      meter.getEventType(),
-                      unit);
-        stream.printf(locale, "     1-minute rate = %2.2f %s/%s\n",
-                      meter.getOneMinuteRate(),
-                      meter.getEventType(),
-                      unit);
-        stream.printf(locale, "     5-minute rate = %2.2f %s/%s\n",
-                      meter.getFiveMinuteRate(),
-                      meter.getEventType(),
-                      unit);
-        stream.printf(locale, "    15-minute rate = %2.2f %s/%s\n",
-                      meter.getFifteenMinuteRate(),
-                      meter.getEventType(),
-                      unit);
+        stream.printf(locale, "         mean rate = %2.2f events/s\n", meter.getMeanRate());
+        stream.printf(locale, "     1-minute rate = %2.2f events/s\n", meter.getOneMinuteRate());
+        stream.printf(locale, "     5-minute rate = %2.2f events/s\n", meter.getFiveMinuteRate());
+        stream.printf(locale, "    15-minute rate = %2.2f events/s\n", meter.getFifteenMinuteRate());
     }
 
     @Override
@@ -193,18 +180,17 @@ public class ConsoleReporter extends AbstractPollingReporter implements
     @Override
     public void processTimer(String name, Timer timer, PrintStream stream) {
         processMeter(name, timer, stream);
-        final String durationUnit = abbrev(timer.getDurationUnit());
         final Snapshot snapshot = timer.getSnapshot();
-        stream.printf(locale, "               min = %2.2f%s\n", timer.getMin(), durationUnit);
-        stream.printf(locale, "               max = %2.2f%s\n", timer.getMax(), durationUnit);
-        stream.printf(locale, "              mean = %2.2f%s\n", timer.getMean(), durationUnit);
-        stream.printf(locale, "            stddev = %2.2f%s\n", timer.getStdDev(), durationUnit);
-        stream.printf(locale, "            median = %2.2f%s\n", snapshot.getMedian(), durationUnit);
-        stream.printf(locale, "              75%% <= %2.2f%s\n", snapshot.get75thPercentile(), durationUnit);
-        stream.printf(locale, "              95%% <= %2.2f%s\n", snapshot.get95thPercentile(), durationUnit);
-        stream.printf(locale, "              98%% <= %2.2f%s\n", snapshot.get98thPercentile(), durationUnit);
-        stream.printf(locale, "              99%% <= %2.2f%s\n", snapshot.get99thPercentile(), durationUnit);
-        stream.printf(locale, "            99.9%% <= %2.2f%s\n", snapshot.get999thPercentile(), durationUnit);
+        stream.printf(locale, "               min = %2.2fms\n", timer.getMin());
+        stream.printf(locale, "               max = %2.2fms\n", timer.getMax());
+        stream.printf(locale, "              mean = %2.2fms\n", timer.getMean());
+        stream.printf(locale, "            stddev = %2.2fms\n", timer.getStdDev());
+        stream.printf(locale, "            median = %2.2fms\n", snapshot.getMedian());
+        stream.printf(locale, "              75%% <= %2.2fms\n", snapshot.get75thPercentile());
+        stream.printf(locale, "              95%% <= %2.2fms\n", snapshot.get95thPercentile());
+        stream.printf(locale, "              98%% <= %2.2fms\n", snapshot.get98thPercentile());
+        stream.printf(locale, "              99%% <= %2.2fms\n", snapshot.get99thPercentile());
+        stream.printf(locale, "            99.9%% <= %2.2fms\n", snapshot.get999thPercentile());
     }
 
     private String abbrev(TimeUnit unit) {

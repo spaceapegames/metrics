@@ -28,15 +28,15 @@ public class InstrumentedSelectChannelConnector extends SelectChannelConnector {
         this.accepts = registry.add(Metrics.name(SelectChannelConnector.class,
                                                  "accepts",
                                                  Integer.toString(port)),
-                                    Metrics.meter("connections"));
+                                    Metrics.meter());
         this.connects = registry.add(Metrics.name(SelectChannelConnector.class,
                                                   "connects",
                                                   Integer.toString(port)),
-                                     Metrics.meter("connections"));
+                                     Metrics.meter());
         this.disconnects = registry.add(Metrics.name(SelectChannelConnector.class,
                                                      "disconnects",
                                                      Integer.toString(port)),
-                                        Metrics.meter("connections"));
+                                        Metrics.meter());
         this.connections = registry.add(Metrics.name(SelectChannelConnector.class,
                                                      "active-connections",
                                                      Integer.toString(port)),

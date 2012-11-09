@@ -64,21 +64,6 @@ class Timer(metric: com.yammer.metrics.core.Timer) {
   def snapshot = metric.getSnapshot
 
   /**
-   * Returns the timer's rate unit.
-   */
-  def rateUnit = metric.getRateUnit
-
-  /**
-   * Returns the timer's duration unit.
-   */
-  def durationUnit = metric.getDurationUnit
-
-  /**
-   * Returns the type of events the timer is measuring.
-   */
-  def eventType = metric.getEventType
-
-  /**
    * Returns the fifteen-minute rate of timings.
    */
   def fifteenMinuteRate = metric.getFifteenMinuteRate

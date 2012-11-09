@@ -8,7 +8,6 @@ import javax.management.*;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A reporter which exposes application metric as JMX MBeans.
@@ -88,10 +87,6 @@ public class JmxReporter extends AbstractReporter implements MetricRegistryListe
     public interface MeterMBean extends MetricMBean {
         long getCount();
 
-        String getEventType();
-
-        TimeUnit getRateUnit();
-
         double getMeanRate();
 
         double getOneMinuteRate();
@@ -113,16 +108,6 @@ public class JmxReporter extends AbstractReporter implements MetricRegistryListe
         @Override
         public long getCount() {
             return metric.getCount();
-        }
-
-        @Override
-        public String getEventType() {
-            return metric.getEventType();
-        }
-
-        @Override
-        public TimeUnit getRateUnit() {
-            return metric.getRateUnit();
         }
 
         @Override
@@ -253,7 +238,7 @@ public class JmxReporter extends AbstractReporter implements MetricRegistryListe
     // CHECKSTYLE:OFF
     @SuppressWarnings("UnusedDeclaration")
     public interface TimerMBean extends MeterMBean, HistogramMBean {
-        TimeUnit getLatencyUnit();
+
     }
     // CHECKSTYLE:ON
 
@@ -268,11 +253,6 @@ public class JmxReporter extends AbstractReporter implements MetricRegistryListe
         @Override
         public double get50thPercentile() {
             return metric.getSnapshot().getMedian();
-        }
-
-        @Override
-        public TimeUnit getLatencyUnit() {
-            return metric.getDurationUnit();
         }
 
         @Override

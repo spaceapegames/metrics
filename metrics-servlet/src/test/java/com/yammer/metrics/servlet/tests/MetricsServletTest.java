@@ -170,15 +170,15 @@ public class MetricsServletTest {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
         registry.add(Metrics.name(MetricsServletTest.class, "meter"),
-                     Metrics.meter("things", TimeUnit.SECONDS, clock))
+                     Metrics.meter(clock))
                 .mark(12);
 
         servlet.service(request, response);
 
         assertThat(json.toString(),
                    is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.meter\":{" +
-                              "\"type\":\"meter\",\"event_type\":\"things\"," +
-                              "\"unit\":\"seconds\",\"count\":12,\"mean\":1200000.0," +
+                              "\"type\":\"meter\"," +
+                              "\"count\":12,\"mean\":1200000.0," +
                               "\"m1\":0.0,\"m5\":0.0,\"m15\":0.0}}"));
     }
 
@@ -187,17 +187,17 @@ public class MetricsServletTest {
         when(clock.getTick()).thenReturn(100000L, 110000L);
 
         registry.add(Metrics.name(MetricsServletTest.class, "timer"),
-                     Metrics.timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock))
+                     Metrics.timer(clock))
                 .update(100, TimeUnit.MILLISECONDS);
 
         servlet.service(request, response);
 
         assertThat(json.toString(),
                    is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.timer\":" +
-                              "{\"type\":\"timer\",\"duration\":{\"unit\":\"milliseconds\"," +
+                              "{\"type\":\"timer\",\"duration\":{" +
                               "\"min\":100.0,\"max\":100.0,\"mean\":100.0,\"std_dev\":0.0," +
                               "\"median\":100.0,\"p75\":100.0,\"p95\":100.0,\"p98\":100.0," +
-                              "\"p99\":100.0,\"p999\":100.0},\"rate\":{\"unit\":\"seconds\"," +
+                              "\"p99\":100.0,\"p999\":100.0},\"rate\":{" +
                               "\"count\":1,\"mean\":100000.0,\"m1\":0.0,\"m5\":0.0," +
                               "\"m15\":0.0}}}"));
     }

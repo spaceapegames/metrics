@@ -20,16 +20,6 @@ class Meter(metric: com.yammer.metrics.core.Meter) {
   }
 
   /**
-   * Returns the meter's rate unit.
-   */
-  def rateUnit = metric.getRateUnit
-
-  /**
-   * Returns the type of events the meter is measuring.
-   */
-  def eventType = metric.getEventType
-
-  /**
    * Returns the number of events which have been marked.
    */
   def count = metric.getCount

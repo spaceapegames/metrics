@@ -62,10 +62,10 @@ public class InstrumentedHandler extends HandlerWrapper {
         super();
         final Class<?> klass = underlying.getClass();
         this.dispatches = registry.add(Metrics.name(klass, "dispatches"), Metrics.timer());
-        this.requests = registry.add(Metrics.name(klass, "requests"), Metrics.meter("requests"));
-        this.resumes = registry.add(Metrics.name(klass, "resumes"), Metrics.meter("requests"));
-        this.suspends = registry.add(Metrics.name(klass, "suspends"), Metrics.meter("requests"));
-        this.expires = registry.add(Metrics.name(klass, "expires"), Metrics.meter("requests"));
+        this.requests = registry.add(Metrics.name(klass, "requests"), Metrics.meter());
+        this.resumes = registry.add(Metrics.name(klass, "resumes"), Metrics.meter());
+        this.suspends = registry.add(Metrics.name(klass, "suspends"), Metrics.meter());
+        this.expires = registry.add(Metrics.name(klass, "expires"), Metrics.meter());
 
         this.activeRequests = registry.add(Metrics.name(klass, "active-requests"),
                                            Metrics.counter());
@@ -75,11 +75,11 @@ public class InstrumentedHandler extends HandlerWrapper {
                                              Metrics.counter());
 
         this.responses = new Meter[]{
-                registry.add(Metrics.name(klass, "1xx-responses"), Metrics.meter("responses")), // 1xx
-                registry.add(Metrics.name(klass, "2xx-responses"), Metrics.meter("responses")), // 2xx
-                registry.add(Metrics.name(klass, "3xx-responses"), Metrics.meter("responses")), // 3xx
-                registry.add(Metrics.name(klass, "4xx-responses"), Metrics.meter("responses")), // 4xx
-                registry.add(Metrics.name(klass, "5xx-responses"), Metrics.meter("responses"))  // 5xx
+                registry.add(Metrics.name(klass, "1xx-responses"), Metrics.meter()), // 1xx
+                registry.add(Metrics.name(klass, "2xx-responses"), Metrics.meter()), // 2xx
+                registry.add(Metrics.name(klass, "3xx-responses"), Metrics.meter()), // 3xx
+                registry.add(Metrics.name(klass, "4xx-responses"), Metrics.meter()), // 4xx
+                registry.add(Metrics.name(klass, "5xx-responses"), Metrics.meter())  // 5xx
         };
 
         registry.add(Metrics.name(klass, "percent-4xx-1m"),

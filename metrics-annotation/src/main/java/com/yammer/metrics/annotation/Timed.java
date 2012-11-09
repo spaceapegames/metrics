@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An annotation for marking a method of a Guice-provided object as timed.
@@ -28,14 +27,4 @@ public @interface Timed {
      * The name of the timer.
      */
     String name() default "";
-
-    /**
-     * The time unit of the timer's rate.
-     */
-    TimeUnit rateUnit() default TimeUnit.SECONDS;
-
-    /**
-     * The time unit of the timer's duration.
-     */
-    TimeUnit durationUnit() default TimeUnit.MILLISECONDS;
 }

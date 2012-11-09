@@ -23,21 +23,7 @@ public class TimerImplTest {
             return val += 50000000;
         }
     };
-    private final Timer timer = Metrics.timer(TimeUnit.MILLISECONDS, TimeUnit.SECONDS, clock);
-
-    @Test
-    public void hasADurationUnit() throws Exception {
-        assertThat("the timer has a duration unit",
-                   timer.getDurationUnit(),
-                   is(TimeUnit.MILLISECONDS));
-    }
-
-    @Test
-    public void hasARateUnit() throws Exception {
-        assertThat("the timer has a rate unit",
-                   timer.getRateUnit(),
-                   is(TimeUnit.SECONDS));
-    }
+    private final Timer timer = Metrics.timer(clock);
 
     @Test
     public void aBlankTimer() throws Exception {

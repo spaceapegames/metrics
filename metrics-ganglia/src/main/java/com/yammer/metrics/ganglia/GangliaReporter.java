@@ -366,10 +366,8 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     @Override
     public void processMeter(String name, Metered meter, String x) throws IOException {
         final String sanitizedName = sanitizeName(name);
-        final String rateUnits = meter.getRateUnit().name();
-        final String rateUnit = rateUnits.substring(0, rateUnits.length() - 1).toLowerCase(Locale.US);
-        final String unit = meter.getEventType() + '/' + rateUnit;
-        printLongField(sanitizedName + ".count", meter.getCount(), "metered", meter.getEventType());
+        final String unit = "events/second";
+        printLongField(sanitizedName + ".count", meter.getCount(), "metered", "events");
         printDoubleField(sanitizedName + ".meanRate", meter.getMeanRate(), "metered", unit);
         printDoubleField(sanitizedName + ".1MinuteRate", meter.getOneMinuteRate(), "metered", unit);
         printDoubleField(sanitizedName + ".5MinuteRate", meter.getFiveMinuteRate(), "metered", unit);
@@ -398,17 +396,16 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
         processMeter(name, timer, x);
         final String sanitizedName = sanitizeName(name);
         final Snapshot snapshot = timer.getSnapshot();
-        final String durationUnit = timer.getDurationUnit().name();
-        printDoubleField(sanitizedName + ".min", timer.getMin(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".max", timer.getMax(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".mean", timer.getMean(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".stddev", timer.getStdDev(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".median", snapshot.getMedian(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".75percentile", snapshot.get75thPercentile(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".95percentile", snapshot.get95thPercentile(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".98percentile", snapshot.get98thPercentile(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".99percentile", snapshot.get99thPercentile(), "timer", durationUnit);
-        printDoubleField(sanitizedName + ".999percentile", snapshot.get999thPercentile(), "timer", durationUnit);
+        printDoubleField(sanitizedName + ".min", timer.getMin(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".max", timer.getMax(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".mean", timer.getMean(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".stddev", timer.getStdDev(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".median", snapshot.getMedian(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".75percentile", snapshot.get75thPercentile(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".95percentile", snapshot.get95thPercentile(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".98percentile", snapshot.get98thPercentile(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".99percentile", snapshot.get99thPercentile(), "timer", "MILLISECONDS");
+        printDoubleField(sanitizedName + ".999percentile", snapshot.get999thPercentile(), "timer", "MILLISECONDS");
     }
 
     private void printDoubleField(String name, double value, String groupName, String units) {

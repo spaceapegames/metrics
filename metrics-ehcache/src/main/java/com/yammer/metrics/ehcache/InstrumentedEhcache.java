@@ -9,7 +9,6 @@ import net.sf.ehcache.Statistics;
 import net.sf.ehcache.constructs.EhcacheDecoratorAdapter;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An instrumented {@link Ehcache} instance.
@@ -370,9 +369,9 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
     private InstrumentedEhcache(MetricRegistry registry, Ehcache cache) {
         super(cache);
         this.getTimer = registry.add(Metrics.name(cache.getClass(), "get", cache.getName()),
-                                     Metrics.timer(TimeUnit.MICROSECONDS));
+                                     Metrics.timer());
         this.putTimer = registry.add(Metrics.name(cache.getClass(), "put", cache.getName()),
-                                     Metrics.timer(TimeUnit.MICROSECONDS));
+                                     Metrics.timer());
     }
 
     @Override

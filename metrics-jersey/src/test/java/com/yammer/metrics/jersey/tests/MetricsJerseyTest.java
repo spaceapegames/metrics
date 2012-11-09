@@ -50,7 +50,7 @@ public class MetricsJerseyTest extends JerseyTest {
                    is("woo"));
 
         final Meter meter = Metrics.metric(Metrics.name(InstrumentedResource.class, "metered"),
-                                           Metrics.meter("blah"));
+                                           Metrics.meter());
         assertThat(meter.getCount(),
                    is(1L));
     }
@@ -59,7 +59,7 @@ public class MetricsJerseyTest extends JerseyTest {
     public void exceptionMeteredMethodsAreExceptionMetered() {
         final Meter meter = Metrics.metric(Metrics.name(InstrumentedResource.class,
                                                         "exceptionMetered", "exceptions"),
-                                           Metrics.meter("blah"));
+                                           Metrics.meter());
         
         assertThat(resource().path("exception-metered").get(String.class),
                    is("fuh"));

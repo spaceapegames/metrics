@@ -18,12 +18,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GangliaReporterTest extends AbstractPollingReporterTest {
-    private GangliaMessage testMessage;
 
     @Override
     protected AbstractPollingReporter createReporter(MetricRegistry registry, OutputStream out, Clock clock) throws Exception {
         final OutputStreamWriter output = new OutputStreamWriter(out);
-        this.testMessage = new GangliaMessage(null, null, null) {
+        final GangliaMessage testMessage = new GangliaMessage(null, null, null) {
 
             @Override
             public GangliaMessage addInt(int value) {
@@ -57,7 +56,7 @@ public class GangliaReporterTest extends AbstractPollingReporterTest {
         };
 
         final GangliaMessageBuilder messageBuilder = mock(GangliaMessageBuilder.class);
-        when(messageBuilder.newMessage()).thenReturn(this.testMessage);
+        when(messageBuilder.newMessage()).thenReturn(testMessage);
 
         final GangliaReporter reporter = new GangliaReporter(registry,
                                                              "group-prefix",

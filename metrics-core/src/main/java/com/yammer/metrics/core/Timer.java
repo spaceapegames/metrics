@@ -9,13 +9,6 @@ import java.util.concurrent.TimeUnit;
  */
 public interface Timer extends Metered, Sampling, Summarizable {
     /**
-     * Returns the timer's duration scale unit.
-     *
-     * @return the timer's duration scale unit
-     */
-    TimeUnit getDurationUnit();
-
-    /**
      * Adds a recorded duration.
      *
      * @param duration the length of the duration

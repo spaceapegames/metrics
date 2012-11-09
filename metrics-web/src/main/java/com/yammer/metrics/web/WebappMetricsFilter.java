@@ -52,11 +52,11 @@ public abstract class WebappMetricsFilter implements Filter {
             metersByStatusCode.put(entry.getKey(),
                                    metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
                                                                    entry.getValue()),
-                                                      Metrics.meter("responses")));
+                                                      Metrics.meter()));
         }
         this.otherMeter = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
                                                           otherMetricName),
-                                             Metrics.meter("responses"));
+                                             Metrics.meter());
         this.activeRequests = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,
                                                               "activeRequests"), Metrics.counter());
         this.requestTimer = metricRegistry.add(Metrics.name(WebappMetricsFilter.class,

@@ -11,7 +11,9 @@ import java.util.concurrent.TimeUnit;
  * The default implementation of {@link Timer}.
  */
 public class TimerImpl implements Timer {
-    private final TimeUnit durationUnit, rateUnit;
+    private static final long NANOSECONDS_PER_MILLISECOND = TimeUnit.NANOSECONDS
+                                                                    .convert(1,
+                                                                             TimeUnit.MILLISECONDS);
     private final Meter meter;
     private final Histogram histogram = Metrics.histogram(SampleType.BIASED);
     private final Clock clock;
@@ -19,25 +21,11 @@ public class TimerImpl implements Timer {
     /**
      * Creates a new {@link TimerImpl}.
      *
-     * @param durationUnit the scale unit for this timer's duration metrics
-     * @param rateUnit     the scale unit for this timer's rate metrics
      * @param clock        the clock used to calculate duration
      */
-    public TimerImpl(TimeUnit durationUnit, TimeUnit rateUnit, Clock clock) {
-        this.durationUnit = durationUnit;
-        this.rateUnit = rateUnit;
-        this.meter = new MeterImpl("calls", rateUnit, clock);
+    public TimerImpl(Clock clock) {
+        this.meter = new MeterImpl(clock);
         this.clock = clock;
-    }
-
-    @Override
-    public TimeUnit getDurationUnit() {
-        return durationUnit;
-    }
-
-    @Override
-    public TimeUnit getRateUnit() {
-        return rateUnit;
     }
 
     @Override
@@ -146,11 +134,6 @@ public class TimerImpl implements Timer {
         return new Snapshot(converted);
     }
 
-    @Override
-    public String getEventType() {
-        return meter.getEventType();
-    }
-
     private void update(long duration) {
         if (duration >= 0) {
             histogram.update(duration);
@@ -159,6 +142,6 @@ public class TimerImpl implements Timer {
     }
 
     private double convertFromNS(double ns) {
-        return ns / TimeUnit.NANOSECONDS.convert(1, durationUnit);
+        return ns / NANOSECONDS_PER_MILLISECOND;
     }
 }

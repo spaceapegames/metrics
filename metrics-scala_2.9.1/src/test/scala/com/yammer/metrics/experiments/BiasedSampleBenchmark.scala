@@ -6,7 +6,7 @@ import com.yammer.metrics.scala.Instrumented
 import com.yammer.metrics.reporting.ConsoleReporter
 
 object BiasedSampleBenchmark extends Instrumented {
-  val updateTimer = metrics.timer("update", durationUnit = TimeUnit.MICROSECONDS)
+  val updateTimer = metrics.timer("update")
 
   def main(args: Array[String]) {
     ConsoleReporter.enable(1, TimeUnit.SECONDS)

@@ -25,12 +25,12 @@ public class InstrumentedAppender extends AppenderBase<ILoggingEvent> {
     }
 
     public InstrumentedAppender(MetricRegistry registry) {
-        this.all = registry.add(Metrics.name(Appender.class, "all"), Metrics.meter("statements"));
-        this.trace = registry.add(Metrics.name(Appender.class, "trace"), Metrics.meter("statements"));
-        this.debug = registry.add(Metrics.name(Appender.class, "debug"), Metrics.meter("statements"));
-        this.info = registry.add(Metrics.name(Appender.class, "info"), Metrics.meter("statements"));
-        this.warn = registry.add(Metrics.name(Appender.class, "warn"), Metrics.meter("statements"));
-        this.error = registry.add(Metrics.name(Appender.class, "error"), Metrics.meter("statements"));
+        this.all = registry.add(Metrics.name(Appender.class, "all"), Metrics.meter());
+        this.trace = registry.add(Metrics.name(Appender.class, "trace"), Metrics.meter());
+        this.debug = registry.add(Metrics.name(Appender.class, "debug"), Metrics.meter());
+        this.info = registry.add(Metrics.name(Appender.class, "info"), Metrics.meter());
+        this.warn = registry.add(Metrics.name(Appender.class, "warn"), Metrics.meter());
+        this.error = registry.add(Metrics.name(Appender.class, "error"), Metrics.meter());
     }
 
     @Override

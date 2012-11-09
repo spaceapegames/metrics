@@ -1,25 +1,9 @@
 package com.yammer.metrics.core;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * An object which maintains mean and exponentially-weighted rate.
  */
 public interface Metered extends Metric {
-    /**
-     * Returns the meter's rate unit.
-     *
-     * @return the meter's rate unit
-     */
-    TimeUnit getRateUnit();
-
-    /**
-     * Returns the type of events the meter is measuring.
-     *
-     * @return the meter's event type
-     */
-    String getEventType();
-
     /**
      * Returns the number of events which have been marked.
      *

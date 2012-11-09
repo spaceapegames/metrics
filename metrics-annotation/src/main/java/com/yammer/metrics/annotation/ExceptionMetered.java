@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An annotation for marking a method of a Guice-provided object as metered.
@@ -52,17 +51,6 @@ public @interface ExceptionMetered {
      * it decorates and the suffix "Exceptions".
      */
     String name() default "";
-
-    /**
-     * The name of the type of events the meter is measuring. The event type defaults to
-     * "exceptions".
-     */
-    String eventType() default "exceptions";
-
-    /**
-     * The time unit of the meter's rate. Defaults to Seconds.
-     */
-    TimeUnit rateUnit() default TimeUnit.SECONDS;
 
     /**
      * The type of exceptions that the meter will catch and count.

@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -148,7 +147,6 @@ public abstract class AbstractPollingReporterTest {
 
     static Timer createTimer() throws Exception {
         final Timer mock = mock(Timer.class);
-        when(mock.getDurationUnit()).thenReturn(TimeUnit.MILLISECONDS);
         setupSummarizableMock(mock);
         setupMeteredMock(mock);
         setupSamplingMock(mock);
@@ -174,8 +172,6 @@ public abstract class AbstractPollingReporterTest {
         when(metered.getFiveMinuteRate()).thenReturn(5d);
         when(metered.getFifteenMinuteRate()).thenReturn(15d);
         when(metered.getMeanRate()).thenReturn(2d);
-        when(metered.getEventType()).thenReturn("eventType");
-        when(metered.getRateUnit()).thenReturn(TimeUnit.SECONDS);
     }
 
     static void setupSamplingMock(Sampling sampling) {

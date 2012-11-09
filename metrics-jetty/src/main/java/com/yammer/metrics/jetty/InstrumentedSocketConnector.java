@@ -27,15 +27,15 @@ public class InstrumentedSocketConnector extends SocketConnector {
         this.accepts = registry.add(Metrics.name(SocketConnector.class,
                                                  "accepts",
                                                  Integer.toString(port)),
-                                    Metrics.meter("connections"));
+                                    Metrics.meter());
         this.connects = registry.add(Metrics.name(SocketConnector.class,
                                                   "connects",
                                                   Integer.toString(port)),
-                                     Metrics.meter("connections"));
+                                     Metrics.meter());
         this.disconnects = registry.add(Metrics.name(SocketConnector.class,
                                                      "disconnects",
                                                      Integer.toString(port)),
-                                        Metrics.meter("connections"));
+                                        Metrics.meter());
         this.connections = registry.add(Metrics.name(SocketConnector.class,
                                                      "active-connections",
                                                      Integer.toString(port)),

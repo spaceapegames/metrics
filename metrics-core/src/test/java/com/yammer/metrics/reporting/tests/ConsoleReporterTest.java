@@ -3,7 +3,6 @@ package com.yammer.metrics.reporting.tests;
 import com.yammer.metrics.core.Clock;
 import com.yammer.metrics.core.MetricPredicate;
 import com.yammer.metrics.core.MetricRegistry;
-import com.yammer.metrics.core.MetricRegistry;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
 import com.yammer.metrics.reporting.ConsoleReporter;
 import org.junit.Test;
@@ -61,10 +60,10 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
                 "1/1/70 12:00:05 AM =============================================================",
                 "java.lang.Object.metric:",
                 "count = 1",
-                "mean rate = 2.00 eventType/s",
-                "1-minute rate = 1.00 eventType/s",
-                "5-minute rate = 5.00 eventType/s",
-                "15-minute rate = 15.00 eventType/s"
+                "mean rate = 2.00 events/s",
+                "1-minute rate = 1.00 events/s",
+                "5-minute rate = 5.00 events/s",
+                "15-minute rate = 15.00 events/s"
         };
     }
 
@@ -74,10 +73,10 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
                 "1/1/70 12:00:05 AM =============================================================",
                 "java.lang.Object.metric:", "" +
                 "count = 1",
-                "mean rate = 2.00 eventType/s",
-                "1-minute rate = 1.00 eventType/s",
-                "5-minute rate = 5.00 eventType/s",
-                "15-minute rate = 15.00 eventType/s",
+                "mean rate = 2.00 events/s",
+                "1-minute rate = 1.00 events/s",
+                "5-minute rate = 5.00 events/s",
+                "15-minute rate = 15.00 events/s",
                 "min = 1.00ms",
                 "max = 3.00ms",
                 "mean = 2.00ms",

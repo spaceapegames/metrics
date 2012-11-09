@@ -53,35 +53,26 @@ class MetricsGroup(val klass: Class[_], val metricsRegistry: MetricRegistry = Me
    * Creates a new meter metric.
    *
    * @param name the name of the meter
-   * @param eventType the plural name of the type of events the meter is
-   *                  measuring (e.g., "requests")
    * @param scope the scope of the meter
-   * @param unit the time unit of the meter
    * @param registry the registry for the gauge
    */
   def meter(name: String,
-            eventType: String,
             scope: String = null,
-            unit: TimeUnit = TimeUnit.SECONDS,
             registry: MetricRegistry = metricsRegistry) =
     new Meter(registry.add(Metrics.name(klass, name, scope),
-                           Metrics.meter(eventType, unit)))
+                           Metrics.meter()))
 
   /**
    * Creates a new timer metric.
    *
    * @param name the name of the timer
    * @param scope the scope of the timer
-   * @param durationUnit the time unit for measuring duration
-   * @param rateUnit the time unit for measuring rate
    * @param registry the registry for the gauge
    */
   def timer(name: String,
             scope: String = null,
-            durationUnit: TimeUnit = TimeUnit.MILLISECONDS,
-            rateUnit: TimeUnit = TimeUnit.SECONDS,
             registry: MetricRegistry = metricsRegistry) =
     new Timer(registry.add(Metrics.name(klass, name, scope),
-                           Metrics.timer(durationUnit, rateUnit)))
+                           Metrics.timer()))
 }
 

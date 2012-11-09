@@ -343,7 +343,6 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
         json.writeStartObject();
         {
             json.writeStringField("type", "meter");
-            json.writeStringField("event_type", meter.getEventType());
             writeMeteredFields(meter, json);
         }
         json.writeEndObject();
@@ -358,7 +357,6 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
             json.writeFieldName("duration");
             json.writeStartObject();
             {
-                json.writeStringField("unit", timer.getDurationUnit().toString().toLowerCase());
                 writeSummarizable(timer, json);
                 writeSampling(timer, json);
                 if (context.showFullSamples) {
@@ -404,7 +402,6 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
     }
 
     private static void writeMeteredFields(Metered metered, JsonGenerator json) throws IOException {
-        json.writeStringField("unit", metered.getRateUnit().toString().toLowerCase());
         json.writeNumberField("count", metered.getCount());
         json.writeNumberField("mean", metered.getMeanRate());
         json.writeNumberField("m1", metered.getOneMinuteRate());

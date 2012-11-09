@@ -18,34 +18,17 @@ public class MeterImpl implements Meter {
     private final AtomicLong count = new AtomicLong();
     private final long startTime;
     private final AtomicLong lastTick;
-    private final TimeUnit rateUnit;
-    private final String eventType;
     private final Clock clock;
 
     /**
      * Creates a new {@link MeterImpl}.
      *
-     * @param eventType  the plural name of the event the meter is measuring (e.g., {@code
-     *                   "requests"})
-     * @param rateUnit   the rate unit of the new meter
      * @param clock      the clock to use for the meter ticks
      */
-    public MeterImpl(String eventType, TimeUnit rateUnit, Clock clock) {
-        this.rateUnit = rateUnit;
-        this.eventType = eventType;
+    public MeterImpl(Clock clock) {
         this.clock = clock;
         this.startTime = this.clock.getTick();
         this.lastTick = new AtomicLong(startTime);
-    }
-
-    @Override
-    public TimeUnit getRateUnit() {
-        return rateUnit;
-    }
-
-    @Override
-    public String getEventType() {
-        return eventType;
     }
 
     @Override
@@ -84,13 +67,13 @@ public class MeterImpl implements Meter {
     @Override
     public double getFifteenMinuteRate() {
         tickIfNecessary();
-        return m15Rate.getRate(rateUnit);
+        return m15Rate.getRate(TimeUnit.SECONDS);
     }
 
     @Override
     public double getFiveMinuteRate() {
         tickIfNecessary();
-        return m5Rate.getRate(rateUnit);
+        return m5Rate.getRate(TimeUnit.SECONDS);
     }
 
     @Override
@@ -106,10 +89,10 @@ public class MeterImpl implements Meter {
     @Override
     public double getOneMinuteRate() {
         tickIfNecessary();
-        return m1Rate.getRate(rateUnit);
+        return m1Rate.getRate(TimeUnit.SECONDS);
     }
 
     private double convertNsRate(double ratePerNs) {
-        return ratePerNs * (double) rateUnit.toNanos(1);
+        return ratePerNs * (double) TimeUnit.SECONDS.toNanos(1);
     }
 }

@@ -28,15 +28,15 @@ public class InstrumentedSslSelectChannelConnector extends SslSelectChannelConne
         this.accepts = registry.add(Metrics.name(SslSelectChannelConnector.class,
                                                  "accepts",
                                                  Integer.toString(port)),
-                                    Metrics.meter("connections"));
+                                    Metrics.meter());
         this.connects = registry.add(Metrics.name(SslSelectChannelConnector.class,
                                                   "connects",
                                                   Integer.toString(port)),
-                                     Metrics.meter("connections"));
+                                     Metrics.meter());
         this.disconnects = registry.add(Metrics.name(SslSelectChannelConnector.class,
                                                      "disconnects",
                                                      Integer.toString(port)),
-                                        Metrics.meter("connections"));
+                                        Metrics.meter());
         this.connections = registry.add(Metrics.name(SslSelectChannelConnector.class,
                                                      "active-connections",
                                                      Integer.toString(port)),

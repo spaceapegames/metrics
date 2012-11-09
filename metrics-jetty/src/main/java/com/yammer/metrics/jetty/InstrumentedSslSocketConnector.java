@@ -27,15 +27,15 @@ public class InstrumentedSslSocketConnector extends SslSocketConnector {
         this.accepts = registry.add(Metrics.name(SslSocketConnector.class,
                                                  "accepts",
                                                  Integer.toString(port)),
-                                    Metrics.meter("connections"));
+                                    Metrics.meter());
         this.connects = registry.add(Metrics.name(SslSocketConnector.class,
                                                   "connects",
                                                   Integer.toString(port)),
-                                     Metrics.meter("connections"));
+                                     Metrics.meter());
         this.disconnects = registry.add(Metrics.name(SslSocketConnector.class,
                                                      "disconnects",
                                                      Integer.toString(port)),
-                                        Metrics.meter("connections"));
+                                        Metrics.meter());
         this.connections = registry.add(Metrics.name(SslSocketConnector.class,
                                                      "active-connections",
                                                      Integer.toString(port)),

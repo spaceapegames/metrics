@@ -28,15 +28,15 @@ public class InstrumentedBlockingChannelConnector extends BlockingChannelConnect
         this.accepts = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                  "accepts",
                                                  Integer.toString(port)),
-                                    Metrics.meter("connections"));
+                                    Metrics.meter());
         this.connects = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                   "connects",
                                                   Integer.toString(port)),
-                                     Metrics.meter("connections"));
+                                     Metrics.meter());
         this.disconnects = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                      "disconnects",
                                                      Integer.toString(port)),
-                                        Metrics.meter("connections"));
+                                        Metrics.meter());
         this.connections = registry.add(Metrics.name(BlockingChannelConnector.class,
                                                      "active-connections",
                                                      Integer.toString(port)),

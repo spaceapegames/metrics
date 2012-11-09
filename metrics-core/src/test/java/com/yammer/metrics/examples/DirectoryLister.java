@@ -15,8 +15,7 @@ import static com.yammer.metrics.Metrics.*;
 public class DirectoryLister {
     private static final Counter DIRECTORIES = metric(name(DirectoryLister.class, "directories"),
                                                       counter());
-    private static final Meter FILES = metric(name(DirectoryLister.class, "files"),
-                                              meter("files"));
+    private static final Meter FILES = metric(name(DirectoryLister.class, "files"), meter());
     private static final Timer LISTING = metric(name(DirectoryLister.class, "directory-listing"),
                                                 timer());
     private final File directory;
