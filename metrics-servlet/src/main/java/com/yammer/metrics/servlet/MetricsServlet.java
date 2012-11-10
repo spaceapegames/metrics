@@ -22,13 +22,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * An HTTP servlet which outputs the metrics in a {@link com.yammer.metrics.core.MetricRegistry} (and optionally the data
+ * An HTTP servlet which outputs the metrics in a {@link MetricRegistry} (and optionally the data
  * provided by {@link VirtualMachineMetrics}) in a JSON object. Only responds to {@code GET}
  * requests.
  * <p/>
  * If the servlet context has an attribute named
  * {@code com.yammer.metrics.servlet.MetricsServlet.registry} which is a
- * {@link com.yammer.metrics.core.MetricRegistry} instance, {@link MetricsServlet} will use it instead of {@link Metrics}.
+ * {@link MetricRegistry} instance, {@link MetricsServlet} will use it instead of {@link Metrics}.
  * <p/>
  * {@link MetricsServlet} also takes an initialization parameter, {@code show-jvm-metrics}, which
  * should be a boolean value (e.g., {@code "true"} or {@code "false"}). It determines whether or not
@@ -63,7 +63,7 @@ import java.util.concurrent.TimeUnit;
 public class MetricsServlet extends HttpServlet implements MetricProcessor<MetricsServlet.Context> {
 
     /**
-     * The attribute name of the {@link com.yammer.metrics.core.MetricRegistry} instance in the servlet context.
+     * The attribute name of the {@link MetricRegistry} instance in the servlet context.
      */
     public static final String REGISTRY_ATTRIBUTE = MetricsServlet.class.getName() + ".registry";
 
@@ -77,6 +77,11 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
      * included in the JSON output.
      */
     public static final String SHOW_JVM_METRICS = "show-jvm-metrics";
+
+    /**
+     * The duration unit to use for times.
+     */
+    public static final String DURATION_UNIT = "duration-unit";
 
     static final class Context {
         final boolean showFullSamples;
@@ -94,6 +99,7 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
 
     private final Clock clock;
     private final VirtualMachineMetrics vm;
+    private TimeUnit durationUnit;
     private MetricRegistry registry;
     private JsonFactory factory;
     private boolean showJvmMetrics;
@@ -102,8 +108,12 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
      * Creates a new {@link MetricsServlet}.
      */
     public MetricsServlet() {
-        this(Clock.defaultClock(), VirtualMachineMetrics.getInstance(),
-             Metrics.defaultRegistry(), DEFAULT_JSON_FACTORY, true);
+        this(Clock.defaultClock(),
+             VirtualMachineMetrics.getInstance(),
+             Metrics.defaultRegistry(),
+             DEFAULT_JSON_FACTORY,
+             true,
+             TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -111,9 +121,13 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
      *
      * @param showJvmMetrics    whether or not JVM-level metrics will be included in the output
      */
-    public MetricsServlet(boolean showJvmMetrics) {
-        this(Clock.defaultClock(), VirtualMachineMetrics.getInstance(),
-             Metrics.defaultRegistry(), DEFAULT_JSON_FACTORY, showJvmMetrics);
+    public MetricsServlet(boolean showJvmMetrics, TimeUnit durationUnit) {
+        this(Clock.defaultClock(),
+             VirtualMachineMetrics.getInstance(),
+             Metrics.defaultRegistry(),
+             DEFAULT_JSON_FACTORY,
+             showJvmMetrics,
+             durationUnit);
     }
 
     /**
@@ -121,7 +135,7 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
      *
      * @param clock             the clock used for the current time
      * @param vm                a {@link VirtualMachineMetrics} instance
-     * @param registry          a {@link com.yammer.metrics.core.MetricRegistry}
+     * @param registry          a {@link MetricRegistry}
      * @param factory           a {@link JsonFactory}
      * @param showJvmMetrics    whether or not JVM-level metrics will be included in the output
      */
@@ -129,12 +143,14 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
                           VirtualMachineMetrics vm,
                           MetricRegistry registry,
                           JsonFactory factory,
-                          boolean showJvmMetrics) {
+                          boolean showJvmMetrics,
+                          TimeUnit durationUnit) {
         this.clock = clock;
         this.vm = vm;
         this.registry = registry;
         this.factory = factory;
         this.showJvmMetrics = showJvmMetrics;
+        this.durationUnit = durationUnit;
     }
 
     @Override
@@ -153,6 +169,11 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
         final String showJvmMetricsParam = config.getInitParameter(SHOW_JVM_METRICS);
         if (showJvmMetricsParam != null) {
             this.showJvmMetrics = Boolean.parseBoolean(showJvmMetricsParam);
+        }
+
+        final String unit = config.getInitParameter(DURATION_UNIT);
+        if (unit != null) {
+            this.durationUnit = TimeUnit.valueOf(unit.toUpperCase());
         }
     }
 
@@ -305,8 +326,17 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
         {
             json.writeStringField("type", "histogram");
             json.writeNumberField("count", histogram.getCount());
-            writeSummarizable(histogram, json);
-            writeSampling(histogram, json);
+            json.writeNumberField("min", histogram.getMin());
+            json.writeNumberField("max", histogram.getMax());
+            json.writeNumberField("mean", histogram.getMean());
+            json.writeNumberField("std_dev", histogram.getStdDev());
+            final Snapshot snapshot = histogram.getSnapshot();
+            json.writeNumberField("median", snapshot.getMedian());
+            json.writeNumberField("p75", snapshot.get75thPercentile());
+            json.writeNumberField("p95", snapshot.get95thPercentile());
+            json.writeNumberField("p98", snapshot.get98thPercentile());
+            json.writeNumberField("p99", snapshot.get99thPercentile());
+            json.writeNumberField("p999", snapshot.get999thPercentile());
 
             if (context.showFullSamples) {
                 json.writeObjectField("values", histogram.getSnapshot().getValues());
@@ -357,10 +387,24 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
             json.writeFieldName("duration");
             json.writeStartObject();
             {
-                writeSummarizable(timer, json);
-                writeSampling(timer, json);
+                json.writeNumberField("min", convertFromNS(timer.getMin()));
+                json.writeNumberField("max", convertFromNS(timer.getMax()));
+                json.writeNumberField("mean", convertFromNS(timer.getMean()));
+                json.writeNumberField("std_dev", convertFromNS(timer.getStdDev()));
+                final Snapshot snapshot = timer.getSnapshot();
+                json.writeNumberField("median", convertFromNS(snapshot.getMedian()));
+                json.writeNumberField("p75", convertFromNS(snapshot.get75thPercentile()));
+                json.writeNumberField("p95", convertFromNS(snapshot.get95thPercentile()));
+                json.writeNumberField("p98", convertFromNS(snapshot.get98thPercentile()));
+                json.writeNumberField("p99", convertFromNS(snapshot.get99thPercentile()));
+                json.writeNumberField("p999", convertFromNS(snapshot.get999thPercentile()));
                 if (context.showFullSamples) {
-                    json.writeObjectField("values", timer.getSnapshot().getValues());
+                    final long[] values = timer.getSnapshot().getValues();
+                    final double[] converted = new double[values.length];
+                    for (int i = 0; i < converted.length; i++) {
+                        converted[i] = convertFromNS(values[i]);
+                    }
+                    json.writeObjectField("values", converted);
                 }
             }
             json.writeEndObject();
@@ -384,28 +428,19 @@ public class MetricsServlet extends HttpServlet implements MetricProcessor<Metri
         }
     }
 
-    private static void writeSummarizable(Summarizable metric, JsonGenerator json) throws IOException {
-        json.writeNumberField("min", metric.getMin());
-        json.writeNumberField("max", metric.getMax());
-        json.writeNumberField("mean", metric.getMean());
-        json.writeNumberField("std_dev", metric.getStdDev());
-    }
-
-    private static void writeSampling(Sampling metric, JsonGenerator json) throws IOException {
-        final Snapshot snapshot = metric.getSnapshot();
-        json.writeNumberField("median", snapshot.getMedian());
-        json.writeNumberField("p75", snapshot.get75thPercentile());
-        json.writeNumberField("p95", snapshot.get95thPercentile());
-        json.writeNumberField("p98", snapshot.get98thPercentile());
-        json.writeNumberField("p99", snapshot.get99thPercentile());
-        json.writeNumberField("p999", snapshot.get999thPercentile());
-    }
-
     private static void writeMeteredFields(Metered metered, JsonGenerator json) throws IOException {
         json.writeNumberField("count", metered.getCount());
         json.writeNumberField("mean", metered.getMeanRate());
         json.writeNumberField("m1", metered.getOneMinuteRate());
         json.writeNumberField("m5", metered.getFiveMinuteRate());
         json.writeNumberField("m15", metered.getFifteenMinuteRate());
+    }
+
+    private double convertFromNS(long ns) {
+        return ns / (double) durationUnit.toNanos(1);
+    }
+
+    private double convertFromNS(double ns) {
+        return ns / (double) durationUnit.toNanos(1);
     }
 }

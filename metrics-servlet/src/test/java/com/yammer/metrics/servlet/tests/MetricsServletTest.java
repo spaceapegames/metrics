@@ -33,7 +33,7 @@ public class MetricsServletTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
     private final ServletOutputStream output = mock(ServletOutputStream.class);
-    private final MetricsServlet servlet = new MetricsServlet(clock, vm, registry, factory, false);
+    private final MetricsServlet servlet = new MetricsServlet(clock, vm, registry, factory, false, TimeUnit.MILLISECONDS);
 
     private final ByteArrayOutputStream json = new ByteArrayOutputStream();
 
@@ -107,7 +107,7 @@ public class MetricsServletTest {
 
         when(vm.getBufferPoolStats()).thenReturn(bufferPoolStats);
 
-        final MetricsServlet servlet = new MetricsServlet(clock, vm, registry, factory, true);
+        final MetricsServlet servlet = new MetricsServlet(clock, vm, registry, factory, true, TimeUnit.MILLISECONDS);
 
         servlet.service(request, response);
 
@@ -158,9 +158,10 @@ public class MetricsServletTest {
         servlet.service(request, response);
 
         assertThat(json.toString(),
-                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.histogram\":{\"type\":\"histogram\",\"count\":1,\"min\":12.0," +
-                              "\"max\":12.0,\"mean\":12.0,\"std_dev\":0.0,\"median\":12.0," +
-                              "\"p75\":12.0,\"p95\":12.0,\"p98\":12.0,\"p99\":12.0,\"p999\":12.0}}"));
+                   is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.histogram\":{" +
+                              "\"type\":\"histogram\",\"count\":1,\"min\":12," +
+                              "\"max\":12,\"mean\":12,\"std_dev\":0.0,\"median\":12," +
+                              "\"p75\":12,\"p95\":12,\"p98\":12,\"p99\":12,\"p999\":12}}"));
     }
 
     @Test
@@ -185,17 +186,17 @@ public class MetricsServletTest {
     @Test
     public void generatesTimers() throws Exception {
         final Snapshot snapshot = mock(Snapshot.class);
-        when(snapshot.getMedian()).thenReturn(100L);
-        when(snapshot.get75thPercentile()).thenReturn(100L);
-        when(snapshot.get95thPercentile()).thenReturn(100L);
-        when(snapshot.get98thPercentile()).thenReturn(100L);
-        when(snapshot.get99thPercentile()).thenReturn(100L);
-        when(snapshot.get999thPercentile()).thenReturn(100L);
+        when(snapshot.getMedian()).thenReturn(TimeUnit.MILLISECONDS.toNanos(100L));
+        when(snapshot.get75thPercentile()).thenReturn(TimeUnit.MILLISECONDS.toNanos(102L));
+        when(snapshot.get95thPercentile()).thenReturn(TimeUnit.MILLISECONDS.toNanos(104L));
+        when(snapshot.get98thPercentile()).thenReturn(TimeUnit.MILLISECONDS.toNanos(106L));
+        when(snapshot.get99thPercentile()).thenReturn(TimeUnit.MILLISECONDS.toNanos(108L));
+        when(snapshot.get999thPercentile()).thenReturn(TimeUnit.MILLISECONDS.toNanos(110L));
 
         final Timer timer = mock(Timer.class);
-        when(timer.getMin()).thenReturn(100L);
-        when(timer.getMax()).thenReturn(100L);
-        when(timer.getMean()).thenReturn(100L);
+        when(timer.getMin()).thenReturn(TimeUnit.MILLISECONDS.toNanos(101L));
+        when(timer.getMax()).thenReturn(TimeUnit.MILLISECONDS.toNanos(103L));
+        when(timer.getMean()).thenReturn(TimeUnit.MILLISECONDS.toNanos(105L));
         when(timer.getSnapshot()).thenReturn(snapshot);
         when(timer.getMeanRate()).thenReturn(100000.0);
         when(timer.getCount()).thenReturn(1L);
@@ -207,9 +208,9 @@ public class MetricsServletTest {
         assertThat(json.toString(),
                    is("{\"com.yammer.metrics.servlet.tests.MetricsServletTest.timer\":" +
                               "{\"type\":\"timer\",\"duration\":{" +
-                              "\"min\":100.0,\"max\":100.0,\"mean\":100.0,\"std_dev\":0.0," +
-                              "\"median\":100.0,\"p75\":100.0,\"p95\":100.0,\"p98\":100.0," +
-                              "\"p99\":100.0,\"p999\":100.0},\"rate\":{" +
+                              "\"min\":101.0,\"max\":103.0,\"mean\":105.0,\"std_dev\":0.0," +
+                              "\"median\":100.0,\"p75\":102.0,\"p95\":104.0,\"p98\":106.0," +
+                              "\"p99\":108.0,\"p999\":110.0},\"rate\":{" +
                               "\"count\":1,\"mean\":100000.0,\"m1\":0.0,\"m5\":0.0," +
                               "\"m15\":0.0}}}"));
     }
