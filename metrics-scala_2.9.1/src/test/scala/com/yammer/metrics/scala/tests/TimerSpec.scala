@@ -14,7 +14,7 @@ class TimerSpec extends Spec {
     @Test def `updates the underlying metric` = {
       timer.time { Thread.sleep(100); 10 }.must(be(10))
 
-      metric.getMin.must(be(approximately(100.0, 10)))
+      metric.getMin.must(be(approximately(100L, 10)))
     }
   }
 }

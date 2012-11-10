@@ -1,7 +1,6 @@
 package com.yammer.metrics.core.tests;
 
 import com.yammer.metrics.core.Histogram;
-import com.yammer.metrics.core.Histogram;
 import com.yammer.metrics.stats.Snapshot;
 import org.junit.Test;
 
@@ -20,15 +19,15 @@ public class HistogramTest {
 
         assertThat("the histogram has a max of zero",
                    histogram.getMax(),
-                   is(closeTo(0.0, 0.0001)));
+                   is(0L));
 
         assertThat("the histogram has a min of zero",
                    histogram.getMin(),
-                   is(closeTo(0.0, 0.0001)));
+                   is(0L));
 
         assertThat("the histogram has a mean of zero",
                    histogram.getMean(),
-                   is(closeTo(0.0, 0.0001)));
+                   is(0L));
 
         assertThat("the histogram has a standard deviation of zero",
                    histogram.getStdDev(),
@@ -36,21 +35,21 @@ public class HistogramTest {
         
         assertThat("the histogram has a sum of zero",
                    histogram.getSum(),
-                   is(closeTo(0.0, 0.0001)));
+                   is(0L));
 
         final Snapshot snapshot = histogram.getSnapshot();
 
         assertThat("the histogram has a median of zero",
                    snapshot.getMedian(),
-                   is(closeTo(0.0, 0.0001)));
+                   is(0L));
 
         assertThat("the histogram has a 75th percentile of zero",
                    snapshot.get75thPercentile(),
-                   is(closeTo(0.0, 0.0001)));
+                   is(0L));
 
         assertThat("the histogram has a 99th percentile of zero",
                    snapshot.get99thPercentile(),
-                   is(closeTo(0.0, 0.0001)));
+                   is(0L));
 
         assertThat("the histogram is empty",
                    snapshot.size(),
@@ -69,15 +68,15 @@ public class HistogramTest {
 
         assertThat("the histogram has a max of 1000",
                    histogram.getMax(),
-                   is(closeTo(1000.0, 0.0001)));
+                   is(1000L));
 
         assertThat("the histogram has a min of 1",
                    histogram.getMin(),
-                   is(closeTo(1.0, 0.0001)));
+                   is(1L));
 
         assertThat("the histogram has a mean of 500.5",
                    histogram.getMean(),
-                   is(closeTo(500.5, 0.0001)));
+                   is(500L));
 
         assertThat("the histogram has a standard deviation of 288.82",
                    histogram.getStdDev(),
@@ -85,21 +84,21 @@ public class HistogramTest {
         
         assertThat("the histogram has a sum of 500500",
                    histogram.getSum(),
-                   is(closeTo(500500, 0.1)));
+                   is(500500L));
 
         final Snapshot snapshot = histogram.getSnapshot();
 
-        assertThat("the histogram has a median of 500.5",
+        assertThat("the histogram has a median of 500",
                    snapshot.getMedian(),
-                   is(closeTo(500.5, 0.0001)));
+                   is(500L));
 
-        assertThat("the histogram has a 75th percentile of 750.75",
+        assertThat("the histogram has a 75th percentile of 750",
                    snapshot.get75thPercentile(),
-                   is(closeTo(750.75, 0.0001)));
+                   is(750L));
 
-        assertThat("the histogram has a 99th percentile of 990.99",
+        assertThat("the histogram has a 99th percentile of 990",
                    snapshot.get99thPercentile(),
-                   is(closeTo(990.99, 0.0001)));
+                   is(990L));
 
         assertThat("the histogram has 1000 values",
                    snapshot.size(),

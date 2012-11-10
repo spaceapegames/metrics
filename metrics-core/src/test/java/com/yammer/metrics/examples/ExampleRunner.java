@@ -2,7 +2,6 @@ package com.yammer.metrics.examples;
 
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Histogram;
-import com.yammer.metrics.core.Histogram;
 import com.yammer.metrics.reporting.ConsoleReporter;
 
 import java.io.File;
@@ -41,7 +40,8 @@ public class ExampleRunner {
 
 
     public static void main(String[] args) throws Exception {
-        ConsoleReporter.enable(10, TimeUnit.SECONDS);
+        final ConsoleReporter reporter = new ConsoleReporter();
+        reporter.start(10, TimeUnit.SECONDS);
 
         System.err.println("Scanning all files on your hard drive...");
 
@@ -52,5 +52,7 @@ public class ExampleRunner {
         }
 
         POOL.awaitTermination(10, TimeUnit.DAYS);
+
+        reporter.shutdown();
     }
 }

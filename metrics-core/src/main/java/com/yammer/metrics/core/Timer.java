@@ -56,10 +56,10 @@ public class Timer implements Metered, Sampling, Summarizable {
     }
 
     /**
-     * Returns a timing {@link com.yammer.metrics.core.TimerContext}, which measures an elapsed time
+     * Returns a timing {@link TimerContext}, which measures an elapsed time
      * in nanoseconds.
      *
-     * @return a new {@link com.yammer.metrics.core.TimerContext}
+     * @return a new {@link TimerContext}
      */
     public TimerContext time() {
         return new TimerContext(this, clock);
@@ -96,8 +96,8 @@ public class Timer implements Metered, Sampling, Summarizable {
      * @return the longest recorded duration
      */
     @Override
-    public double getMax() {
-        return convertFromNS(histogram.getMax());
+    public long getMax() {
+        return histogram.getMax();
     }
 
     /**
@@ -106,8 +106,8 @@ public class Timer implements Metered, Sampling, Summarizable {
      * @return the shortest recorded duration
      */
     @Override
-    public double getMin() {
-        return convertFromNS(histogram.getMin());
+    public long getMin() {
+        return histogram.getMin();
     }
 
     /**
@@ -116,8 +116,8 @@ public class Timer implements Metered, Sampling, Summarizable {
      * @return the arithmetic mean of all recorded durations
      */
     @Override
-    public double getMean() {
-        return convertFromNS(histogram.getMean());
+    public long getMean() {
+        return histogram.getMean();
     }
 
     /**
@@ -127,7 +127,7 @@ public class Timer implements Metered, Sampling, Summarizable {
      */
     @Override
     public double getStdDev() {
-        return convertFromNS(histogram.getStdDev());
+        return histogram.getStdDev();
     }
 
     /**
@@ -136,18 +136,13 @@ public class Timer implements Metered, Sampling, Summarizable {
      * @return the sum of all recorded durations
      */
     @Override
-    public double getSum() {
-        return convertFromNS(histogram.getSum());
+    public long getSum() {
+        return histogram.getSum();
     }
 
     @Override
     public Snapshot getSnapshot() {
-        final double[] values = histogram.getSnapshot().getValues();
-        final double[] converted = new double[values.length];
-        for (int i = 0; i < values.length; i++) {
-            converted[i] = convertFromNS(values[i]);
-        }
-        return new Snapshot(converted);
+        return histogram.getSnapshot();
     }
 
     private void update(long duration) {
@@ -155,9 +150,5 @@ public class Timer implements Metered, Sampling, Summarizable {
             histogram.update(duration);
             meter.mark();
         }
-    }
-
-    private double convertFromNS(double ns) {
-        return ns / NANOSECONDS_PER_MILLISECOND;
     }
 }

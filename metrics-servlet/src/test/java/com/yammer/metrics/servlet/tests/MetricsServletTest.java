@@ -185,17 +185,17 @@ public class MetricsServletTest {
     @Test
     public void generatesTimers() throws Exception {
         final Snapshot snapshot = mock(Snapshot.class);
-        when(snapshot.getMedian()).thenReturn(100.0);
-        when(snapshot.get75thPercentile()).thenReturn(100.0);
-        when(snapshot.get95thPercentile()).thenReturn(100.0);
-        when(snapshot.get98thPercentile()).thenReturn(100.0);
-        when(snapshot.get99thPercentile()).thenReturn(100.0);
-        when(snapshot.get999thPercentile()).thenReturn(100.0);
+        when(snapshot.getMedian()).thenReturn(100L);
+        when(snapshot.get75thPercentile()).thenReturn(100L);
+        when(snapshot.get95thPercentile()).thenReturn(100L);
+        when(snapshot.get98thPercentile()).thenReturn(100L);
+        when(snapshot.get99thPercentile()).thenReturn(100L);
+        when(snapshot.get999thPercentile()).thenReturn(100L);
 
         final Timer timer = mock(Timer.class);
-        when(timer.getMin()).thenReturn(100.0);
-        when(timer.getMax()).thenReturn(100.0);
-        when(timer.getMean()).thenReturn(100.0);
+        when(timer.getMin()).thenReturn(100L);
+        when(timer.getMax()).thenReturn(100L);
+        when(timer.getMean()).thenReturn(100L);
         when(timer.getSnapshot()).thenReturn(snapshot);
         when(timer.getMeanRate()).thenReturn(100000.0);
         when(timer.getCount()).thenReturn(1L);

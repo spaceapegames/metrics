@@ -19,76 +19,21 @@ public class ConsoleReporter extends AbstractPollingReporter implements
                                                              MetricProcessor<PrintStream> {
     private static final int CONSOLE_WIDTH = 80;
 
-    /**
-     * Enables the console reporter for the default metrics registry, and causes it to print to
-     * STDOUT with the specified period.
-     *
-     * @param period the period between successive outputs
-     * @param unit   the time unit of {@code period}
-     */
-    public static void enable(long period, TimeUnit unit) {
-        enable(Metrics.defaultRegistry(), period, unit);
-    }
-
-    /**
-     * Enables the console reporter for the given metrics registry, and causes it to print to STDOUT
-     * with the specified period and unrestricted output.
-     *
-     * @param metricRegistry the metrics registry
-     * @param period          the period between successive outputs
-     * @param unit            the time unit of {@code period}
-     */
-    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit) {
-        final ConsoleReporter reporter = new ConsoleReporter(metricRegistry,
-                                                             System.out,
-                                                             MetricPredicate.ALL);
-        reporter.start(period, unit);
-    }
-
     private final PrintStream out;
     private final MetricPredicate predicate;
     private final Clock clock;
+    private final TimeUnit durationUnit;
     private final TimeZone timeZone;
     private final Locale locale;
 
-    /**
-     * Creates a new {@link ConsoleReporter} for the default metrics registry, with unrestricted
-     * output.
-     *
-     * @param out the {@link PrintStream} to which output will be written
-     */
-    public ConsoleReporter(PrintStream out) {
-        this(Metrics.defaultRegistry(), out, MetricPredicate.ALL);
-    }
-
-    /**
-     * Creates a new {@link ConsoleReporter} for a given metrics registry.
-     *
-     * @param metricRegistry the metrics registry
-     * @param out             the {@link PrintStream} to which output will be written
-     * @param predicate       the {@link MetricPredicate} used to determine whether a metric will be
-     *                        output
-     */
-    public ConsoleReporter(MetricRegistry metricRegistry, PrintStream out, MetricPredicate predicate) {
-        this(metricRegistry, out, predicate, Clock.defaultClock(), TimeZone.getDefault());
-    }
-
-    /**
-     * Creates a new {@link ConsoleReporter} for a given metrics registry.
-     *
-     * @param metricRegistry the metrics registry
-     * @param out             the {@link PrintStream} to which output will be written
-     * @param predicate       the {@link MetricPredicate} used to determine whether a metric will be
-     *                        output
-     * @param clock           the {@link Clock} used to print time
-     * @param timeZone        the {@link TimeZone} used to print time
-     */
-    public ConsoleReporter(MetricRegistry metricRegistry,
-                           PrintStream out,
-                           MetricPredicate predicate,
-                           Clock clock,
-                           TimeZone timeZone) {
-        this(metricRegistry, out, predicate, clock, timeZone, Locale.getDefault());
+    public ConsoleReporter() {
+        this(Metrics.defaultRegistry(),
+             System.out,
+             MetricPredicate.ALL,
+             Clock.defaultClock(),
+             TimeUnit.MILLISECONDS,
+             TimeZone.getDefault(),
+             Locale.getDefault());
     }
 
     /**
@@ -100,17 +45,20 @@ public class ConsoleReporter extends AbstractPollingReporter implements
      *                        output
      * @param clock           the {@link com.yammer.metrics.core.Clock} used to print time
      * @param timeZone        the {@link TimeZone} used to print time
+     * @param durationUnit    the {@link TimeUnit} in which to print durations
      * @param locale          the {@link Locale} used to print values
      */
     public ConsoleReporter(MetricRegistry metricRegistry,
                            PrintStream out,
                            MetricPredicate predicate,
                            Clock clock,
+                           TimeUnit durationUnit,
                            TimeZone timeZone, Locale locale) {
         super(metricRegistry, "console-reporter");
         this.out = out;
         this.predicate = predicate;
         this.clock = clock;
+        this.durationUnit = durationUnit;
         this.timeZone = timeZone;
         this.locale = locale;
     }
@@ -165,32 +113,32 @@ public class ConsoleReporter extends AbstractPollingReporter implements
     @Override
     public void processHistogram(String name, Histogram histogram, PrintStream stream) {
         final Snapshot snapshot = histogram.getSnapshot();
-        stream.printf(locale, "               min = %2.2f\n", histogram.getMin());
-        stream.printf(locale, "               max = %2.2f\n", histogram.getMax());
-        stream.printf(locale, "              mean = %2.2f\n", histogram.getMean());
+        stream.printf(locale, "               min = %d\n", histogram.getMin());
+        stream.printf(locale, "               max = %d\n", histogram.getMax());
+        stream.printf(locale, "              mean = %d\n", histogram.getMean());
         stream.printf(locale, "            stddev = %2.2f\n", histogram.getStdDev());
-        stream.printf(locale, "            median = %2.2f\n", snapshot.getMedian());
-        stream.printf(locale, "              75%% <= %2.2f\n", snapshot.get75thPercentile());
-        stream.printf(locale, "              95%% <= %2.2f\n", snapshot.get95thPercentile());
-        stream.printf(locale, "              98%% <= %2.2f\n", snapshot.get98thPercentile());
-        stream.printf(locale, "              99%% <= %2.2f\n", snapshot.get99thPercentile());
-        stream.printf(locale, "            99.9%% <= %2.2f\n", snapshot.get999thPercentile());
+        stream.printf(locale, "            median = %d\n", snapshot.getMedian());
+        stream.printf(locale, "              75%% <= %d\n", snapshot.get75thPercentile());
+        stream.printf(locale, "              95%% <= %d\n", snapshot.get95thPercentile());
+        stream.printf(locale, "              98%% <= %d\n", snapshot.get98thPercentile());
+        stream.printf(locale, "              99%% <= %d\n", snapshot.get99thPercentile());
+        stream.printf(locale, "            99.9%% <= %d\n", snapshot.get999thPercentile());
     }
 
     @Override
     public void processTimer(String name, Timer timer, PrintStream stream) {
         processMeter(name, timer, stream);
         final Snapshot snapshot = timer.getSnapshot();
-        stream.printf(locale, "               min = %2.2fms\n", timer.getMin());
-        stream.printf(locale, "               max = %2.2fms\n", timer.getMax());
-        stream.printf(locale, "              mean = %2.2fms\n", timer.getMean());
-        stream.printf(locale, "            stddev = %2.2fms\n", timer.getStdDev());
-        stream.printf(locale, "            median = %2.2fms\n", snapshot.getMedian());
-        stream.printf(locale, "              75%% <= %2.2fms\n", snapshot.get75thPercentile());
-        stream.printf(locale, "              95%% <= %2.2fms\n", snapshot.get95thPercentile());
-        stream.printf(locale, "              98%% <= %2.2fms\n", snapshot.get98thPercentile());
-        stream.printf(locale, "              99%% <= %2.2fms\n", snapshot.get99thPercentile());
-        stream.printf(locale, "            99.9%% <= %2.2fms\n", snapshot.get999thPercentile());
+        stream.printf(locale, "               min = %2.2fms\n", convertFromNS(timer.getMin()));
+        stream.printf(locale, "               max = %2.2fms\n", convertFromNS(timer.getMax()));
+        stream.printf(locale, "              mean = %2.2fms\n", convertFromNS(timer.getMean()));
+        stream.printf(locale, "            stddev = %2.2fms\n", convertFromNS(timer.getStdDev()));
+        stream.printf(locale, "            median = %2.2fms\n", convertFromNS(snapshot.getMedian()));
+        stream.printf(locale, "              75%% <= %2.2fms\n", convertFromNS(snapshot.get75thPercentile()));
+        stream.printf(locale, "              95%% <= %2.2fms\n", convertFromNS(snapshot.get95thPercentile()));
+        stream.printf(locale, "              98%% <= %2.2fms\n", convertFromNS(snapshot.get98thPercentile()));
+        stream.printf(locale, "              99%% <= %2.2fms\n", convertFromNS(snapshot.get99thPercentile()));
+        stream.printf(locale, "            99.9%% <= %2.2fms\n", convertFromNS(snapshot.get999thPercentile()));
     }
 
     private String abbrev(TimeUnit unit) {
@@ -212,5 +160,13 @@ public class ConsoleReporter extends AbstractPollingReporter implements
             default:
                 throw new IllegalArgumentException("Unrecognized TimeUnit: " + unit);
         }
+    }
+
+    private double convertFromNS(long ns) {
+        return ns / (double) durationUnit.toNanos(1);
+    }
+
+    private double convertFromNS(double ns) {
+        return ns / (double) durationUnit.toNanos(1);
     }
 }

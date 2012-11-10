@@ -32,15 +32,15 @@ public class TimerTest {
 
         assertThat("the timer has a max duration of zero",
                    timer.getMax(),
-                   is(closeTo(0.0, 0.001)));
+                   is(0L));
 
         assertThat("the timer has a min duration of zero",
                    timer.getMin(),
-                   is(closeTo(0.0, 0.001)));
+                   is(0L));
 
         assertThat("the timer has a mean duration of zero",
                    timer.getMean(),
-                   is(closeTo(0.0, 0.001)));
+                   is(0L));
 
         assertThat("the timer has a duration standard deviation of zero",
                    timer.getStdDev(),
@@ -50,15 +50,15 @@ public class TimerTest {
 
         assertThat("the timer has a median duration of zero",
                    snapshot.getMedian(),
-                   is(closeTo(0.0, 0.001)));
+                   is(0L));
 
         assertThat("the timer has a 75th percentile duration of zero",
                    snapshot.get75thPercentile(),
-                   is(closeTo(0.0, 0.001)));
+                   is(0L));
 
         assertThat("the timer has a 99th percentile duration of zero",
                    snapshot.get99thPercentile(),
-                   is(closeTo(0.0, 0.001)));
+                   is(0L));
 
         assertThat("the timer has a mean rate of zero",
                    timer.getMeanRate(),
@@ -83,11 +83,11 @@ public class TimerTest {
 
     @Test
     public void timingASeriesOfEvents() throws Exception {
-        timer.update(10, TimeUnit.MILLISECONDS);
-        timer.update(20, TimeUnit.MILLISECONDS);
-        timer.update(20, TimeUnit.MILLISECONDS);
-        timer.update(30, TimeUnit.MILLISECONDS);
-        timer.update(40, TimeUnit.MILLISECONDS);
+        timer.update(10, TimeUnit.NANOSECONDS);
+        timer.update(20, TimeUnit.NANOSECONDS);
+        timer.update(20, TimeUnit.NANOSECONDS);
+        timer.update(30, TimeUnit.NANOSECONDS);
+        timer.update(40, TimeUnit.NANOSECONDS);
 
         assertThat("the timer has a count of 5",
                    timer.getCount(),
@@ -95,15 +95,15 @@ public class TimerTest {
 
         assertThat("the timer has a max duration of 40",
                    timer.getMax(),
-                   is(closeTo(40.0, 0.001)));
+                   is(40L));
 
         assertThat("the timer has a min duration of 10",
                    timer.getMin(),
-                   is(closeTo(10.0, 0.001)));
+                   is(10L));
 
         assertThat("the timer has a mean duration of 24",
                    timer.getMean(),
-                   is(closeTo(24.0, 0.001)));
+                   is(24L));
 
         assertThat("the timer has a duration standard deviation of zero",
                    timer.getStdDev(),
@@ -113,19 +113,19 @@ public class TimerTest {
 
         assertThat("the timer has a median duration of 20",
                    snapshot.getMedian(),
-                   is(closeTo(20.0, 0.001)));
+                   is(20L));
 
         assertThat("the timer has a 75th percentile duration of 35",
                    snapshot.get75thPercentile(),
-                   is(closeTo(35.0, 0.001)));
+                   is(35L));
 
         assertThat("the timer has a 99th percentile duration of 40",
                    snapshot.get99thPercentile(),
-                   is(closeTo(40.0, 0.001)));
+                   is(40L));
 
         assertThat("the timer has no values",
                    timer.getSnapshot().getValues(),
-                   is(new double[]{10.0, 20.0, 20.0, 30.0, 40.0}));
+                   is(new long[]{10, 20, 20, 30, 40}));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class TimerTest {
 
         assertThat("the timer has an accurate standard deviation",
                    timer.getStdDev(),
-                   is(closeTo(6.521908912666392E12, 0.001)));
+                   is(closeTo(6.521908912666392E18, 0.001)));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class TimerTest {
 
         assertThat("records the duration of the Callable#call()",
                    timer.getMax(),
-                   is(closeTo(50.0, 0.001)));
+                   is(50000000L));
     }
 
     @Test
@@ -170,6 +170,6 @@ public class TimerTest {
 
         assertThat("records the duration of the context",
                    timer.getMax(),
-                   is(closeTo(50.0, 0.001)));
+                   is(50000000L));
     }
 }

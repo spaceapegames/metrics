@@ -9,7 +9,8 @@ object BiasedSampleBenchmark extends Instrumented {
   val updateTimer = metrics.timer("update")
 
   def main(args: Array[String]) {
-    ConsoleReporter.enable(1, TimeUnit.SECONDS)
+    val reporter = new ConsoleReporter()
+    reporter.start(1, TimeUnit.SECONDS)
 
     val workerCount = 100
     val iterationCount = 1000000

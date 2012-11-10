@@ -156,7 +156,7 @@ public class JmxReporter extends AbstractReporter implements MetricRegistryListe
 
         double get999thPercentile();
 
-        double[] values();
+        long[] values();
     }
     // CHECKSTYLE:ON
 
@@ -230,7 +230,7 @@ public class JmxReporter extends AbstractReporter implements MetricRegistryListe
         }
 
         @Override
-        public double[] values() {
+        public long[] values() {
             return metric.getSnapshot().getValues();
         }
     }
@@ -301,7 +301,7 @@ public class JmxReporter extends AbstractReporter implements MetricRegistryListe
         }
 
         @Override
-        public double[] values() {
+        public long[] values() {
             return metric.getSnapshot().getValues();
         }
     }

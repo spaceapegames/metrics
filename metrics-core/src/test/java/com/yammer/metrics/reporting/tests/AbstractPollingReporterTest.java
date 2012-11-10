@@ -3,7 +3,6 @@ package com.yammer.metrics.reporting.tests;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.*;
 import com.yammer.metrics.reporting.AbstractPollingReporter;
-import com.yammer.metrics.stats.Snapshot;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,6 +11,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -124,32 +124,43 @@ public abstract class AbstractPollingReporterTest {
     }
 
     static Counter createCounter(long count) throws Exception {
-        final Counter mock = mock(Counter.class);
-        when(mock.getCount()).thenReturn(count);
-        return mock;
+        final Counter counter = new Counter();
+        counter.inc(count);
+        return counter;
     }
 
     static Histogram createHistogram() throws Exception {
-        final Histogram mock = mock(Histogram.class);
-        setupSummarizableMock(mock);
-        setupSamplingMock(mock);
-        return mock;
+        final Histogram histogram = new Histogram(Histogram.SampleType.UNIFORM);
+        for (int i = 0; i < 100; i++) {
+            histogram.update(i);
+        }
+        return histogram;
     }
 
 
     static Gauge<String> createGauge() throws Exception {
-        @SuppressWarnings("unchecked")
-        final Gauge<String> mock = mock(Gauge.class);
-        when(mock.getValue()).thenReturn("gaugeValue");
-        return mock;
+        return new Gauge<String>() {
+            @Override
+            public String getValue() {
+                return "gaugeValue";
+            }
+        };
     }
 
 
     static Timer createTimer() throws Exception {
+        final Histogram histogram = new Histogram(Histogram.SampleType.UNIFORM);
+        for (int i = 0; i < 100; i++) {
+            histogram.update(TimeUnit.MILLISECONDS.toNanos(i));
+        }
+
         final Timer mock = mock(Timer.class);
-        setupSummarizableMock(mock);
+        when(mock.getMin()).thenReturn(histogram.getMin());
+        when(mock.getMax()).thenReturn(histogram.getMax());
+        when(mock.getMean()).thenReturn(histogram.getMean());
+        when(mock.getStdDev()).thenReturn(histogram.getStdDev());
         setupMeteredMock(mock);
-        setupSamplingMock(mock);
+        when(mock.getSnapshot()).thenReturn(histogram.getSnapshot());
         return mock;
     }
 
@@ -159,27 +170,12 @@ public abstract class AbstractPollingReporterTest {
         return mock;
     }
 
-    static void setupSummarizableMock(Summarizable summarizable) {
-        when(summarizable.getMin()).thenReturn(1d);
-        when(summarizable.getMax()).thenReturn(3d);
-        when(summarizable.getMean()).thenReturn(2d);
-        when(summarizable.getStdDev()).thenReturn(1.5d);
-    }
-
     static void setupMeteredMock(Metered metered) {
         when(metered.getCount()).thenReturn(1L);
         when(metered.getOneMinuteRate()).thenReturn(1d);
         when(metered.getFiveMinuteRate()).thenReturn(5d);
         when(metered.getFifteenMinuteRate()).thenReturn(15d);
         when(metered.getMeanRate()).thenReturn(2d);
-    }
-
-    static void setupSamplingMock(Sampling sampling) {
-        final double[] values = new double[1000];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = i / 1000.0;
-        }
-        when(sampling.getSnapshot()).thenReturn(new Snapshot(values));
     }
 
     public abstract String[] expectedGaugeResult(String value);

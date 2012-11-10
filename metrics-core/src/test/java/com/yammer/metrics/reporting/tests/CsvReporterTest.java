@@ -10,12 +10,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.concurrent.TimeUnit;
 
 public class CsvReporterTest extends AbstractPollingReporterTest {
 
     @Override
     protected AbstractPollingReporter createReporter(MetricRegistry registry, final OutputStream out, Clock clock) throws Exception {
-        return new CsvReporter(registry, MetricPredicate.ALL, new File("/tmp"), clock) {
+        return new CsvReporter(registry, MetricPredicate.ALL, new File("/tmp"), TimeUnit.MILLISECONDS, clock) {
             @Override
             protected PrintStream createStreamForMetric(String metricName) throws IOException {
                 return new PrintStream(out);
@@ -25,29 +26,29 @@ public class CsvReporterTest extends AbstractPollingReporterTest {
 
     @Override
     public String[] expectedCounterResult(long count) {
-        return new String[]{"# time,count", String.format("5,%s\n", count)};
+        return new String[]{"timestamp,count", String.format("5678,%s\n", count)};
     }
 
     @Override
     public String[] expectedHistogramResult() {
-        return new String[]{"# time,min,max,mean,median,stddev,95%,99%,99.9%",
-                            "5,1.0,3.0,2.0,0.4995,1.5,0.9499499999999999,0.98999,0.998999\n"};
+        return new String[]{"timestamp,min,max,mean,median,stddev,95%,99%,99.9%",
+                            "5678,0,99,49,49,29.011491975882016,94,98,99\n"};
     }
 
     @Override
     public String[] expectedMeterResult() {
-        return new String[]{"# time,count,1 min rate,mean rate,5 min rate,15 min rate",
-                            "5,1,1.0,2.0,5.0,15.0\n"};
+        return new String[]{"timestamp,count,1 min rate,mean rate,5 min rate,15 min rate",
+                            "5678,1,1.0,2.0,5.0,15.0\n"};
     }
 
     @Override
     public String[] expectedTimerResult() {
-        return new String[]{"# time,min,max,mean,median,stddev,95%,99%,99.9%",
-                            "5,1.0,3.0,2.0,0.4995,1.5,0.9499499999999999,0.98999,0.998999\n"};
+        return new String[]{"timestamp,min,max,mean,median,stddev,95%,99%,99.9%,count,1 min rate,mean rate,5 min rate,15 min rate",
+                            "5678,0.0,99.0,49.5,49.5,29.011491975882016,94.949999,98.99,99.0,1,1.0,2.0,5.0,15.0\n"};
     }
 
     @Override
     public String[] expectedGaugeResult(String value) {
-        return new String[]{"# time,value", String.format("5,%s\n", value)};
+        return new String[]{"timestamp,value", String.format("5678,%s\n", value)};
     }
 }

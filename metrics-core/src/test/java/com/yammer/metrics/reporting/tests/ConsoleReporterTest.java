@@ -16,13 +16,13 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.fail;
 
 public class ConsoleReporterTest extends AbstractPollingReporterTest {
-
     @Override
     protected AbstractPollingReporter createReporter(MetricRegistry registry, OutputStream out, Clock clock) {
         return new ConsoleReporter(registry,
                                    new PrintStream(out),
                                    MetricPredicate.ALL,
                                    clock,
+                                   TimeUnit.MILLISECONDS,
                                    TimeZone.getTimeZone("UTC"),
                                    Locale.US);
     }
@@ -41,16 +41,16 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
         return new String[]{
                 "1/1/70 12:00:05 AM =============================================================",
                 "java.lang.Object.metric:",
-                "min = 1.00",
-                "max = 3.00",
-                "mean = 2.00",
-                "stddev = 1.50",
-                "median = 0.50",
-                "75% <= 0.75",
-                "95% <= 0.95",
-                "98% <= 0.98",
-                "99% <= 0.99",
-                "99.9% <= 1.00"
+                "min = 0",
+                "max = 99",
+                "mean = 49",
+                "stddev = 29.01",
+                "median = 49",
+                "75% <= 74",
+                "95% <= 94",
+                "98% <= 97",
+                "99% <= 98",
+                "99.9% <= 99"
         };
     }
 
@@ -77,16 +77,16 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
                 "1-minute rate = 1.00 events/s",
                 "5-minute rate = 5.00 events/s",
                 "15-minute rate = 15.00 events/s",
-                "min = 1.00ms",
-                "max = 3.00ms",
-                "mean = 2.00ms",
-                "stddev = 1.50ms",
-                "median = 0.50ms",
-                "75% <= 0.75ms",
-                "95% <= 0.95ms",
-                "98% <= 0.98ms",
-                "99% <= 0.99ms",
-                "99.9% <= 1.00ms"
+                "min = 0.00ms",
+                "max = 99.00ms",
+                "mean = 49.50ms",
+                "stddev = 29.01ms",
+                "median = 49.50ms",
+                "75% <= 74.75ms",
+                "95% <= 94.95ms",
+                "98% <= 97.98ms",
+                "99% <= 98.99ms",
+                "99.9% <= 99.00ms"
         };
     }
 
@@ -102,10 +102,10 @@ public class ConsoleReporterTest extends AbstractPollingReporterTest {
     @Test
     public void givenShutdownReporterWhenCreatingNewReporterExpectSuccess() {
         try {
-            final ConsoleReporter reporter1 = new ConsoleReporter(System.out);
+            final ConsoleReporter reporter1 = new ConsoleReporter();
             reporter1.start(1, TimeUnit.SECONDS);
             reporter1.shutdown();
-            final ConsoleReporter reporter2 = new ConsoleReporter(System.out);
+            final ConsoleReporter reporter2 = new ConsoleReporter();
             reporter2.start(1, TimeUnit.SECONDS);
             reporter2.shutdown();
         } catch (Exception e) {

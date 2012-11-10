@@ -8,7 +8,8 @@ object LongLivedRunner extends Instrumented {
   val counters = Seq("one", "two").map { s => s -> metrics.counter("counter", s) }.toMap
 
   def main(args: Array[String]) {
-    ConsoleReporter.enable(1, TimeUnit.SECONDS)
+    val reporter = new ConsoleReporter()
+    reporter.start(1, TimeUnit.SECONDS)
     
     val thread = new Thread {
       override def run() {
@@ -24,5 +25,6 @@ object LongLivedRunner extends Instrumented {
 
     println("Hit return to quit")
     readLine()
+    reporter.shutdown()
   }
 }

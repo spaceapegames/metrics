@@ -1,6 +1,5 @@
 package com.yammer.metrics.reporting;
 
-import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.*;
 import com.yammer.metrics.stats.Snapshot;
 import org.slf4j.Logger;
@@ -25,35 +24,9 @@ public class CsvReporter extends AbstractPollingReporter implements
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvReporter.class);
 
     /**
-     * Enables the CSV reporter for the default metrics registry, and causes it to write to files in
-     * {@code outputDir} with the specified period.
-     *
-     * @param outputDir    the directory in which {@code .csv} files will be created
-     * @param period       the period between successive outputs
-     * @param unit         the time unit of {@code period}
-     */
-    public static void enable(File outputDir, long period, TimeUnit unit) {
-        enable(Metrics.defaultRegistry(), outputDir, period, unit);
-    }
-
-    /**
-     * Enables the CSV reporter for the given metrics registry, and causes it to write to files in
-     * {@code outputDir} with the specified period.
-     *
-     * @param metricRegistry the metrics registry
-     * @param outputDir       the directory in which {@code .csv} files will be created
-     * @param period          the period between successive outputs
-     * @param unit            the time unit of {@code period}
-     */
-    public static void enable(MetricRegistry metricRegistry, File outputDir, long period, TimeUnit unit) {
-        final CsvReporter reporter = new CsvReporter(metricRegistry, outputDir);
-        reporter.start(period, unit);
-    }
-
-    /**
      * The context used to output metrics.
      */
-    public interface Context {
+    interface Context {
         /**
          * Returns an open {@link PrintStream} for the metric with {@code header} already written
          * to it.
@@ -68,37 +41,9 @@ public class CsvReporter extends AbstractPollingReporter implements
     private final MetricPredicate predicate;
     private final File outputDir;
     private final Map<String, PrintStream> streamMap;
+    private final TimeUnit durationUnit;
     private final Clock clock;
     private long startTime;
-
-    /**
-     * Creates a new {@link CsvReporter} which will write all metrics from the given
-     * {@link com.yammer.metrics.core.MetricRegistry} to CSV files in the given output directory.
-     *
-     * @param outputDir          the directory to which files will be written
-     * @param metricRegistry    the {@link com.yammer.metrics.core.MetricRegistry} containing the metrics this reporter
-     *                           will report
-     */
-    public CsvReporter(MetricRegistry metricRegistry, File outputDir) {
-        this(metricRegistry, MetricPredicate.ALL, outputDir);
-    }
-
-    /**
-     * Creates a new {@link CsvReporter} which will write metrics from the given
-     * {@link com.yammer.metrics.core.MetricRegistry} which match the given {@link MetricPredicate} to CSV files in the
-     * given output directory.
-     *
-     * @param metricRegistry    the {@link com.yammer.metrics.core.MetricRegistry} containing the metrics this reporter
-     *                           will report
-     * @param predicate          the {@link MetricPredicate} which metrics are required to match
-     *                           before being written to files
-     * @param outputDir          the directory to which files will be written
-     */
-    public CsvReporter(MetricRegistry metricRegistry,
-                       MetricPredicate predicate,
-                       File outputDir) {
-        this(metricRegistry, predicate, outputDir, Clock.defaultClock());
-    }
 
     /**
      * Creates a new {@link CsvReporter} which will write metrics from the given
@@ -115,8 +60,10 @@ public class CsvReporter extends AbstractPollingReporter implements
     public CsvReporter(MetricRegistry metricRegistry,
                        MetricPredicate predicate,
                        File outputDir,
+                       TimeUnit durationUnit,
                        Clock clock) {
         super(metricRegistry, "csv-reporter");
+        this.durationUnit = durationUnit;
         if (outputDir.exists() && !outputDir.isDirectory()) {
             throw new IllegalArgumentException(outputDir + " is not a directory");
         }
@@ -145,7 +92,6 @@ public class CsvReporter extends AbstractPollingReporter implements
 
     @Override
     public void run() {
-        final long time = TimeUnit.MILLISECONDS.toSeconds(clock.getTime() - startTime);
         final MetricDispatcher dispatcher = new MetricDispatcher();
         try {
             for (Entry<String, Metric> entry : getMetricRegistry().filter(predicate)) {
@@ -156,7 +102,7 @@ public class CsvReporter extends AbstractPollingReporter implements
                         @Override
                         public PrintStream getStream(String header) throws IOException {
                             final PrintStream stream = getPrintStream(name, header);
-                            stream.print(time);
+                            stream.print(clock.getTime());
                             stream.print(',');
                             return stream;
                         }
@@ -173,7 +119,7 @@ public class CsvReporter extends AbstractPollingReporter implements
     @Override
     public void processMeter(String name, Metered meter, Context context) throws IOException {
         final PrintStream stream = context.getStream(
-                "# time,count,1 min rate,mean rate,5 min rate,15 min rate");
+                "timestamp,count,1 min rate,mean rate,5 min rate,15 min rate");
         stream.append(new StringBuilder()
                               .append(meter.getCount()).append(',')
                               .append(meter.getOneMinuteRate()).append(',')
@@ -186,14 +132,14 @@ public class CsvReporter extends AbstractPollingReporter implements
 
     @Override
     public void processCounter(String name, Counter counter, Context context) throws IOException {
-        final PrintStream stream = context.getStream("# time,count");
+        final PrintStream stream = context.getStream("timestamp,count");
         stream.println(counter.getCount());
         stream.flush();
     }
 
     @Override
     public void processHistogram(String name, Histogram histogram, Context context) throws IOException {
-        final PrintStream stream = context.getStream("# time,min,max,mean,median,stddev,95%,99%,99.9%");
+        final PrintStream stream = context.getStream("timestamp,min,max,mean,median,stddev,95%,99%,99.9%");
         final Snapshot snapshot = histogram.getSnapshot();
         stream.append(new StringBuilder()
                               .append(histogram.getMin()).append(',')
@@ -211,24 +157,30 @@ public class CsvReporter extends AbstractPollingReporter implements
 
     @Override
     public void processTimer(String name, Timer timer, Context context) throws IOException {
-        final PrintStream stream = context.getStream("# time,min,max,mean,median,stddev,95%,99%,99.9%");
+        final PrintStream stream = context.getStream("timestamp,min,max,mean,median,stddev,95%,99%,99.9%,count,1 min rate,mean rate,5 min rate,15 min rate");
         final Snapshot snapshot = timer.getSnapshot();
         stream.append(new StringBuilder()
-                              .append(timer.getMin()).append(',')
-                              .append(timer.getMax()).append(',')
-                              .append(timer.getMean()).append(',')
-                              .append(snapshot.getMedian()).append(',')
-                              .append(timer.getStdDev()).append(',')
-                              .append(snapshot.get95thPercentile()).append(',')
-                              .append(snapshot.get99thPercentile()).append(',')
-                              .append(snapshot.get999thPercentile()).toString())
+                              .append(convertFromNS(timer.getMin())).append(',')
+                              .append(convertFromNS(timer.getMax())).append(',')
+                              .append(convertFromNS(timer.getMean())).append(',')
+                              .append(convertFromNS(snapshot.getMedian())).append(',')
+                              .append(convertFromNS(timer.getStdDev())).append(',')
+                              .append(convertFromNS(snapshot.get95thPercentile())).append(',')
+                              .append(convertFromNS(snapshot.get99thPercentile())).append(',')
+                              .append(convertFromNS(snapshot.get999thPercentile())).append(',')
+                              .append(timer.getCount()).append(',')
+                              .append(timer.getOneMinuteRate()).append(',')
+                              .append(timer.getMeanRate()).append(',')
+                              .append(timer.getFiveMinuteRate()).append(',')
+                              .append(timer.getFifteenMinuteRate())
+                              .toString())
                 .println();
         stream.flush();
     }
 
     @Override
     public void processGauge(String name, Gauge<?> gauge, Context context) throws IOException {
-        final PrintStream stream = context.getStream("# time,value");
+        final PrintStream stream = context.getStream("timestamp,value");
         stream.println(gauge.getValue());
         stream.flush();
     }
@@ -266,5 +218,13 @@ public class CsvReporter extends AbstractPollingReporter implements
             }
         }
         return stream;
+    }
+
+    private double convertFromNS(long ns) {
+        return ns / (double) durationUnit.toNanos(1);
+    }
+
+    private double convertFromNS(double ns) {
+        return ns / (double) durationUnit.toNanos(1);
     }
 }
