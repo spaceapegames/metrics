@@ -5,6 +5,7 @@ import com.simple.simplespec.Spec
 import com.yammer.metrics.Metrics
 import com.yammer.metrics.scala.Timer
 import com.yammer.metrics.Metrics.name
+import java.util.concurrent.TimeUnit
 
 class TimerSpec extends Spec {
   class `A timer` {
@@ -14,7 +15,7 @@ class TimerSpec extends Spec {
     @Test def `updates the underlying metric` = {
       timer.time { Thread.sleep(100); 10 }.must(be(10))
 
-      metric.getMin.must(be(approximately(100L, 10)))
+      TimeUnit.NANOSECONDS.toMillis(metric.getMin).must(be(approximately(100L, 10)))
     }
   }
 }
