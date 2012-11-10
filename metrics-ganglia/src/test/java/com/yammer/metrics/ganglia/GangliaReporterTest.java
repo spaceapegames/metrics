@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.SocketException;
+import java.util.concurrent.TimeUnit;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -62,6 +63,7 @@ public class GangliaReporterTest extends AbstractPollingReporterTest {
                                                              "group-prefix",
                                                              MetricPredicate.ALL,
                                                              false,
+                                                             TimeUnit.MILLISECONDS,
                                                              messageBuilder,
                                                              VirtualMachineMetrics.getInstance()) {
             @Override

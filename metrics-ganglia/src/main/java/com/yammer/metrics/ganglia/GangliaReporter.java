@@ -44,114 +44,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
     private boolean compressPackageNames;
     private final GangliaMessageBuilder gangliaMessageBuilder;
     public boolean printVMMetrics = true;
-
-    /**
-     * Enables the ganglia reporter to send data for the default metrics registry to ganglia server
-     * with the specified period.
-     *
-     * @param period      the period between successive outputs
-     * @param unit        the time unit of {@code period}
-     * @param gangliaHost the gangliaHost name of ganglia server (carbon-cache agent)
-     * @param port        the port number on which the ganglia server is listening
-     */
-    public static void enable(long period, TimeUnit unit, String gangliaHost, int port) {
-        enable(Metrics.defaultRegistry(), period, unit, gangliaHost, port, "");
-    }
-
-    /**
-     * Enables the ganglia reporter to send data for the default metrics registry to ganglia server
-     * with the specified period.
-     *
-     * @param period      the period between successive outputs
-     * @param unit        the time unit of {@code period}
-     * @param gangliaHost the gangliaHost name of ganglia server (carbon-cache agent)
-     * @param port        the port number on which the ganglia server is listening
-     * @param groupPrefix prefix to the ganglia group name (such as myapp_counter)
-     */
-    public static void enable(long period, TimeUnit unit, String gangliaHost, int port, String groupPrefix) {
-        enable(Metrics.defaultRegistry(), period, unit, gangliaHost, port, groupPrefix);
-    }
-
-    /**
-     * Enables the ganglia reporter to send data for the default metrics registry to ganglia server
-     * with the specified period.
-     *
-     * @param period               the period between successive outputs
-     * @param unit                 the time unit of {@code period}
-     * @param gangliaHost          the gangliaHost name of ganglia server (carbon-cache agent)
-     * @param port                 the port number on which the ganglia server is listening
-     * @param compressPackageNames if true reporter will compress package names e.g.
-     *                             com.foo.Metric becomes c.f.Metric
-     */
-    public static void enable(long period, TimeUnit unit, String gangliaHost, int port, boolean compressPackageNames) {
-        enable(Metrics.defaultRegistry(),
-               period,
-               unit,
-               gangliaHost,
-               port,
-               "",
-               MetricPredicate.ALL,
-               compressPackageNames);
-    }
-
-
-    /**
-     * Enables the ganglia reporter to send data for the given metrics registry to ganglia server
-     * with the specified period.
-     *
-     * @param metricRegistry the metrics registry
-     * @param period          the period between successive outputs
-     * @param unit            the time unit of {@code period}
-     * @param gangliaHost     the gangliaHost name of ganglia server (carbon-cache agent)
-     * @param port            the port number on which the ganglia server is listening
-     * @param groupPrefix     prefix to the ganglia group name (such as myapp_counter)
-     */
-    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String gangliaHost, int port, String groupPrefix) {
-        enable(metricRegistry, period, unit, gangliaHost, port, groupPrefix, MetricPredicate.ALL);
-    }
-
-    /**
-     * Enables the ganglia reporter to send data to ganglia server with the specified period.
-     *
-     * @param metricRegistry the metrics registry
-     * @param period          the period between successive outputs
-     * @param unit            the time unit of {@code period}
-     * @param gangliaHost     the gangliaHost name of ganglia server (carbon-cache agent)
-     * @param port            the port number on which the ganglia server is listening
-     * @param groupPrefix     prefix to the ganglia group name (such as myapp_counter)
-     * @param predicate       filters metrics to be reported
-     */
-    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String gangliaHost, int port, String groupPrefix, MetricPredicate predicate) {
-        enable(metricRegistry, period, unit, gangliaHost, port, groupPrefix, predicate, false);
-    }
-
-    /**
-     * Enables the ganglia reporter to send data to ganglia server with the specified period.
-     *
-     * @param metricRegistry      the metrics registry
-     * @param period               the period between successive outputs
-     * @param unit                 the time unit of {@code period}
-     * @param gangliaHost          the gangliaHost name of ganglia server (carbon-cache agent)
-     * @param port                 the port number on which the ganglia server is listening
-     * @param groupPrefix          prefix to the ganglia group name (such as myapp_counter)
-     * @param predicate            filters metrics to be reported
-     * @param compressPackageNames if true reporter will compress package names e.g.
-     *                             com.foo.Metric becomes c.f.Metric
-     */
-    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String gangliaHost,
-                              int port, String groupPrefix, MetricPredicate predicate, boolean compressPackageNames) {
-        try {
-            final GangliaReporter reporter = new GangliaReporter(metricRegistry,
-                                                                 gangliaHost,
-                                                                 port,
-                                                                 groupPrefix,
-                                                                 predicate,
-                                                                 compressPackageNames);
-            reporter.start(period, unit);
-        } catch (Exception e) {
-            LOG.error("Error creating/starting ganglia reporter:", e);
-        }
-    }
+    private final TimeUnit durationUnit;
 
     /**
      * Creates a new {@link GangliaReporter}.
@@ -160,7 +53,8 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param port        is port on which ganglia server is running
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(String gangliaHost, int port) throws IOException {
+    public GangliaReporter(String gangliaHost,
+                           int port) throws IOException {
         this(Metrics.defaultRegistry(), gangliaHost, port, "");
     }
 
@@ -172,13 +66,15 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param compressPackageNames whether or not Metrics' package names will be shortened
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(String gangliaHost, int port, boolean compressPackageNames) throws IOException {
+    public GangliaReporter(String gangliaHost,
+                           int port,
+                           boolean compressPackageNames) throws IOException {
         this(Metrics.defaultRegistry(),
              gangliaHost,
              port,
              "",
              MetricPredicate.ALL,
-             compressPackageNames);
+             compressPackageNames, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -190,7 +86,10 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param groupPrefix     prefix to the ganglia group name (such as myapp_counter)
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(MetricRegistry metricRegistry, String gangliaHost, int port, String groupPrefix) throws IOException {
+    public GangliaReporter(MetricRegistry metricRegistry,
+                           String gangliaHost,
+                           int port,
+                           String groupPrefix) throws IOException {
         this(metricRegistry, gangliaHost, port, groupPrefix, MetricPredicate.ALL);
     }
 
@@ -204,8 +103,12 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param predicate       filters metrics to be reported
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(MetricRegistry metricRegistry, String gangliaHost, int port, String groupPrefix, MetricPredicate predicate) throws IOException {
-        this(metricRegistry, gangliaHost, port, groupPrefix, predicate, false);
+    public GangliaReporter(MetricRegistry metricRegistry,
+                           String gangliaHost,
+                           int port,
+                           String groupPrefix,
+                           MetricPredicate predicate) throws IOException {
+        this(metricRegistry, gangliaHost, port, groupPrefix, predicate, false, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -218,32 +121,46 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
      * @param predicate            filters metrics to be reported
      * @param compressPackageNames if true reporter will compress package names e.g.
      *                             com.foo.Metric becomes c.f.Metric
+     * @param durationUnit         the unit to convert durations to
      * @throws java.io.IOException if there is an error connecting to the ganglia server
      */
-    public GangliaReporter(MetricRegistry metricRegistry, String gangliaHost, int port, String groupPrefix,
-                           MetricPredicate predicate, boolean compressPackageNames) throws IOException {
+    public GangliaReporter(MetricRegistry metricRegistry,
+                           String gangliaHost,
+                           int port,
+                           String groupPrefix,
+                           MetricPredicate predicate,
+                           boolean compressPackageNames,
+                           TimeUnit durationUnit) throws IOException {
         this(metricRegistry,
              groupPrefix,
              predicate,
              compressPackageNames,
+             durationUnit,
              new GangliaMessageBuilder(gangliaHost, port), VirtualMachineMetrics.getInstance());
     }
 
     /**
      * Creates a new {@link GangliaReporter}.
      *
-     * @param metricRegistry          the metrics registry
-     * @param groupPrefix              prefix to the ganglia group name (such as myapp_counter)
-     * @param predicate                filters metrics to be reported
-     * @param compressPackageNames     if true reporter will compress package names e.g.
-     *                                 com.foo.Metric becomes c.f.Metric
-     * @param gangliaMessageBuilder    a {@link GangliaMessageBuilder} instance
-     * @param vm                       a {@link VirtualMachineMetrics} instance
-     * @throws java.io.IOException if there is an error connecting to the ganglia server
+     * @param metricRegistry        the metrics registry
+     * @param groupPrefix           prefix to the ganglia group name (such as myapp_counter)
+     * @param predicate             filters metrics to be reported
+     * @param compressPackageNames  if true reporter will compress package names e.g. com.foo.Metric
+     *                              becomes c.f.Metric
+     * @param durationUnit          the unit to convert durations to
+     * @param gangliaMessageBuilder a {@link com.yammer.metrics.ganglia.GangliaMessageBuilder}
+     *                              instance
+     * @param vm                    a {@link com.yammer.metrics.core.VirtualMachineMetrics} instance
+     *                                @throws java.io.IOException if there is an error connecting to
+     *                              the ganglia server
      */
-    public GangliaReporter(MetricRegistry metricRegistry, String groupPrefix,
-                           MetricPredicate predicate, boolean compressPackageNames,
-                           GangliaMessageBuilder gangliaMessageBuilder, VirtualMachineMetrics vm) throws IOException {
+    public GangliaReporter(MetricRegistry metricRegistry,
+                           String groupPrefix,
+                           MetricPredicate predicate,
+                           boolean compressPackageNames,
+                           TimeUnit durationUnit,
+                           GangliaMessageBuilder gangliaMessageBuilder,
+                           VirtualMachineMetrics vm) throws IOException {
         super(metricRegistry, "ganglia-reporter");
         this.gangliaMessageBuilder = gangliaMessageBuilder;
         this.groupPrefix = groupPrefix + "_";
@@ -251,6 +168,7 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
         this.predicate = predicate;
         this.compressPackageNames = compressPackageNames;
         this.vm = vm;
+        this.durationUnit = durationUnit;
     }
 
     @Override
@@ -379,16 +297,16 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
         final String sanitizedName = sanitizeName(name);
         final Snapshot snapshot = histogram.getSnapshot();
         // TODO:  what units make sense for histograms?  should we add event type to the Histogram metric?
-        printDoubleField(sanitizedName + ".min", histogram.getMin(), "histo");
-        printDoubleField(sanitizedName + ".max", histogram.getMax(), "histo");
-        printDoubleField(sanitizedName + ".mean", histogram.getMean(), "histo");
+        printLongField(sanitizedName + ".min", histogram.getMin(), "histo");
+        printLongField(sanitizedName + ".max", histogram.getMax(), "histo");
+        printLongField(sanitizedName + ".mean", histogram.getMean(), "histo");
         printDoubleField(sanitizedName + ".stddev", histogram.getStdDev(), "histo");
-        printDoubleField(sanitizedName + ".median", snapshot.getMedian(), "histo");
-        printDoubleField(sanitizedName + ".75percentile", snapshot.get75thPercentile(), "histo");
-        printDoubleField(sanitizedName + ".95percentile", snapshot.get95thPercentile(), "histo");
-        printDoubleField(sanitizedName + ".98percentile", snapshot.get98thPercentile(), "histo");
-        printDoubleField(sanitizedName + ".99percentile", snapshot.get99thPercentile(), "histo");
-        printDoubleField(sanitizedName + ".999percentile", snapshot.get999thPercentile(), "histo");
+        printLongField(sanitizedName + ".median", snapshot.getMedian(), "histo");
+        printLongField(sanitizedName + ".75percentile", snapshot.get75thPercentile(), "histo");
+        printLongField(sanitizedName + ".95percentile", snapshot.get95thPercentile(), "histo");
+        printLongField(sanitizedName + ".98percentile", snapshot.get98thPercentile(), "histo");
+        printLongField(sanitizedName + ".99percentile", snapshot.get99thPercentile(), "histo");
+        printLongField(sanitizedName + ".999percentile", snapshot.get999thPercentile(), "histo");
     }
 
     @Override
@@ -396,16 +314,17 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
         processMeter(name, timer, x);
         final String sanitizedName = sanitizeName(name);
         final Snapshot snapshot = timer.getSnapshot();
-        printDoubleField(sanitizedName + ".min", timer.getMin(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".max", timer.getMax(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".mean", timer.getMean(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".stddev", timer.getStdDev(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".median", snapshot.getMedian(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".75percentile", snapshot.get75thPercentile(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".95percentile", snapshot.get95thPercentile(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".98percentile", snapshot.get98thPercentile(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".99percentile", snapshot.get99thPercentile(), "timer", "MILLISECONDS");
-        printDoubleField(sanitizedName + ".999percentile", snapshot.get999thPercentile(), "timer", "MILLISECONDS");
+        final String unit = durationUnit.toString();
+        printDoubleField(sanitizedName + ".min", convertFromNS(timer.getMin()), "timer", unit);
+        printDoubleField(sanitizedName + ".max", convertFromNS(timer.getMax()), "timer", unit);
+        printDoubleField(sanitizedName + ".mean", convertFromNS(timer.getMean()), "timer", unit);
+        printDoubleField(sanitizedName + ".stddev", convertFromNS(timer.getStdDev()), "timer", unit);
+        printDoubleField(sanitizedName + ".median", convertFromNS(snapshot.getMedian()), "timer", unit);
+        printDoubleField(sanitizedName + ".75percentile", convertFromNS(snapshot.get75thPercentile()), "timer", unit);
+        printDoubleField(sanitizedName + ".95percentile", convertFromNS(snapshot.get95thPercentile()), "timer", unit);
+        printDoubleField(sanitizedName + ".98percentile", convertFromNS(snapshot.get98thPercentile()), "timer", unit);
+        printDoubleField(sanitizedName + ".99percentile", convertFromNS(snapshot.get99thPercentile()), "timer", unit);
+        printDoubleField(sanitizedName + ".999percentile", convertFromNS(snapshot.get999thPercentile()), "timer", unit);
     }
 
     private void printDoubleField(String name, double value, String groupName, String units) {
@@ -514,5 +433,13 @@ public class GangliaReporter extends AbstractPollingReporter implements MetricPr
             name = sb.toString();
         }
         return name;
+    }
+
+    private double convertFromNS(long ns) {
+        return ns / (double) durationUnit.toNanos(1);
+    }
+
+    private double convertFromNS(double ns) {
+        return ns / (double) durationUnit.toNanos(1);
     }
 }
