@@ -31,88 +31,10 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
     protected final MetricDispatcher dispatcher = new MetricDispatcher();
     protected final Clock clock;
     protected final SocketProvider socketProvider;
+    private final TimeUnit durationUnit;
     protected final VirtualMachineMetrics vm;
     protected Writer writer;
     public boolean printVMMetrics = true;
-
-    /**
-     * Enables the graphite reporter to send data for the default metrics registry to graphite
-     * server with the specified period.
-     *
-     * @param period the period between successive outputs
-     * @param unit   the time unit of {@code period}
-     * @param host   the host name of graphite server (carbon-cache agent)
-     * @param port   the port number on which the graphite server is listening
-     */
-    public static void enable(long period, TimeUnit unit, String host, int port) {
-        enable(Metrics.defaultRegistry(), period, unit, host, port);
-    }
-
-    /**
-     * Enables the graphite reporter to send data for the given metrics registry to graphite server
-     * with the specified period.
-     *
-     * @param metricRegistry the metrics registry
-     * @param period          the period between successive outputs
-     * @param unit            the time unit of {@code period}
-     * @param host            the host name of graphite server (carbon-cache agent)
-     * @param port            the port number on which the graphite server is listening
-     */
-    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String host, int port) {
-        enable(metricRegistry, period, unit, host, port, null);
-    }
-
-    /**
-     * Enables the graphite reporter to send data to graphite server with the specified period.
-     *
-     * @param period the period between successive outputs
-     * @param unit   the time unit of {@code period}
-     * @param host   the host name of graphite server (carbon-cache agent)
-     * @param port   the port number on which the graphite server is listening
-     * @param prefix the string which is prepended to all metric names
-     */
-    public static void enable(long period, TimeUnit unit, String host, int port, String prefix) {
-        enable(Metrics.defaultRegistry(), period, unit, host, port, prefix);
-    }
-
-    /**
-     * Enables the graphite reporter to send data to graphite server with the specified period.
-     *
-     * @param metricRegistry the metrics registry
-     * @param period          the period between successive outputs
-     * @param unit            the time unit of {@code period}
-     * @param host            the host name of graphite server (carbon-cache agent)
-     * @param port            the port number on which the graphite server is listening
-     * @param prefix          the string which is prepended to all metric names
-     */
-    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String host, int port, String prefix) {
-        enable(metricRegistry, period, unit, host, port, prefix, MetricPredicate.ALL);
-    }
-
-    /**
-     * Enables the graphite reporter to send data to graphite server with the specified period.
-     *
-     * @param metricRegistry the metrics registry
-     * @param period          the period between successive outputs
-     * @param unit            the time unit of {@code period}
-     * @param host            the host name of graphite server (carbon-cache agent)
-     * @param port            the port number on which the graphite server is listening
-     * @param prefix          the string which is prepended to all metric names
-     * @param predicate       filters metrics to be reported
-     */
-    public static void enable(MetricRegistry metricRegistry, long period, TimeUnit unit, String host, int port, String prefix, MetricPredicate predicate) {
-        try {
-            final GraphiteReporter reporter = new GraphiteReporter(metricRegistry,
-                                                                   prefix,
-                                                                   predicate,
-                                                                   new DefaultSocketProvider(host,
-                                                                                             port),
-                                                                   Clock.defaultClock());
-            reporter.start(period, unit);
-        } catch (Exception e) {
-            LOG.error("Error creating/starting Graphite reporter:", e);
-        }
-    }
 
     /**
      * Creates a new {@link GraphiteReporter}.
@@ -123,7 +45,7 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
      * @throws IOException if there is an error connecting to the Graphite server
      */
     public GraphiteReporter(String host, int port, String prefix) throws IOException {
-        this(Metrics.defaultRegistry(), host, port, prefix);
+        this(Metrics.defaultRegistry(), host, port, prefix, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -133,60 +55,47 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
      * @param host            is graphite server
      * @param port            is port on which graphite server is running
      * @param prefix          is prepended to all names reported to graphite
+     * @param durationUnit    the unit to convert durations to
      * @throws IOException if there is an error connecting to the Graphite server
      */
-    public GraphiteReporter(MetricRegistry metricRegistry, String host, int port, String prefix) throws IOException {
+    public GraphiteReporter(MetricRegistry metricRegistry,
+                            String host,
+                            int port,
+                            String prefix,
+                            TimeUnit durationUnit) throws IOException {
         this(metricRegistry,
              prefix,
              MetricPredicate.ALL,
              new DefaultSocketProvider(host, port),
-             Clock.defaultClock());
+             Clock.defaultClock(),
+             durationUnit,
+             VirtualMachineMetrics.getInstance(),
+             "graphite-reporter");
     }
 
     /**
      * Creates a new {@link GraphiteReporter}.
      *
      * @param metricRegistry the metrics registry
-     * @param prefix          is prepended to all names reported to graphite
-     * @param predicate       filters metrics to be reported
-     * @param socketProvider  a {@link SocketProvider} instance
-     * @param clock           a {@link Clock} instance
+     * @param prefix         is prepended to all names reported to graphite
+     * @param predicate      filters metrics to be reported
+     * @param socketProvider a {@link SocketProvider} instance
+     * @param clock          a {@link Clock} instance
+     * @param durationUnit   the unit to convert durations to
+     * @param vm             a {@link VirtualMachineMetrics} instance
      * @throws IOException if there is an error connecting to the Graphite server
      */
-    public GraphiteReporter(MetricRegistry metricRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock) throws IOException {
-        this(metricRegistry, prefix, predicate, socketProvider, clock,
-             VirtualMachineMetrics.getInstance());
-    }
-
-    /**
-     * Creates a new {@link GraphiteReporter}.
-     *
-     * @param metricRegistry the metrics registry
-     * @param prefix          is prepended to all names reported to graphite
-     * @param predicate       filters metrics to be reported
-     * @param socketProvider  a {@link SocketProvider} instance
-     * @param clock           a {@link Clock} instance
-     * @param vm              a {@link VirtualMachineMetrics} instance
-     * @throws IOException if there is an error connecting to the Graphite server
-     */
-    public GraphiteReporter(MetricRegistry metricRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock, VirtualMachineMetrics vm) throws IOException {
-        this(metricRegistry, prefix, predicate, socketProvider, clock, vm, "graphite-reporter");
-    }
-    
-    /**
-     * Creates a new {@link GraphiteReporter}.
-     *
-     * @param metricRegistry the metrics registry
-     * @param prefix          is prepended to all names reported to graphite
-     * @param predicate       filters metrics to be reported
-     * @param socketProvider  a {@link SocketProvider} instance
-     * @param clock           a {@link Clock} instance
-     * @param vm              a {@link VirtualMachineMetrics} instance
-     * @throws IOException if there is an error connecting to the Graphite server
-     */
-    public GraphiteReporter(MetricRegistry metricRegistry, String prefix, MetricPredicate predicate, SocketProvider socketProvider, Clock clock, VirtualMachineMetrics vm, String name) throws IOException {
+    public GraphiteReporter(MetricRegistry metricRegistry,
+                            String prefix,
+                            MetricPredicate predicate,
+                            SocketProvider socketProvider,
+                            Clock clock,
+                            TimeUnit durationUnit,
+                            VirtualMachineMetrics vm,
+                            String name) throws IOException {
         super(metricRegistry, name);
         this.socketProvider = socketProvider;
+        this.durationUnit = durationUnit;
         this.vm = vm;
 
         this.clock = clock;
@@ -297,44 +206,42 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
 
     @Override
     public void processMeter(String name, Metered meter, Long epoch) throws IOException {
-        final String sanitizedName = name;
-        sendInt(epoch, sanitizedName, "count", meter.getCount());
-        sendFloat(epoch, sanitizedName, "meanRate", meter.getMeanRate());
-        sendFloat(epoch, sanitizedName, "1MinuteRate", meter.getOneMinuteRate());
-        sendFloat(epoch, sanitizedName, "5MinuteRate", meter.getFiveMinuteRate());
-        sendFloat(epoch, sanitizedName, "15MinuteRate", meter.getFifteenMinuteRate());
+        sendInt(epoch, name, "count", meter.getCount());
+        sendFloat(epoch, name, "meanRate", meter.getMeanRate());
+        sendFloat(epoch, name, "1MinuteRate", meter.getOneMinuteRate());
+        sendFloat(epoch, name, "5MinuteRate", meter.getFiveMinuteRate());
+        sendFloat(epoch, name, "15MinuteRate", meter.getFifteenMinuteRate());
     }
 
     @Override
     public void processHistogram(String name, Histogram histogram, Long epoch) throws IOException {
-        final String sanitizedName = name;
-        sendSummarizable(epoch, sanitizedName, histogram);
-        sendSampling(epoch, sanitizedName, histogram);
+        sendInt(epoch, name, "min", histogram.getMin());
+        sendInt(epoch, name, "max", histogram.getMax());
+        sendInt(epoch, name, "mean", histogram.getMean());
+        sendFloat(epoch, name, "stddev", histogram.getStdDev());
+        final Snapshot snapshot = histogram.getSnapshot();
+        sendInt(epoch, name, "median", snapshot.getMedian());
+        sendInt(epoch, name, "75percentile", snapshot.get75thPercentile());
+        sendInt(epoch, name, "95percentile", snapshot.get95thPercentile());
+        sendInt(epoch, name, "98percentile", snapshot.get98thPercentile());
+        sendInt(epoch, name, "99percentile", snapshot.get99thPercentile());
+        sendInt(epoch, name, "999percentile", snapshot.get999thPercentile());
     }
 
     @Override
     public void processTimer(String name, Timer timer, Long epoch) throws IOException {
         processMeter(name, timer, epoch);
-        final String sanitizedName = name;
-        sendSummarizable(epoch, sanitizedName, timer);
-        sendSampling(epoch, sanitizedName, timer);
-    }
-
-    protected void sendSummarizable(long epoch, String sanitizedName, Summarizable metric) throws IOException {
-        sendFloat(epoch, sanitizedName, "min", metric.getMin());
-        sendFloat(epoch, sanitizedName, "max", metric.getMax());
-        sendFloat(epoch, sanitizedName, "mean", metric.getMean());
-        sendFloat(epoch, sanitizedName, "stddev", metric.getStdDev());
-    }
-
-    protected void sendSampling(long epoch, String sanitizedName, Sampling metric) throws IOException {
-        final Snapshot snapshot = metric.getSnapshot();
-        sendFloat(epoch, sanitizedName, "median", snapshot.getMedian());
-        sendFloat(epoch, sanitizedName, "75percentile", snapshot.get75thPercentile());
-        sendFloat(epoch, sanitizedName, "95percentile", snapshot.get95thPercentile());
-        sendFloat(epoch, sanitizedName, "98percentile", snapshot.get98thPercentile());
-        sendFloat(epoch, sanitizedName, "99percentile", snapshot.get99thPercentile());
-        sendFloat(epoch, sanitizedName, "999percentile", snapshot.get999thPercentile());
+        sendFloat(epoch, name, "min", convertFromNS(timer.getMin()));
+        sendFloat(epoch, name, "max", convertFromNS(timer.getMax()));
+        sendFloat(epoch, name, "mean", convertFromNS(timer.getMean()));
+        sendFloat(epoch, name, "stddev", convertFromNS(timer.getStdDev()));
+        final Snapshot snapshot = timer.getSnapshot();
+        sendFloat(epoch, name, "median", convertFromNS(snapshot.getMedian()));
+        sendFloat(epoch, name, "75percentile", convertFromNS(snapshot.get75thPercentile()));
+        sendFloat(epoch, name, "95percentile", convertFromNS(snapshot.get95thPercentile()));
+        sendFloat(epoch, name, "98percentile", convertFromNS(snapshot.get98thPercentile()));
+        sendFloat(epoch, name, "99percentile", convertFromNS(snapshot.get99thPercentile()));
+        sendFloat(epoch, name, "999percentile", convertFromNS(snapshot.get999thPercentile()));
     }
 
     protected void printVmMetrics(long epoch) {
@@ -358,6 +265,14 @@ public class GraphiteReporter extends AbstractPollingReporter implements MetricP
             sendInt(epoch, name, "time", entry.getValue().getTime(TimeUnit.MILLISECONDS));
             sendInt(epoch, name, "runs", entry.getValue().getRuns());
         }
+    }
+
+    private double convertFromNS(long ns) {
+        return ns / (double) durationUnit.toNanos(1);
+    }
+
+    private double convertFromNS(double ns) {
+        return ns / (double) durationUnit.toNanos(1);
     }
 
     public static class DefaultSocketProvider implements SocketProvider {
