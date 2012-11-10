@@ -90,7 +90,7 @@ public class InstrumentedTimingCollectorTest {
         assertThat(name,
                    is(Metrics.name("sql", "empty")));
         assertThat(timer.getMax(),
-                   is(2L));
+                   is(1L));
     }
 
     @Test
