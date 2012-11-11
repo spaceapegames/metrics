@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Meter implements Metered {
     private static final long TICK_INTERVAL = TimeUnit.SECONDS.toNanos(5);
+    private static final double NANOSECONDS_PER_SECOND = (double) TimeUnit.SECONDS.toNanos(1);
 
     private final EWMA m1Rate = EWMA.oneMinuteEWMA();
     private final EWMA m5Rate = EWMA.fiveMinuteEWMA();
@@ -90,8 +91,7 @@ public class Meter implements Metered {
         if (getCount() == 0) {
             return 0.0;
         } else {
-            final long elapsed = (clock.getTick() - startTime);
-            return convertNsRate(getCount() / (double) elapsed);
+            return getCount() / ((clock.getTick() - startTime) * NANOSECONDS_PER_SECOND);
         }
     }
 
@@ -99,9 +99,5 @@ public class Meter implements Metered {
     public double getOneMinuteRate() {
         tickIfNecessary();
         return m1Rate.getRate(TimeUnit.SECONDS);
-    }
-
-    private double convertNsRate(double ratePerNs) {
-        return ratePerNs * (double) TimeUnit.SECONDS.toNanos(1);
     }
 }
