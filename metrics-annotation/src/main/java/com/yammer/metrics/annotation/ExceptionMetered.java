@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation for marking a method of a Guice-provided object as metered.
+ * An annotation for marking a method of an annotated object as metered.
  * <p/>
  * Given a method like this:
  * <pre><code>
@@ -51,6 +51,12 @@ public @interface ExceptionMetered {
      * it decorates and the suffix "Exceptions".
      */
     String name() default "";
+
+    /**
+     * If {@code true}, use the given name an as absolute name. If {@code false}, use the given name
+     * relative to the annotated class.
+     */
+    boolean absolute() default false;
 
     /**
      * The type of exceptions that the meter will catch and count.

@@ -99,14 +99,14 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
 
         if (method.getMethod().isAnnotationPresent(Timed.class)) {
             final Timed annotation = method.getMethod().getAnnotation(Timed.class);
-            final String name = chooseName(annotation.name(), method);
+            final String name = chooseName(annotation.name(), annotation.absolute(), method);
             final Timer timer = registry.timer(name);
             dispatcher = new TimedRequestDispatcher(dispatcher, timer);
         }
 
         if (method.getMethod().isAnnotationPresent(Metered.class)) {
             final Metered annotation = method.getMethod().getAnnotation(Metered.class);
-            final String name = chooseName(annotation.name(), method);
+            final String name = chooseName(annotation.name(), annotation.absolute(), method);
             final Meter meter = registry.meter(name);
             dispatcher = new MeteredRequestDispatcher(dispatcher, meter);
         }
@@ -114,6 +114,7 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
         if (method.getMethod().isAnnotationPresent(ExceptionMetered.class)) {
             final ExceptionMetered annotation = method.getMethod().getAnnotation(ExceptionMetered.class);
             final String name = chooseName(annotation.name(),
+                                           annotation.absolute(),
                                            method,
                                            ExceptionMetered.DEFAULT_NAME_SUFFIX);
             final Meter meter = registry.meter(name);
@@ -123,9 +124,12 @@ class InstrumentedResourceMethodDispatchProvider implements ResourceMethodDispat
         return dispatcher;
     }
 
-    private String chooseName(String explicitName, AbstractResourceMethod method, String... suffixes) {
+    private String chooseName(String explicitName, boolean absolute, AbstractResourceMethod method, String... suffixes) {
         if (explicitName != null && !explicitName.isEmpty()) {
-            return explicitName;
+            if (absolute) {
+                return explicitName;
+            }
+            return Metrics.name(method.getDeclaringResource().getResourceClass(), explicitName);
         }
         return Metrics.name(Metrics.name(method.getDeclaringResource().getResourceClass(),
                                          method.getMethod().getName()), suffixes);
