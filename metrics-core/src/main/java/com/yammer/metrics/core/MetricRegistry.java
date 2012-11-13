@@ -103,7 +103,11 @@ public class MetricRegistry implements Iterable<Map.Entry<String, Metric>> {
     }
     
     public boolean add(String name, Metric metric) {
-        return metrics.putIfAbsent(name, metric) == null;
+        final boolean added = metrics.putIfAbsent(name, metric) == null;
+        if (added) {
+            notifyMetricRegistered(name, metric);
+        }
+        return added;
     }
 
     /**
