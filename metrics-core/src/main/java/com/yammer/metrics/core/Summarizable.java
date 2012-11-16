@@ -31,11 +31,4 @@ public interface Summarizable {
      * @return the standard deviation of all recorded values
      */
     double getStdDev();
-
-    /**
-     * Returns the sum of all recorded values.
-     *
-     * @return the sum of all recorded values
-     */
-    long getSum();
 }

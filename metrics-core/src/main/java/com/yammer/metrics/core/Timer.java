@@ -10,8 +10,6 @@ import java.util.concurrent.TimeUnit;
  * throughput statistics via {@link Meter}.
  */
 public class Timer implements Metered, Sampling, Summarizable {
-    private static final long NANOSECONDS_PER_MILLISECOND =
-            TimeUnit.NANOSECONDS.convert(1, TimeUnit.MILLISECONDS);
     private final Meter meter;
     private final Histogram histogram = new Histogram(Histogram.SampleType.BIASED);
     private final Clock clock;
@@ -128,16 +126,6 @@ public class Timer implements Metered, Sampling, Summarizable {
     @Override
     public double getStdDev() {
         return histogram.getStdDev();
-    }
-
-    /**
-     * Returns the sum of all recorded durations.
-     *
-     * @return the sum of all recorded durations
-     */
-    @Override
-    public long getSum() {
-        return histogram.getSum();
     }
 
     @Override
