@@ -7,13 +7,12 @@
 
     <groupId>com.yammer.metrics</groupId>
     <artifactId>metrics-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-spaceape-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Metrics Parent</name>
     <description>
         Yammer's Metrics library.
     </description>
-    <url>http://metrics.codahale.com/</url>
 
     <modules>
         <module>metrics-annotation</module>
@@ -39,49 +38,26 @@
         <slf4j.version>1.6.6</slf4j.version>
         <jackson.version>2.0.5</jackson.version>
     </properties>
-
-    <developers>
-        <developer>
-            <name>Coda Hale</name>
-            <email>coda.hale@gmail.com</email>
-            <timezone>-8</timezone>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git://github.com/codahale/metrics.git</connection>
-        <developerConnection>scm:git:git@github.com:codahale/metrics.git</developerConnection>
-        <url>http://github.com/codahale/metrics/</url>
-    </scm>
-
-    <issueManagement>
-        <system>github</system>
-        <url>http://github.com/codahale/metrics/issues#issue/</url>
-    </issueManagement>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
+    
+	<scm>
+		<connection>scm:git:git@github.com:spaceapegames/metrics.git</connection>
+		<tag>scm:git:git@github.com:spaceapegames/metrics.git</tag>
+		<url>scm:git:git@github.com:spaceapegames/metrics.git</url>
+        <developerConnection>scm:git:git@github.com:spaceapegames/metrics.git</developerConnection>
+	</scm>
+	
+	<distributionManagement>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>spaceapegames</id>
+            <name>libs-releases</name>
+            <url>https://spaceapegames.artifactoryonline.com/spaceapegames/libs-releases-local/</url>
         </repository>
-        <site>
-            <id>repo.codahale.com</id>
-            <url>scp://codahale.com/home/codahale/metrics.codahale.com/maven/</url>
-        </site>
+        <snapshotRepository>
+            <id>spaceapegames</id>
+            <name>libs-snapshots</name>
+            <url>https://spaceapegames.artifactoryonline.com/spaceapegames/libs-snapshots-local</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
     </distributionManagement>
 
     <dependencies>
@@ -104,36 +80,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.2</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <build>
         <plugins>
