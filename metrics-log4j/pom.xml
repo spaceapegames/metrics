@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.yammer.metrics</groupId>
         <artifactId>metrics-parent</artifactId>
-        <version>3.0.1-spaceape-SNAPSHOT</version>
+        <version>3.0.1-spaceape</version>
     </parent>
 
     <artifactId>metrics-log4j</artifactId>
