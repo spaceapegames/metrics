@@ -142,7 +142,7 @@ public class VirtualMachineMetrics {
      *
      * @return total Heap and non-heap initial JVM memory in bytes.
      */
-    public double getTotalInit() {
+    public double totalInit() {
         return memory.getHeapMemoryUsage().getInit() +
                 memory.getNonHeapMemoryUsage().getInit();
     }
@@ -152,7 +152,7 @@ public class VirtualMachineMetrics {
      *
      * @return total Heap and non-heap memory currently used by JVM in bytes.
      */
-    public double getTotalUsed() {
+    public double totalUsed() {
         return memory.getHeapMemoryUsage().getUsed() +
                 memory.getNonHeapMemoryUsage().getUsed();
     }
@@ -162,7 +162,7 @@ public class VirtualMachineMetrics {
      *
      * @return total Heap and non-heap memory currently used by JVM in bytes.
      */
-    public double getTotalMax() {
+    public double totalMax() {
         return memory.getHeapMemoryUsage().getMax() +
                 memory.getNonHeapMemoryUsage().getMax();
     }
@@ -171,7 +171,7 @@ public class VirtualMachineMetrics {
      *
      * @return total Heap and non-heap memory currently committed to the JVM in bytes.
      */
-    public double getTotalCommitted() {
+    public double totalCommitted() {
         return memory.getHeapMemoryUsage().getCommitted() +
                 memory.getNonHeapMemoryUsage().getCommitted();
     }
@@ -180,7 +180,7 @@ public class VirtualMachineMetrics {
      *
      * @return Heap initial JVM memory in bytes.
      */
-    public double getHeapInit() {
+    public double heapInit() {
         return memory.getHeapMemoryUsage().getInit();
     }
     /**
@@ -188,7 +188,7 @@ public class VirtualMachineMetrics {
      *
      * @return Heap memory currently used by JVM in bytes.
      */
-    public double getHeapUsed() {
+    public double heapUsed() {
         return memory.getHeapMemoryUsage().getUsed();
     }
     /**
@@ -196,7 +196,7 @@ public class VirtualMachineMetrics {
      *
      * @return Heap memory currently used by JVM in bytes.
      */
-    public double getHeapMax() {
+    public double heapMax() {
         return memory.getHeapMemoryUsage().getMax();
     }
     /**
@@ -204,7 +204,7 @@ public class VirtualMachineMetrics {
      *
      * @return Heap memory currently committed to the JVM in bytes.
      */
-    public double getHeapCommitted() {
+    public double heapCommitted() {
         return memory.getHeapMemoryUsage().getCommitted();
     }
 
@@ -213,7 +213,7 @@ public class VirtualMachineMetrics {
      *
      * @return the percentage of the JVM's heap which is being used
      */
-    public double getHeapUsage() {
+    public double heapUsage() {
         final MemoryUsage usage = memory.getHeapMemoryUsage();
         return usage.getUsed() / (double) usage.getMax();
     }
@@ -224,7 +224,7 @@ public class VirtualMachineMetrics {
      *
      * @return the percentage of the JVM's non-heap memory which is being used
      */
-    public double getNonHeapUsage() {
+    public double nonHeapUsage() {
         final MemoryUsage usage = memory.getNonHeapMemoryUsage();
         return usage.getUsed() / (double) usage.getMax();
     }
@@ -234,7 +234,7 @@ public class VirtualMachineMetrics {
      *
      * @return a map of memory pool names to the percentage of that pool which is being used
      */
-    public Map<String, Double> getMemoryPoolUsage() {
+    public Map<String, Double> memoryPoolUsage() {
         final Map<String, Double> pools = new TreeMap<String, Double>();
         for (MemoryPoolMXBean pool : memoryPools) {
             final double max = pool.getUsage().getMax() == -1 ?
@@ -251,7 +251,7 @@ public class VirtualMachineMetrics {
      * @return the percentage of available file descriptors which are currently in use, or {@code
      *         NaN} if the running JVM does not have access to this information
      */
-    public double getFileDescriptorUsage() {
+    public double fileDescriptorUsage() {
         try {
             final Method getOpenFileDescriptorCount = os.getClass().getDeclaredMethod("getOpenFileDescriptorCount");
             getOpenFileDescriptorCount.setAccessible(true);
@@ -276,7 +276,7 @@ public class VirtualMachineMetrics {
      * @see <a href="http://java.sun.com/j2se/versioning_naming.html">J2SE SDK/JRE Version String
      *      Naming Convention</a>
      */
-    public String getVersion() {
+    public String version() {
         return System.getProperty("java.runtime.version");
     }
 
@@ -286,7 +286,7 @@ public class VirtualMachineMetrics {
      * @return the name of the currently-running jvm, eg  "Java HotSpot(TM) Client VM"
      * @see <a href="http://download.oracle.com/javase/6/docs/api/java/lang/System.html#getProperties()">System.getProperties()</a>
      */
-    public String getName() {
+    public String name() {
         return System.getProperty("java.vm.name");
     }
 
@@ -295,16 +295,16 @@ public class VirtualMachineMetrics {
      *
      * @return the number of seconds the JVM process has been running
      */
-    public long getUptime() {
+    public long uptime() {
         return TimeUnit.MILLISECONDS.toSeconds(runtime.getUptime());
     }
 
     /**
-     * Returns the number of live threads (includes {@link #getDaemonThreadCount}.
+     * Returns the number of live threads (includes {@link #daemonThreadCount()}.
      *
      * @return the number of live threads
      */
-    public int getThreadCount() {
+    public int threadCount() {
         return threads.getThreadCount();
     }
 
@@ -313,7 +313,7 @@ public class VirtualMachineMetrics {
      *
      * @return the number of live daemon threads
      */
-    public int getDaemonThreadCount() {
+    public int daemonThreadCount() {
         return threads.getDaemonThreadCount();
     }
 
@@ -322,7 +322,7 @@ public class VirtualMachineMetrics {
      *
      * @return a map of garbage collector names to garbage collector information
      */
-    public Map<String, GarbageCollectorStats> getGarbageCollectors() {
+    public Map<String, GarbageCollectorStats> garbageCollectors() {
         final Map<String, GarbageCollectorStats> stats = new HashMap<String, GarbageCollectorStats>();
         for (GarbageCollectorMXBean gc : garbageCollectors) {
             stats.put(gc.getName(),
@@ -337,7 +337,7 @@ public class VirtualMachineMetrics {
      *
      * @return a set of any deadlocked threads
      */
-    public Set<String> getDeadlockedThreads() {
+    public Set<String> deadlockedThreads() {
         final long[] threadIds = threads.findDeadlockedThreads();
         if (threadIds != null) {
             final Set<String> threads = new HashSet<String>();
@@ -366,7 +366,7 @@ public class VirtualMachineMetrics {
      *
      * @return a map of thread states to percentages
      */
-    public Map<State, Double> getThreadStatePercentages() {
+    public Map<State, Double> threadStatePercentages() {
         final Map<State, Double> conditions = new HashMap<State, Double>();
         for (State state : State.values()) {
             conditions.put(state, 0.0);
@@ -394,7 +394,7 @@ public class VirtualMachineMetrics {
      *
      * @param out an output stream
      */
-    public void getThreadDump(OutputStream out) {
+    public void threadDump(OutputStream out) {
         final ThreadInfo[] threads = this.threads.dumpAllThreads(true, true);
         final PrintWriter writer = new PrintWriter(out, true);
 

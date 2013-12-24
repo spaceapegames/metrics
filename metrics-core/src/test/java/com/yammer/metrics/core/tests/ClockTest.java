@@ -15,10 +15,10 @@ public class ClockTest {
     public void cpuTimeClock() throws Exception {
         final Clock.CpuTimeClock clock = new Clock.CpuTimeClock();
 
-        assertThat((double) clock.getTime(),
+        assertThat((double) clock.time(),
                    is(closeTo(System.currentTimeMillis(), 100)));
 
-        assertThat((double) clock.getTick(),
+        assertThat((double) clock.tick(),
                    is(closeTo(ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime(), 1000000)));
     }
 
@@ -26,10 +26,10 @@ public class ClockTest {
     public void userTimeClock() throws Exception {
         final Clock.UserTimeClock clock = new Clock.UserTimeClock();
 
-        assertThat((double) clock.getTime(),
+        assertThat((double) clock.time(),
                    is(closeTo(System.currentTimeMillis(), 100)));
 
-        assertThat((double) clock.getTick(),
+        assertThat((double) clock.tick(),
                    is(closeTo(System.nanoTime(), 100000)));
     }
 

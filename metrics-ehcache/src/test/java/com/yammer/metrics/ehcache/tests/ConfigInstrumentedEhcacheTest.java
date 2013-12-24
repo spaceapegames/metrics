@@ -31,13 +31,13 @@ public class ConfigInstrumentedEhcacheTest {
     public void measuresGets() throws Exception {
         cache.get("woo");
 
-        final Timer gets = Metrics.defaultRegistry().newTimer(Cache.class,
-                                                              "get",
-                                                              "test-config",
-                                                              TimeUnit.MILLISECONDS,
-                                                              TimeUnit.SECONDS);
+        final Timer gets = Metrics.newTimer(Cache.class,
+                                            "get",
+                                            "test-config",
+                                            TimeUnit.MILLISECONDS,
+                                            TimeUnit.SECONDS);
 
-        assertThat(gets.getCount(), is(1L));
+        assertThat(gets.count(), is(1L));
 
     }
 
@@ -46,13 +46,13 @@ public class ConfigInstrumentedEhcacheTest {
 
         cache.put(new Element("woo", "whee"));
 
-        final Timer puts = Metrics.defaultRegistry().newTimer(Cache.class,
-                                                              "put",
-                                                              "test-config",
-                                                              TimeUnit.MILLISECONDS,
-                                                              TimeUnit.SECONDS);
+        final Timer puts = Metrics.newTimer(Cache.class,
+                                            "put",
+                                            "test-config",
+                                            TimeUnit.MILLISECONDS,
+                                            TimeUnit.SECONDS);
 
-        assertThat(puts.getCount(), is(1L));
+        assertThat(puts.count(), is(1L));
 
     }
 

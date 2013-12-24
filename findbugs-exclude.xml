@@ -5,7 +5,13 @@
 
     <!-- Don't tell me about servlets and serialization. -->
     <Match>
-        <Class name="~com\.yammer\.metrics\.servlet\..*Servlet"/>
+        <Class name="~com\.yammer\.metrics\.reporting\..*Servlet"/>
+        <Bug code="Se"/>
+    </Match>
+
+    <!-- Don't tell me about Spring and serialization. -->
+    <Match>
+        <Class name="~com\.yammer\.metrics\.spring\..*"/>
         <Bug code="Se"/>
     </Match>
 </FindBugsFilter>

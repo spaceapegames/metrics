@@ -36,7 +36,7 @@ class Timer(metric: com.yammer.metrics.core.Timer) {
   /**
    * Returns the number of durations recorded.
    */
-  def count = metric.getCount
+  def count = metric.count
 
   /**
    * Clears all recorded durations.
@@ -46,22 +46,22 @@ class Timer(metric: com.yammer.metrics.core.Timer) {
   /**
    * Returns the longest recorded duration.
    */
-  def max = metric.getMax
+  def max = metric.max
 
   /**
    * Returns the shortest recorded duration.
    */
-  def min = metric.getMin
+  def min = metric.min
 
   /**
    * Returns the arithmetic mean of all recorded durations.
    */
-  def mean = metric.getMean
+  def mean = metric.mean
 
   /**
    * Returns the standard deviation of all recorded durations.
    */
-  def stdDev = metric.getStdDev
+  def stdDev = metric.stdDev
 
   /**
    * Returns a snapshot of the values in the timer's sample.
@@ -71,36 +71,36 @@ class Timer(metric: com.yammer.metrics.core.Timer) {
   /**
    * Returns the timer's rate unit.
    */
-  def rateUnit = metric.getRateUnit
+  def rateUnit = metric.rateUnit
 
   /**
    * Returns the timer's duration unit.
    */
-  def durationUnit = metric.getDurationUnit
+  def durationUnit = metric.durationUnit
 
   /**
    * Returns the type of events the timer is measuring.
    */
-  def eventType = metric.getEventType
+  def eventType = metric.eventType
 
   /**
    * Returns the fifteen-minute rate of timings.
    */
-  def fifteenMinuteRate = metric.getFifteenMinuteRate
+  def fifteenMinuteRate = metric.fifteenMinuteRate
 
   /**
    * Returns the five-minute rate of timings.
    */
-  def fiveMinuteRate = metric.getFiveMinuteRate
+  def fiveMinuteRate = metric.fiveMinuteRate
 
   /**
    * Returns the mean rate of timings.
    */
-  def meanRate = metric.getMeanRate
+  def meanRate = metric.meanRate
 
   /**
    * Returns the one-minute rate of timings.
    */
-  def oneMinuteRate = metric.getOneMinuteRate
+  def oneMinuteRate = metric.oneMinuteRate
 }
 

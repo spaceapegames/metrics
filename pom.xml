@@ -27,6 +27,7 @@
         <module>metrics-jetty</module>
         <module>metrics-log4j</module>
         <module>metrics-logback</module>
+        <module>metrics-scala_2.9.1</module>
         <module>metrics-servlet</module>
         <module>metrics-spring</module>
         <module>metrics-web</module>
@@ -40,7 +41,7 @@
         <slf4j.version>1.7.4</slf4j.version>
         <jackson.version>2.1.2</jackson.version>
         <guice.version>3.0</guice.version>
-        <jacksonscala.version>2.2.0-spaceape</jacksonscala.version>
+        <jacksonscala.version>2.2.1-spaceape</jacksonscala.version>
     </properties>
     
 	<scm>

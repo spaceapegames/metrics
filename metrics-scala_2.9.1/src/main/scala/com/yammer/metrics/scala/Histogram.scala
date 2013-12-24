@@ -27,7 +27,7 @@ class Histogram(metric: com.yammer.metrics.core.Histogram) {
   /**
    * Returns the number of values recorded.
    */
-  def count = metric.getCount
+  def count = metric.count
 
   /**
    * Clears all recorded values.
@@ -37,22 +37,22 @@ class Histogram(metric: com.yammer.metrics.core.Histogram) {
   /**
    * Returns the largest recorded value.
    */
-  def max = metric.getMax
+  def max = metric.max
 
   /**
    * Returns the smallest recorded value.
    */
-  def min = metric.getMin
+  def min = metric.min
 
   /**
    * Returns the arithmetic mean of all recorded values.
    */
-  def mean = metric.getMean
+  def mean = metric.mean
 
   /**
    * Returns the standard deviation of all recorded values.
    */
-  def stdDev = metric.getStdDev
+  def stdDev = metric.stdDev
 
   /**
    * Returns a snapshot of the values in the histogram's sample.

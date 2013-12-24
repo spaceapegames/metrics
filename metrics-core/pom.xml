@@ -10,14 +10,8 @@
 
     <artifactId>metrics-core</artifactId>
     <name>Metrics Core Library</name>
-    <packaging>bundle</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-annotation</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

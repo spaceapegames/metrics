@@ -39,7 +39,7 @@ public class JmxGauge extends Gauge<Object> {
     }
 
     @Override
-    public Object getValue() {
+    public Object value() {
         try {
             return SERVER.getAttribute(objectName, attribute);
         } catch (Exception e) {

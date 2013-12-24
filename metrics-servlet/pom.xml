@@ -10,7 +10,7 @@
 
     <artifactId>metrics-servlet</artifactId>
     <name>Metrics Servlet</name>
-    <packaging>bundle</packaging>
+
 
     <dependencies>
         <dependency>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jacksonscala.version}</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

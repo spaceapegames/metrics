@@ -158,12 +158,12 @@ public class ExponentiallyDecayingSampleTest {
         }
 
         @Override
-        public long getTick() {
+        public long tick() {
             return ticksInNanos;
         }
 
         @Override
-        public long getTime() {
+        public long time() {
             return TimeUnit.NANOSECONDS.toMillis(ticksInNanos);
         }
 

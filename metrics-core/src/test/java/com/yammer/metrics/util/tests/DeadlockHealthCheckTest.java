@@ -25,7 +25,7 @@ public class DeadlockHealthCheckTest {
 
     @Test
     public void returnsHealthyIfNoDeadlocks() throws Exception {
-        when(vm.getDeadlockedThreads()).thenReturn(new HashSet<String>());
+        when(vm.deadlockedThreads()).thenReturn(new HashSet<String>());
 
         assertThat(healthCheck.execute(),
                    is(HealthCheck.Result.healthy()));
@@ -37,7 +37,7 @@ public class DeadlockHealthCheckTest {
         threads.add("thread1");
         threads.add("thread2");
 
-        when(vm.getDeadlockedThreads()).thenReturn(threads);
+        when(vm.deadlockedThreads()).thenReturn(threads);
         
         assertThat(healthCheck.execute(),
                    is(HealthCheck.Result.unhealthy("Deadlocked threads detected:\n" +

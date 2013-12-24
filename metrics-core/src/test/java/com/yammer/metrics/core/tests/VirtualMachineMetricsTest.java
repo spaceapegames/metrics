@@ -78,61 +78,61 @@ public class VirtualMachineMetricsTest {
 
     @Test
     public void calculatesTotalInit() throws Exception {
-        assertThat(vmm.getTotalInit(),
+        assertThat(vmm.totalInit(),
                    is(3.0));
     }
 
     @Test
     public void calculatesTotalUsed() throws Exception {
-        assertThat(vmm.getTotalUsed(),
+        assertThat(vmm.totalUsed(),
                    is(30.0));
     }
 
     @Test
     public void calculatesTotalMax() throws Exception {
-        assertThat(vmm.getTotalMax(),
+        assertThat(vmm.totalMax(),
                    is(3000.0));
     }
 
     @Test
     public void calculatesTotalCommitted() throws Exception {
-        assertThat(vmm.getTotalCommitted(),
+        assertThat(vmm.totalCommitted(),
                    is(300.0));
     }
 
     @Test
     public void calculatesHeapInit() throws Exception {
-        assertThat(vmm.getHeapInit(),
+        assertThat(vmm.heapInit(),
                    is(1.0));
     }
 
     @Test
     public void calculatesHeapUsed() throws Exception {
-        assertThat(vmm.getHeapUsed(),
+        assertThat(vmm.heapUsed(),
                    is(10.0));
     }
 
     @Test
     public void calculatesHeapCommitted() throws Exception {
-        assertThat(vmm.getHeapCommitted(),
+        assertThat(vmm.heapCommitted(),
                    is(100.0));
     }
 
     @Test
     public void calculatesHeapMax() throws Exception {
-        assertThat(vmm.getHeapMax(),
+        assertThat(vmm.heapMax(),
                    is(1000.0));
     }
 
     @Test
     public void calculatesNonHeapUsage() throws Exception {
-        assertThat(vmm.getNonHeapUsage(),
+        assertThat(vmm.nonHeapUsage(),
                    is(0.01));
     }
 
     @Test
     public void calculatesMemoryPoolUsage() throws Exception {
-        final Map<String,Double> usages = vmm.getMemoryPoolUsage();
+        final Map<String,Double> usages = vmm.memoryPoolUsage();
 
         assertThat(usages,
                    hasEntry("pool1", 0.01));
@@ -143,7 +143,7 @@ public class VirtualMachineMetricsTest {
 
     @Test
     public void calculatesFileDescriptorUsage() throws Exception {
-        assertThat(vmm.getFileDescriptorUsage(),
+        assertThat(vmm.fileDescriptorUsage(),
                    is(0.05));
     }
 
@@ -152,7 +152,7 @@ public class VirtualMachineMetricsTest {
     public void fdCalculationHandlesNonUnixSystems() throws Exception {
         when(os.getOpenFileDescriptorCount()).thenThrow(NoSuchMethodException.class);
 
-        assertThat(vmm.getFileDescriptorUsage(),
+        assertThat(vmm.fileDescriptorUsage(),
                    is(Double.NaN));
     }
 
@@ -161,7 +161,7 @@ public class VirtualMachineMetricsTest {
     public void fdCalculationHandlesSecuredSystems() throws Exception {
         when(os.getOpenFileDescriptorCount()).thenThrow(IllegalAccessException.class);
 
-        assertThat(vmm.getFileDescriptorUsage(),
+        assertThat(vmm.fileDescriptorUsage(),
                    is(Double.NaN));
     }
 
@@ -170,38 +170,38 @@ public class VirtualMachineMetricsTest {
     public void fdCalculationHandlesWeirdSystems() throws Exception {
         when(os.getOpenFileDescriptorCount()).thenThrow(InvocationTargetException.class);
 
-        assertThat(vmm.getFileDescriptorUsage(),
+        assertThat(vmm.fileDescriptorUsage(),
                    is(Double.NaN));
     }
 
     @Test
     public void fetchesTheVMName() throws Exception {
         // this is ugly, but I'd rather not dick with the system properties
-        assertThat(vmm.getName(),
+        assertThat(vmm.name(),
                    is(System.getProperty("java.vm.name")));
     }
 
     @Test
     public void calculatesTheUptimeInSeconds() throws Exception {
-        assertThat(vmm.getUptime(),
+        assertThat(vmm.uptime(),
                    is(11L));
     }
 
     @Test
     public void calculatesTheThreadCount() throws Exception {
-        assertThat(vmm.getThreadCount(),
+        assertThat(vmm.threadCount(),
                    is(52));
     }
 
     @Test
     public void calculatesTheDaemonThreadCount() throws Exception {
-        assertThat(vmm.getDaemonThreadCount(),
+        assertThat(vmm.daemonThreadCount(),
                    is(22));
     }
 
     @Test
     public void calculatesGcStats() throws Exception {
-        final Map<String, GarbageCollectorStats> stats = vmm.getGarbageCollectors();
+        final Map<String, GarbageCollectorStats> stats = vmm.garbageCollectors();
 
         assertThat(stats.get("gc1").getRuns(),
                    is(1L));

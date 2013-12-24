@@ -21,7 +21,7 @@ public class RatioGaugeTest {
             }
         };
 
-        assertThat(regular.getValue(),
+        assertThat(regular.value(),
                    is(0.5));
     }
 
@@ -39,7 +39,7 @@ public class RatioGaugeTest {
             }
         };
 
-        assertThat(divByZero.getValue(),
+        assertThat(divByZero.value(),
                    is(Double.NaN));
     }
 
@@ -57,7 +57,7 @@ public class RatioGaugeTest {
             }
         };
         
-        assertThat(infinite.getValue(),
+        assertThat(infinite.value(),
                    is(Double.NaN));
     }
 
@@ -75,7 +75,7 @@ public class RatioGaugeTest {
             }
         };
         
-        assertThat(nan.getValue(),
+        assertThat(nan.value(),
                    is(Double.NaN));
     }
 }

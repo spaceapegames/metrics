@@ -1,28 +1,23 @@
 package com.yammer.metrics.jdbi.tests;
 
+import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import java.util.concurrent.TimeUnit;
+import org.junit.Test;
+import org.skife.jdbi.v2.StatementContext;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.jdbi.InstrumentedTimingCollector;
 import com.yammer.metrics.jdbi.strategies.NameStrategies;
 import com.yammer.metrics.jdbi.strategies.ShortNameStrategy;
 import com.yammer.metrics.jdbi.strategies.SmartNameStrategy;
 import com.yammer.metrics.jdbi.strategies.StatementNameStrategy;
-import org.junit.Test;
-import org.skife.jdbi.v2.StatementContext;
-
-import java.util.concurrent.TimeUnit;
-
-import static org.hamcrest.Matchers.closeTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 public class InstrumentedTimingCollectorTest {
-    private final MetricsRegistry registry = Metrics.defaultRegistry();
-
     @Test
     public void updatesTimerForSqlObjects() throws Exception {
         final StatementNameStrategy strategy = new SmartNameStrategy();
@@ -35,11 +30,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(1), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName(getClass(), "updatesTimerForSqlObjects")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(1000.0, 1)));
     }
 
@@ -54,11 +49,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(1), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName(getClass(), "SELECT_1")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(1000.0, 1)));
     }
 
@@ -72,11 +67,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(2), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName("sql", "raw", "SELECT_1")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(2000.0, 1)));
     }
 
@@ -89,11 +84,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(2), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName("sql", "empty", "")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(2000.0, 1)));
     }
 
@@ -107,11 +102,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(3), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName("sql", "raw", "don_t_know_what_it_is_but_it_s_not_SQL")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(3000.0, 1)));
     }
 
@@ -127,11 +122,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(3), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName(getClass(), "updatesTimerForContextClass")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(3000.0, 1)));
     }
 
@@ -147,11 +142,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(4), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName("foo", "bar", "updatesTimerForTemplateFile")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(4000.0, 1)));
     }
 
@@ -167,11 +162,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(4), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName("my-group", "updatesTimerForContextGroupAndName", "")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(4000.0, 1)));
     }
 
@@ -188,11 +183,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(5), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName("my-group", "my-type", "updatesTimerForContextGroupTypeAndName")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(5000.0, 1)));
     }
 
@@ -208,18 +203,18 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(1), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName("jdbi", getClass().getSimpleName(), "updatesTimerForShortSqlObjectStrategy")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(1000.0, 1)));
     }
 
     @Test
     public void updatesTimerForShortContextClassStrategy() throws Exception {
         final StatementNameStrategy strategy = new ShortNameStrategy("jdbi");
-        final InstrumentedTimingCollector collector = new InstrumentedTimingCollector(registry, strategy);
+        final InstrumentedTimingCollector collector = new InstrumentedTimingCollector(Metrics.defaultRegistry(), strategy);
         final StatementContext ctx = mock(StatementContext.class);
         doReturn("SELECT 1").when(ctx).getRawSql();
         doReturn(getClass().getName()).when(ctx).getAttribute(NameStrategies.STATEMENT_CLASS);
@@ -228,11 +223,11 @@ public class InstrumentedTimingCollectorTest {
         collector.collect(TimeUnit.SECONDS.toNanos(3), ctx);
 
         final MetricName name = strategy.getStatementName(ctx);
-        final Timer timer = registry.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        final Timer timer = Metrics.newTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
 
         assertThat(name,
                    is(new MetricName("jdbi", getClass().getSimpleName(), "updatesTimerForShortContextClassStrategy")));
-        assertThat(timer.getMax(),
+        assertThat(timer.max(),
                    is(closeTo(3000.0, 1)));
     }
 }

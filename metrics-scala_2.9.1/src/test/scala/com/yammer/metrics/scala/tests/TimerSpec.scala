@@ -1,19 +1,20 @@
 package com.yammer.metrics.scala.tests
 
 import org.junit.Test
+import com.simple.simplespec.Spec
 import com.yammer.metrics.Metrics
 import com.yammer.metrics.scala.Timer
-import org.scalatest.matchers.ShouldMatchers
 
-class TimerSpec extends ShouldMatchers {
-    val metric = Metrics.defaultRegistry().newTimer(classOf[TimerSpec], "timer")
+class TimerSpec extends Spec {
+  class `A timer` {
+    val metric = Metrics.newTimer(classOf[TimerSpec], "timer")
     val timer = new Timer(metric)
 
-    @Test def `A timer updates the underlying metric` {
-      timer.time { Thread.sleep(100); 10 } should equal (10)
+    @Test def `updates the underlying metric` = {
+      timer.time { Thread.sleep(100); 10 }.must(be(10))
 
-      metric.getMin should be > (100.0 - 10)
-      metric.getMin should be < (100.0 + 10)
+      metric.min().must(be(approximately(100.0, 10)))
     }
+  }
 }
 

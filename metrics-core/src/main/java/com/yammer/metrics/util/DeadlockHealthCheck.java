@@ -32,7 +32,7 @@ public class DeadlockHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        final Set<String> threads = vm.getDeadlockedThreads();
+        final Set<String> threads = vm.deadlockedThreads();
         if (threads.isEmpty()) {
             return Result.healthy();
         }

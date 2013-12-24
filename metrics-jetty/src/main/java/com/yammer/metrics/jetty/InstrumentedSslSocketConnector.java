@@ -6,7 +6,9 @@ import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.MetricsRegistry;
 import com.yammer.metrics.core.Timer;
 import org.eclipse.jetty.io.Connection;
+import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -23,27 +25,59 @@ public class InstrumentedSslSocketConnector extends SslSocketConnector {
     public InstrumentedSslSocketConnector(MetricsRegistry registry, int port) {
         super();
         setPort(port);
-        this.duration = registry.newTimer(SslSocketConnector.class,
+        this.duration = registry.newTimer(SocketConnector.class,
                                           "connection-duration",
                                           Integer.toString(port),
                                           TimeUnit.MILLISECONDS,
                                           TimeUnit.SECONDS);
-        this.accepts = registry.newMeter(SslSocketConnector.class,
+        this.accepts = registry.newMeter(SocketConnector.class,
                                          "accepts",
                                          Integer.toString(port),
                                          "connections",
                                          TimeUnit.SECONDS);
-        this.connects = registry.newMeter(SslSocketConnector.class,
+        this.connects = registry.newMeter(SocketConnector.class,
                                           "connects",
                                           Integer.toString(port),
                                           "connections",
                                           TimeUnit.SECONDS);
-        this.disconnects = registry.newMeter(SslSocketConnector.class,
+        this.disconnects = registry.newMeter(SocketConnector.class,
                                              "disconnects",
                                              Integer.toString(port),
                                              "connections",
                                              TimeUnit.SECONDS);
-        this.connections = registry.newCounter(SslSocketConnector.class,
+        this.connections = registry.newCounter(SocketConnector.class,
+                                               "active-connections",
+                                               Integer.toString(port));
+    }
+
+    public InstrumentedSslSocketConnector(SslContextFactory contextFactory, int port) {
+        this(contextFactory, Metrics.defaultRegistry(), port);
+    }
+
+    public InstrumentedSslSocketConnector(SslContextFactory contextFactory, MetricsRegistry registry, int port) {
+        super(contextFactory);
+        setPort(port);
+        this.duration = registry.newTimer(SocketConnector.class,
+                                          "connection-duration",
+                                          Integer.toString(port),
+                                          TimeUnit.MILLISECONDS,
+                                          TimeUnit.SECONDS);
+        this.accepts = registry.newMeter(SocketConnector.class,
+                                         "accepts",
+                                         Integer.toString(port),
+                                         "connections",
+                                         TimeUnit.SECONDS);
+        this.connects = registry.newMeter(SocketConnector.class,
+                                          "connects",
+                                          Integer.toString(port),
+                                          "connections",
+                                          TimeUnit.SECONDS);
+        this.disconnects = registry.newMeter(SocketConnector.class,
+                                             "disconnects",
+                                             Integer.toString(port),
+                                             "connections",
+                                             TimeUnit.SECONDS);
+        this.connections = registry.newCounter(SocketConnector.class,
                                                "active-connections",
                                                Integer.toString(port));
     }

@@ -1,11 +1,14 @@
 package com.yammer.metrics.core.tests;
 
 import com.yammer.metrics.core.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;
@@ -13,7 +16,17 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class MetricsRegistryTest {
-    private final MetricsRegistry registry = new MetricsRegistry();
+    private MetricsRegistry registry;
+
+    @Before
+    public void setUp() throws Exception {
+        this.registry = new MetricsRegistry();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        registry.shutdown();
+    }
 
     @Test
     public void sortingMetricNamesSortsThemByClassThenScopeThenName() throws Exception {
@@ -35,7 +48,7 @@ public class MetricsRegistryTest {
         stringMetrics.put(three, mThree);
         sortedMetrics.put(String.class.getCanonicalName(), stringMetrics);
 
-        assertThat(registry.getGroupedMetrics(),
+        assertThat(registry.groupedMetrics(),
                    is(sortedMetrics));
     }
 
@@ -94,5 +107,15 @@ public class MetricsRegistryTest {
         final InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).onMetricAdded(name, counter1);
         inOrder.verify(listener).onMetricRemoved(name);
+    }
+
+    @Test
+    public void createdExecutorsAreShutDownOnShutdown() throws Exception {
+        final ScheduledExecutorService service = registry.newScheduledThreadPool(1, "test");
+
+        registry.shutdown();
+        
+        assertThat(service.isShutdown(),
+                   is(true));
     }
 }

@@ -18,8 +18,6 @@ import java.util.Map;
  * }</pre>
  */
 public class DefaultWebappMetricsFilter extends WebappMetricsFilter {
-    public static final String REGISTRY_ATTRIBUTE = DefaultWebappMetricsFilter.class.getName() + ".registry";
-
     private static final String NAME_PREFIX = "responseCodes.";
     private static final int OK = 200;
     private static final int CREATED = 201;
@@ -32,7 +30,7 @@ public class DefaultWebappMetricsFilter extends WebappMetricsFilter {
      * Creates a new instance of the filter.
      */
     public DefaultWebappMetricsFilter() {
-        super(REGISTRY_ATTRIBUTE, createMeterNamesByStatusCode(), NAME_PREFIX + "other");
+        super(createMeterNamesByStatusCode(), NAME_PREFIX + "other");
     }
 
     private static Map<Integer, String> createMeterNamesByStatusCode() {

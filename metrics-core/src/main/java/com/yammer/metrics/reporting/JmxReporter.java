@@ -9,7 +9,6 @@ import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import static javax.management.ObjectName.quote;
 
 /**
  * A reporter which exposes application metric as JMX MBeans.
@@ -18,6 +17,9 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
                                                              MetricProcessor<JmxReporter.Context> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JmxReporter.class);
+
+    private final Map<MetricName, ObjectName> registeredBeans;
+    private final MBeanServer server;
 
     // CHECKSTYLE:OFF
     @SuppressWarnings("UnusedDeclaration")
@@ -58,7 +60,7 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
 
         @Override
         public Object getValue() {
-            return metric.getValue();
+            return metric.value();
         }
     }
 
@@ -80,7 +82,7 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
 
         @Override
         public long getCount() {
-            return metric.getCount();
+            return metric.count();
         }
     }
 
@@ -113,37 +115,37 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
 
         @Override
         public long getCount() {
-            return metric.getCount();
+            return metric.count();
         }
 
         @Override
         public String getEventType() {
-            return metric.getEventType();
+            return metric.eventType();
         }
 
         @Override
         public TimeUnit getRateUnit() {
-            return metric.getRateUnit();
+            return metric.rateUnit();
         }
 
         @Override
         public double getMeanRate() {
-            return metric.getMeanRate();
+            return metric.meanRate();
         }
 
         @Override
         public double getOneMinuteRate() {
-            return metric.getOneMinuteRate();
+            return metric.oneMinuteRate();
         }
 
         @Override
         public double getFiveMinuteRate() {
-            return metric.getFiveMinuteRate();
+            return metric.fiveMinuteRate();
         }
 
         @Override
         public double getFifteenMinuteRate() {
-            return metric.getFifteenMinuteRate();
+            return metric.fifteenMinuteRate();
         }
     }
 
@@ -197,27 +199,27 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
 
         @Override
         public long getCount() {
-            return metric.getCount();
+            return metric.count();
         }
 
         @Override
         public double getMin() {
-            return metric.getMin();
+            return metric.min();
         }
 
         @Override
         public double getMax() {
-            return metric.getMax();
+            return metric.max();
         }
 
         @Override
         public double getMean() {
-            return metric.getMean();
+            return metric.mean();
         }
 
         @Override
         public double getStdDev() {
-            return metric.getStdDev();
+            return metric.stdDev();
         }
 
         @Override
@@ -273,27 +275,27 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
 
         @Override
         public TimeUnit getLatencyUnit() {
-            return metric.getDurationUnit();
+            return metric.durationUnit();
         }
 
         @Override
         public double getMin() {
-            return metric.getMin();
+            return metric.min();
         }
 
         @Override
         public double getMax() {
-            return metric.getMax();
+            return metric.max();
         }
 
         @Override
         public double getMean() {
-            return metric.getMean();
+            return metric.mean();
         }
 
         @Override
         public double getStdDev() {
-            return metric.getStdDev();
+            return metric.stdDev();
         }
 
         @Override
@@ -327,6 +329,36 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
         }
     }
 
+    private static JmxReporter INSTANCE;
+
+    /**
+     * Starts the default instance of {@link JmxReporter}.
+     *
+     * @param registry    the {@link MetricsRegistry} to report from
+     */
+    public static void startDefault(MetricsRegistry registry) {
+        INSTANCE = new JmxReporter(registry);
+        INSTANCE.start();
+    }
+
+    /**
+     * Returns the default instance of {@link JmxReporter} if it has been started.
+     *
+     * @return The default instance or null if the default is not used
+     */
+    public static JmxReporter getDefault() {
+        return INSTANCE;
+    }
+
+    /**
+     * Stops the default instance of {@link JmxReporter}.
+     */
+    public static void shutdownDefault() {
+        if (INSTANCE != null) {
+            INSTANCE.shutdown();
+        }
+    }
+
     static final class Context {
         private final MetricName metricName;
         private final ObjectName objectName;
@@ -345,11 +377,6 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
         }
     }
 
-    private final Map<MetricName, ObjectName> registeredBeans;
-    private final String registryName;
-    private final MBeanServer server;
-    private final MetricDispatcher dispatcher;
-
     /**
      * Creates a new {@link JmxReporter} for the given registry.
      *
@@ -357,41 +384,19 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
      */
     public JmxReporter(MetricsRegistry registry) {
         super(registry);
-        this.registryName = registry.getName();
         this.registeredBeans = new ConcurrentHashMap<MetricName, ObjectName>(100);
         this.server = ManagementFactory.getPlatformMBeanServer();
-        this.dispatcher = new MetricDispatcher();
     }
 
     @Override
     public void onMetricAdded(MetricName name, Metric metric) {
         if (metric != null) {
             try {
-                dispatcher.dispatch(metric, name, this, new Context(name, createObjectName(name)));
+                metric.processWith(this, name, new Context(name, new ObjectName(name.getMBeanName())));
             } catch (Exception e) {
-                LOGGER.warn("Error processing " + name, e);
+                LOGGER.warn("Error processing {}", name, e);
             }
         }
-    }
-
-    private ObjectName createObjectName(MetricName name) throws MalformedObjectNameException {
-        final StringBuilder nameBuilder = new StringBuilder();
-        nameBuilder.append(name.getDomain());
-        nameBuilder.append(":type=");
-        nameBuilder.append(quote(name.getType()));
-        if (name.hasScope()) {
-            nameBuilder.append(",scope=");
-            nameBuilder.append(quote(name.getScope()));
-        }
-        if (!name.getName().isEmpty()) {
-            nameBuilder.append(",name=");
-            nameBuilder.append(quote(name.getName()));
-        }
-        if (registryName != null) {
-            nameBuilder.append(",registry=");
-            nameBuilder.append(quote(registryName));
-        }
-        return new ObjectName(nameBuilder.toString());
     }
 
     @Override
@@ -467,9 +472,9 @@ public class JmxReporter extends AbstractReporter implements MetricsRegistryList
             // This is often thrown when the process is shutting down. An application with lots of
             // metrics will often begin unregistering metrics *after* JMX itself has cleared,
             // resulting in a huge dump of exceptions as the process is exiting.
-            LOGGER.trace("Error unregistering " + name, e);
+            LOGGER.trace("Error unregistering {}", name, e);
         } catch (MBeanRegistrationException e) {
-            LOGGER.debug("Error unregistering " + name, e);
+            LOGGER.debug("Error unregistering {}", name, e);
         }
     }
 }

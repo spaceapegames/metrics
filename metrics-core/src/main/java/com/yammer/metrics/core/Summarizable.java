@@ -9,34 +9,34 @@ public interface Summarizable {
      *
      * @return the largest recorded value
      */
-    double getMax();
+    double max();
 
     /**
      * Returns the smallest recorded value.
      *
      * @return the smallest recorded value
      */
-    double getMin();
+    double min();
 
     /**
      * Returns the arithmetic mean of all recorded values.
      *
      * @return the arithmetic mean of all recorded values
      */
-    double getMean();
+    double mean();
 
     /**
      * Returns the standard deviation of all recorded values.
      *
      * @return the standard deviation of all recorded values
      */
-    double getStdDev();
+    double stdDev();
 
     /**
      * Returns the sum of all recorded values.
      *
      * @return the sum of all recorded values
      */
-    double getSum();
+    double sum();
 
 }
