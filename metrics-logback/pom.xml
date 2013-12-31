@@ -12,7 +12,7 @@
     <name>Metrics Logback Support</name>
 
     <properties>
-        <logback.version>1.0.7</logback.version>
+        <logback.version>1.0.13</logback.version>
     </properties>
 
     <dependencies>

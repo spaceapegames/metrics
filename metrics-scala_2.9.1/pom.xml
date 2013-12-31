@@ -12,7 +12,7 @@
     <name>Metrics for Scala ${scala.version}</name>
 
     <properties>
-        <scala.version>2.10.0</scala.version>
+        <scala.version>2.11.0-M7</scala.version>
     </properties>
 
     <dependencies>
