@@ -8,11 +8,11 @@
         <version>3.0.3-spaceape-SNAPSHOT</version>
     </parent>
 
-    <artifactId>metrics-scala_2.10.0</artifactId>
+    <artifactId>metrics-scala_2.11</artifactId>
     <name>Metrics for Scala ${scala.version}</name>
 
     <properties>
-        <scala.version>2.10.0</scala.version>
+        <scala.version>2.11.4</scala.version>
     </properties>
 
     <dependencies>
