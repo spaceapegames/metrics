@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.yammer.metrics</groupId>
         <artifactId>metrics-parent</artifactId>
-        <version>3.0.3-spaceape</version>
+        <version>3.0.4-spaceape-SNAPSHOT</version>
     </parent>
 
     <artifactId>metrics-ganglia</artifactId>
